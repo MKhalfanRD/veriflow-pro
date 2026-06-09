@@ -10,10 +10,10 @@ export const Route = createFileRoute("/riwayat")({
 function Page() {
   const { usulan } = useAppStore();
   const events = usulan.flatMap((u) => {
-    const items = [
-      { t: u.tanggalPengajuan, label: `Usulan "${u.namaKegiatan}" diajukan`, by: u.balai, kind: "submit" as const },
+    const items: { t: string; label: string; by: string; kind: "submit" | "verify" }[] = [
+      { t: u.tanggalPengajuan, label: `Usulan "${u.namaKegiatan}" diajukan`, by: u.balai, kind: "submit" },
     ];
-    if (u.tanggalVerifV1) items.push({ t: u.tanggalVerifV1, label: `Diverifikasi V1: ${STATUS_LABEL[u.status]}`, by: u.verifikatorV1 ?? "Verifikator 1", kind: "verify" as const });
+    if (u.tanggalVerifV1) items.push({ t: u.tanggalVerifV1, label: `Diverifikasi V1: ${STATUS_LABEL[u.status]}`, by: u.verifikatorV1 ?? "Verifikator 1", kind: "verify" });
     return items;
   }).sort((a, b) => b.t.localeCompare(a.t));
 
