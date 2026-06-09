@@ -84,6 +84,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content:
           "Sistem manajemen usulan kegiatan dengan verifikasi berjenjang untuk Balai/Satker, Pembina Teknis, dan SSPSDA.",
       },
+      { property: "og:title", content: "SIPRO-SDA · Sistem Manajemen Usulan & Verifikasi Berjenjang" },
+      { name: "twitter:title", content: "SIPRO-SDA · Sistem Manajemen Usulan & Verifikasi Berjenjang" },
+      { name: "description", content: "Proyek Berjalan is a web application for managing and verifying project proposals through a tiered approval process." },
+      { property: "og:description", content: "Proyek Berjalan is a web application for managing and verifying project proposals through a tiered approval process." },
+      { name: "twitter:description", content: "Proyek Berjalan is a web application for managing and verifying project proposals through a tiered approval process." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b30715e0-1169-4508-825f-04fdb42258a5/id-preview-4f3e2dca--31abbaaf-a2d1-4802-a076-0be3cc09412a.lovable.app-1780983256001.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b30715e0-1169-4508-825f-04fdb42258a5/id-preview-4f3e2dca--31abbaaf-a2d1-4802-a076-0be3cc09412a.lovable.app-1780983256001.png" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:type", content: "website" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
