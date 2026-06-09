@@ -11,8 +11,12 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VerifikasiAkhirRouteImport } from './routes/verifikasi-akhir'
 import { Route as VerifikasiRouteImport } from './routes/verifikasi'
+import { Route as RiwayatRouteImport } from './routes/riwayat'
+import { Route as PengaturanRouteImport } from './routes/pengaturan'
+import { Route as BeritaAcaraRouteImport } from './routes/berita-acara'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UsulanIndexRouteImport } from './routes/usulan.index'
+import { Route as UsulanBaruRouteImport } from './routes/usulan.baru'
 
 const VerifikasiAkhirRoute = VerifikasiAkhirRouteImport.update({
   id: '/verifikasi-akhir',
@@ -22,6 +26,21 @@ const VerifikasiAkhirRoute = VerifikasiAkhirRouteImport.update({
 const VerifikasiRoute = VerifikasiRouteImport.update({
   id: '/verifikasi',
   path: '/verifikasi',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RiwayatRoute = RiwayatRouteImport.update({
+  id: '/riwayat',
+  path: '/riwayat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PengaturanRoute = PengaturanRouteImport.update({
+  id: '/pengaturan',
+  path: '/pengaturan',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BeritaAcaraRoute = BeritaAcaraRouteImport.update({
+  id: '/berita-acara',
+  path: '/berita-acara',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -34,38 +53,84 @@ const UsulanIndexRoute = UsulanIndexRouteImport.update({
   path: '/usulan/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UsulanBaruRoute = UsulanBaruRouteImport.update({
+  id: '/usulan/baru',
+  path: '/usulan/baru',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/berita-acara': typeof BeritaAcaraRoute
+  '/pengaturan': typeof PengaturanRoute
+  '/riwayat': typeof RiwayatRoute
   '/verifikasi': typeof VerifikasiRoute
   '/verifikasi-akhir': typeof VerifikasiAkhirRoute
+  '/usulan/baru': typeof UsulanBaruRoute
   '/usulan/': typeof UsulanIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/berita-acara': typeof BeritaAcaraRoute
+  '/pengaturan': typeof PengaturanRoute
+  '/riwayat': typeof RiwayatRoute
   '/verifikasi': typeof VerifikasiRoute
   '/verifikasi-akhir': typeof VerifikasiAkhirRoute
+  '/usulan/baru': typeof UsulanBaruRoute
   '/usulan': typeof UsulanIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/berita-acara': typeof BeritaAcaraRoute
+  '/pengaturan': typeof PengaturanRoute
+  '/riwayat': typeof RiwayatRoute
   '/verifikasi': typeof VerifikasiRoute
   '/verifikasi-akhir': typeof VerifikasiAkhirRoute
+  '/usulan/baru': typeof UsulanBaruRoute
   '/usulan/': typeof UsulanIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/verifikasi' | '/verifikasi-akhir' | '/usulan/'
+  fullPaths:
+    | '/'
+    | '/berita-acara'
+    | '/pengaturan'
+    | '/riwayat'
+    | '/verifikasi'
+    | '/verifikasi-akhir'
+    | '/usulan/baru'
+    | '/usulan/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/verifikasi' | '/verifikasi-akhir' | '/usulan'
-  id: '__root__' | '/' | '/verifikasi' | '/verifikasi-akhir' | '/usulan/'
+  to:
+    | '/'
+    | '/berita-acara'
+    | '/pengaturan'
+    | '/riwayat'
+    | '/verifikasi'
+    | '/verifikasi-akhir'
+    | '/usulan/baru'
+    | '/usulan'
+  id:
+    | '__root__'
+    | '/'
+    | '/berita-acara'
+    | '/pengaturan'
+    | '/riwayat'
+    | '/verifikasi'
+    | '/verifikasi-akhir'
+    | '/usulan/baru'
+    | '/usulan/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BeritaAcaraRoute: typeof BeritaAcaraRoute
+  PengaturanRoute: typeof PengaturanRoute
+  RiwayatRoute: typeof RiwayatRoute
   VerifikasiRoute: typeof VerifikasiRoute
   VerifikasiAkhirRoute: typeof VerifikasiAkhirRoute
+  UsulanBaruRoute: typeof UsulanBaruRoute
   UsulanIndexRoute: typeof UsulanIndexRoute
 }
 
@@ -85,6 +150,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VerifikasiRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/riwayat': {
+      id: '/riwayat'
+      path: '/riwayat'
+      fullPath: '/riwayat'
+      preLoaderRoute: typeof RiwayatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pengaturan': {
+      id: '/pengaturan'
+      path: '/pengaturan'
+      fullPath: '/pengaturan'
+      preLoaderRoute: typeof PengaturanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/berita-acara': {
+      id: '/berita-acara'
+      path: '/berita-acara'
+      fullPath: '/berita-acara'
+      preLoaderRoute: typeof BeritaAcaraRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -99,13 +185,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UsulanIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/usulan/baru': {
+      id: '/usulan/baru'
+      path: '/usulan/baru'
+      fullPath: '/usulan/baru'
+      preLoaderRoute: typeof UsulanBaruRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BeritaAcaraRoute: BeritaAcaraRoute,
+  PengaturanRoute: PengaturanRoute,
+  RiwayatRoute: RiwayatRoute,
   VerifikasiRoute: VerifikasiRoute,
   VerifikasiAkhirRoute: VerifikasiAkhirRoute,
+  UsulanBaruRoute: UsulanBaruRoute,
   UsulanIndexRoute: UsulanIndexRoute,
 }
 export const routeTree = rootRouteImport
