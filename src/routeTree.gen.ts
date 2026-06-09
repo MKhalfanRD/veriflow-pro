@@ -9,38 +9,82 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VerifikasiAkhirRouteImport } from './routes/verifikasi-akhir'
+import { Route as VerifikasiRouteImport } from './routes/verifikasi'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as UsulanIndexRouteImport } from './routes/usulan.index'
 
+const VerifikasiAkhirRoute = VerifikasiAkhirRouteImport.update({
+  id: '/verifikasi-akhir',
+  path: '/verifikasi-akhir',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VerifikasiRoute = VerifikasiRouteImport.update({
+  id: '/verifikasi',
+  path: '/verifikasi',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UsulanIndexRoute = UsulanIndexRouteImport.update({
+  id: '/usulan/',
+  path: '/usulan/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/verifikasi': typeof VerifikasiRoute
+  '/verifikasi-akhir': typeof VerifikasiAkhirRoute
+  '/usulan/': typeof UsulanIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/verifikasi': typeof VerifikasiRoute
+  '/verifikasi-akhir': typeof VerifikasiAkhirRoute
+  '/usulan': typeof UsulanIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/verifikasi': typeof VerifikasiRoute
+  '/verifikasi-akhir': typeof VerifikasiAkhirRoute
+  '/usulan/': typeof UsulanIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/verifikasi' | '/verifikasi-akhir' | '/usulan/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/verifikasi' | '/verifikasi-akhir' | '/usulan'
+  id: '__root__' | '/' | '/verifikasi' | '/verifikasi-akhir' | '/usulan/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  VerifikasiRoute: typeof VerifikasiRoute
+  VerifikasiAkhirRoute: typeof VerifikasiAkhirRoute
+  UsulanIndexRoute: typeof UsulanIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/verifikasi-akhir': {
+      id: '/verifikasi-akhir'
+      path: '/verifikasi-akhir'
+      fullPath: '/verifikasi-akhir'
+      preLoaderRoute: typeof VerifikasiAkhirRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/verifikasi': {
+      id: '/verifikasi'
+      path: '/verifikasi'
+      fullPath: '/verifikasi'
+      preLoaderRoute: typeof VerifikasiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +92,21 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/usulan/': {
+      id: '/usulan/'
+      path: '/usulan'
+      fullPath: '/usulan/'
+      preLoaderRoute: typeof UsulanIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  VerifikasiRoute: VerifikasiRoute,
+  VerifikasiAkhirRoute: VerifikasiAkhirRoute,
+  UsulanIndexRoute: UsulanIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
