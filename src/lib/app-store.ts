@@ -18,7 +18,15 @@ export function useAppStore(): AppStore {
 }
 
 export const ROLE_LABEL: Record<Role, string> = {
+  publik: "Pengguna Publik",
   balai: "Balai/Satker",
   verif1: "Pembina Teknis (Verifikator 1)",
   verif2: "SSPSDA (Verifikator 2)",
+};
+
+export const ROLE_NAME: Record<Role, string> = {
+  publik: "Tamu",
+  balai: "Andi Maulana",
+  verif1: "Budi Santoso",
+  verif2: "Hendra Wijaya",
 };
