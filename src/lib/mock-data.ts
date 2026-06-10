@@ -1,4 +1,4 @@
-export type Role = "balai" | "verif1" | "verif2";
+export type Role = "publik" | "balai" | "verif1" | "verif2";
 
 export type Prioritas = "nasional" | "menteri" | "dirjen";
 
@@ -54,6 +54,8 @@ export interface Usulan {
   status: StatusUsulan;
   tanggalPengajuan: string;
   tanggalVerifV1?: string;
+  tanggalEdit?: string;
+  diubah?: boolean;
   catatanRevisi?: string;
   alasanTidakDilanjutkan?: string;
   verifikatorV1?: string;
@@ -70,6 +72,12 @@ export const BALAI_LIST = [
   "BBWS Citarum",
 ];
 
+/** Balai aktif untuk demo (role = balai) */
+export const CURRENT_BALAI = "BBWS Bengawan Solo";
+
+/** Tahun perencanaan (T+1) */
+export const TAHUN_PERENCANAAN = new Date().getFullYear() + 1;
+
 export const USULAN_MOCK: Usulan[] = [
   {
     id: "u1",
@@ -79,7 +87,7 @@ export const USULAN_MOCK: Usulan[] = [
     deskripsi:
       "Rehabilitasi struktur tubuh bendungan, perbaikan spillway, dan peningkatan kapasitas tampung untuk pengendalian banjir hilir.",
     anggaran: 125_000_000_000,
-    tahun: 2026,
+    tahun: TAHUN_PERENCANAAN,
     balai: "BBWS Bengawan Solo",
     prioritas: "nasional",
     status: "menunggu_v1",
@@ -98,11 +106,13 @@ export const USULAN_MOCK: Usulan[] = [
     deskripsi:
       "Pengerukan sedimen, perkuatan tebing, dan pembangunan tanggul sepanjang 4,2 km untuk mengurangi risiko banjir.",
     anggaran: 87_500_000_000,
-    tahun: 2026,
+    tahun: TAHUN_PERENCANAAN,
     balai: "BBWS Ciliwung Cisadane",
     prioritas: "menteri",
     status: "revisi",
     tanggalPengajuan: "2025-05-10",
+    tanggalEdit: "2025-05-18",
+    diubah: true,
     catatanRevisi:
       "Mohon lengkapi DED segmen STA 2+400 hingga 3+800, serta perbarui RAB sesuai HSPK terbaru.",
     verifikatorV1: "Ir. Budi Santoso, M.T.",
@@ -120,7 +130,7 @@ export const USULAN_MOCK: Usulan[] = [
     deskripsi:
       "Pembangunan embung kapasitas 320.000 m³ untuk irigasi pertanian 480 ha dan suplai air baku.",
     anggaran: 32_000_000_000,
-    tahun: 2026,
+    tahun: TAHUN_PERENCANAAN,
     balai: "BBWS Bengawan Solo",
     prioritas: "dirjen",
     status: "disetujui_v1",
@@ -142,12 +152,14 @@ export const USULAN_MOCK: Usulan[] = [
     deskripsi:
       "Pemeliharaan rutin jaringan irigasi DI Rentang seluas 4.260 Ha, termasuk rehabilitasi bangunan bagi.",
     anggaran: 18_700_000_000,
-    tahun: 2026,
+    tahun: TAHUN_PERENCANAAN,
     balai: "BBWS Cimanuk Cisanggarung",
     prioritas: "nasional",
     status: "menunggu_v2",
     tanggalPengajuan: "2025-04-28",
     tanggalVerifV1: "2025-05-06",
+    tanggalEdit: "2025-05-02",
+    diubah: true,
     verifikatorV1: "Ir. Budi Santoso, M.T.",
     dokumen: [
       { nama: "KAK_Rentang.pdf", tipe: "teknis", ukuran: "2.1 MB" },
@@ -163,7 +175,7 @@ export const USULAN_MOCK: Usulan[] = [
     deskripsi:
       "Pembangunan tanggul pengendali banjir sepanjang 6 km melindungi kawasan permukiman dan pertanian.",
     anggaran: 64_300_000_000,
-    tahun: 2026,
+    tahun: TAHUN_PERENCANAAN,
     balai: "BWS Sumatera II",
     prioritas: "menteri",
     status: "disetujui_v2",
@@ -184,7 +196,7 @@ export const USULAN_MOCK: Usulan[] = [
     lokasi: "Bandung, Jawa Barat",
     deskripsi: "Normalisasi saluran drainase primer pusat kota.",
     anggaran: 22_400_000_000,
-    tahun: 2026,
+    tahun: TAHUN_PERENCANAAN,
     balai: "BBWS Citarum",
     prioritas: "dirjen",
     status: "tidak_dilanjutkan",
@@ -206,13 +218,34 @@ export const USULAN_MOCK: Usulan[] = [
     lokasi: "Sikka, NTT",
     deskripsi: "Pembangunan embung air baku 180.000 m³ untuk wilayah kering.",
     anggaran: 14_200_000_000,
-    tahun: 2026,
+    tahun: TAHUN_PERENCANAAN,
     balai: "BWS Nusa Tenggara II",
     prioritas: "dirjen",
     status: "draft",
     tanggalPengajuan: "2025-05-20",
     dokumen: [
       { nama: "KAK_Draft.pdf", tipe: "teknis", ukuran: "1.2 MB" },
+    ],
+  },
+  {
+    id: "u8",
+    nomor: "USL-2025-0031",
+    namaKegiatan: "Rehabilitasi Bendung Colo",
+    lokasi: "Sukoharjo, Jawa Tengah",
+    deskripsi: "Rehabilitasi bendung utama dan jaringan primer untuk irigasi 22.000 Ha.",
+    anggaran: 48_500_000_000,
+    tahun: TAHUN_PERENCANAAN,
+    balai: "BBWS Bengawan Solo",
+    prioritas: "menteri",
+    status: "disetujui_v2",
+    tanggalPengajuan: "2025-03-29",
+    tanggalVerifV1: "2025-04-08",
+    verifikatorV1: "Ir. Budi Santoso, M.T.",
+    verifikatorV2: "Dr. Ir. Hendra Wijaya",
+    dokumen: [
+      { nama: "KAK_Colo.pdf", tipe: "teknis", ukuran: "2.9 MB" },
+      { nama: "DED.pdf", tipe: "teknis", ukuran: "6.2 MB" },
+      { nama: "RAB.pdf", tipe: "teknis", ukuran: "920 KB" },
     ],
   },
 ];

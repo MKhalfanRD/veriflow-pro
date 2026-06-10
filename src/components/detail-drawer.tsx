@@ -94,19 +94,21 @@ export function DetailDrawer({ usulan, onClose }: Props) {
           <div className="grid grid-cols-2 gap-x-6 gap-y-4">
             <Field label="Balai Pengusul">{usulan.balai}</Field>
             <Field label="Lokasi">{usulan.lokasi}</Field>
-            <Field label="Anggaran">
-              <span className="font-mono font-semibold">{formatRupiah(usulan.anggaran)}</span>
-            </Field>
+            {role !== "publik" && (
+              <Field label="Anggaran">
+                <span className="font-mono font-semibold">{formatRupiah(usulan.anggaran)}</span>
+              </Field>
+            )}
             <Field label="Tahun Pelaksanaan">{usulan.tahun}</Field>
             <Field label="Tanggal Pengajuan">{formatTanggal(usulan.tanggalPengajuan)}</Field>
             <Field label="Tingkat Prioritas">{PRIORITAS_LABEL[usulan.prioritas]}</Field>
-            {usulan.tanggalVerifV1 && (
+            {role !== "publik" && usulan.tanggalVerifV1 && (
               <Field label="Verifikasi V1">
                 {formatTanggal(usulan.tanggalVerifV1)}<br />
                 <span className="text-xs text-muted-foreground">{usulan.verifikatorV1}</span>
               </Field>
             )}
-            {usulan.verifikatorV2 && (
+            {role !== "publik" && usulan.verifikatorV2 && (
               <Field label="Verifikator Akhir">{usulan.verifikatorV2}</Field>
             )}
           </div>
@@ -115,7 +117,7 @@ export function DetailDrawer({ usulan, onClose }: Props) {
             <p className="text-sm leading-relaxed text-foreground/80">{usulan.deskripsi}</p>
           </Field>
 
-          {usulan.catatanRevisi && (
+          {role !== "publik" && usulan.catatanRevisi && (
             <div className="rounded-lg border border-status-revisi/30 bg-status-revisi-bg p-4">
               <div className="text-[10px] font-bold uppercase tracking-wider text-status-revisi mb-1">
                 Catatan Revisi
@@ -124,7 +126,7 @@ export function DetailDrawer({ usulan, onClose }: Props) {
             </div>
           )}
 
-          {usulan.alasanTidakDilanjutkan && (
+          {role !== "publik" && usulan.alasanTidakDilanjutkan && (
             <div className="rounded-lg border border-status-rejected/30 bg-status-rejected-bg p-4">
               <div className="text-[10px] font-bold uppercase tracking-wider text-status-rejected mb-1">
                 Alasan Tidak Dilanjutkan
@@ -133,33 +135,35 @@ export function DetailDrawer({ usulan, onClose }: Props) {
             </div>
           )}
 
-          <div>
-            <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-2">
-              Dokumen Pendukung
-            </div>
-            <div className="space-y-2">
-              {usulan.dokumen.map((d) => (
-                <div
-                  key={d.nama}
-                  className="flex items-center gap-3 p-3 rounded-lg border border-border bg-surface hover:border-brand/40 transition-colors"
-                >
-                  <FileText className="size-4 text-brand shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium truncate">{d.nama}</div>
-                    <div className="text-[10px] text-muted-foreground uppercase">
-                      {d.tipe} · {d.ukuran}
+          {role !== "publik" && (
+            <div>
+              <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-2">
+                Dokumen Pendukung
+              </div>
+              <div className="space-y-2">
+                {usulan.dokumen.map((d) => (
+                  <div
+                    key={d.nama}
+                    className="flex items-center gap-3 p-3 rounded-lg border border-border bg-surface hover:border-brand/40 transition-colors"
+                  >
+                    <FileText className="size-4 text-brand shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-medium truncate">{d.nama}</div>
+                      <div className="text-[10px] text-muted-foreground uppercase">
+                        {d.tipe} · {d.ukuran}
+                      </div>
                     </div>
+                    <button className="text-xs text-muted-foreground hover:text-foreground p-1.5">
+                      <Eye className="size-4" />
+                    </button>
+                    <button className="text-xs text-muted-foreground hover:text-foreground p-1.5">
+                      <Download className="size-4" />
+                    </button>
                   </div>
-                  <button className="text-xs text-muted-foreground hover:text-foreground p-1.5">
-                    <Eye className="size-4" />
-                  </button>
-                  <button className="text-xs text-muted-foreground hover:text-foreground p-1.5">
-                    <Download className="size-4" />
-                  </button>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           {role === "verif1" && usulan.status === "menunggu_v1" && (
             <div className="rounded-lg border border-border bg-surface p-4 space-y-3">

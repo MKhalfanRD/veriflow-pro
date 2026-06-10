@@ -126,7 +126,7 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-  const [role, setRole] = useState<Role>("balai");
+  const [role, setRole] = useState<Role>("publik");
   const [usulan, setUsulan] = useState<Usulan[]>(USULAN_MOCK);
 
   const store = {
