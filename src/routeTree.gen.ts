@@ -11,12 +11,25 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VerifikasiAkhirRouteImport } from './routes/verifikasi-akhir'
 import { Route as VerifikasiRouteImport } from './routes/verifikasi'
+import { Route as StudiPendahuluanRouteImport } from './routes/studi-pendahuluan'
 import { Route as RiwayatRouteImport } from './routes/riwayat'
+import { Route as PeraturanRouteImport } from './routes/peraturan'
 import { Route as PengaturanRouteImport } from './routes/pengaturan'
+import { Route as PelaksanaanRouteImport } from './routes/pelaksanaan'
+import { Route as EvaluasiRouteImport } from './routes/evaluasi'
 import { Route as BeritaAcaraRouteImport } from './routes/berita-acara'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UsulanIndexRouteImport } from './routes/usulan.index'
 import { Route as UsulanBaruRouteImport } from './routes/usulan.baru'
+import { Route as TeknisRekapRouteImport } from './routes/teknis.rekap'
+import { Route as SspsdaRekapRouteImport } from './routes/sspsda.rekap'
+import { Route as SspsdaLaporanRouteImport } from './routes/sspsda.laporan'
+import { Route as PerencanaanRincianDppRouteImport } from './routes/perencanaan.rincian-dpp'
+import { Route as PerencanaanPerubahanDppRouteImport } from './routes/perencanaan.perubahan-dpp'
+import { Route as BalaiRekapRouteImport } from './routes/balai.rekap'
+import { Route as BalaiLaporanRouteImport } from './routes/balai.laporan'
+import { Route as TeknisLaporanSuratRouteImport } from './routes/teknis.laporan.surat'
+import { Route as TeknisLaporanRekomtekRouteImport } from './routes/teknis.laporan.rekomtek'
 
 const VerifikasiAkhirRoute = VerifikasiAkhirRouteImport.update({
   id: '/verifikasi-akhir',
@@ -28,14 +41,34 @@ const VerifikasiRoute = VerifikasiRouteImport.update({
   path: '/verifikasi',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StudiPendahuluanRoute = StudiPendahuluanRouteImport.update({
+  id: '/studi-pendahuluan',
+  path: '/studi-pendahuluan',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RiwayatRoute = RiwayatRouteImport.update({
   id: '/riwayat',
   path: '/riwayat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PeraturanRoute = PeraturanRouteImport.update({
+  id: '/peraturan',
+  path: '/peraturan',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PengaturanRoute = PengaturanRouteImport.update({
   id: '/pengaturan',
   path: '/pengaturan',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PelaksanaanRoute = PelaksanaanRouteImport.update({
+  id: '/pelaksanaan',
+  path: '/pelaksanaan',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EvaluasiRoute = EvaluasiRouteImport.update({
+  id: '/evaluasi',
+  path: '/evaluasi',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BeritaAcaraRoute = BeritaAcaraRouteImport.update({
@@ -58,80 +91,216 @@ const UsulanBaruRoute = UsulanBaruRouteImport.update({
   path: '/usulan/baru',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TeknisRekapRoute = TeknisRekapRouteImport.update({
+  id: '/teknis/rekap',
+  path: '/teknis/rekap',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SspsdaRekapRoute = SspsdaRekapRouteImport.update({
+  id: '/sspsda/rekap',
+  path: '/sspsda/rekap',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SspsdaLaporanRoute = SspsdaLaporanRouteImport.update({
+  id: '/sspsda/laporan',
+  path: '/sspsda/laporan',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PerencanaanRincianDppRoute = PerencanaanRincianDppRouteImport.update({
+  id: '/perencanaan/rincian-dpp',
+  path: '/perencanaan/rincian-dpp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PerencanaanPerubahanDppRoute = PerencanaanPerubahanDppRouteImport.update({
+  id: '/perencanaan/perubahan-dpp',
+  path: '/perencanaan/perubahan-dpp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BalaiRekapRoute = BalaiRekapRouteImport.update({
+  id: '/balai/rekap',
+  path: '/balai/rekap',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BalaiLaporanRoute = BalaiLaporanRouteImport.update({
+  id: '/balai/laporan',
+  path: '/balai/laporan',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TeknisLaporanSuratRoute = TeknisLaporanSuratRouteImport.update({
+  id: '/teknis/laporan/surat',
+  path: '/teknis/laporan/surat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TeknisLaporanRekomtekRoute = TeknisLaporanRekomtekRouteImport.update({
+  id: '/teknis/laporan/rekomtek',
+  path: '/teknis/laporan/rekomtek',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/berita-acara': typeof BeritaAcaraRoute
+  '/evaluasi': typeof EvaluasiRoute
+  '/pelaksanaan': typeof PelaksanaanRoute
   '/pengaturan': typeof PengaturanRoute
+  '/peraturan': typeof PeraturanRoute
   '/riwayat': typeof RiwayatRoute
+  '/studi-pendahuluan': typeof StudiPendahuluanRoute
   '/verifikasi': typeof VerifikasiRoute
   '/verifikasi-akhir': typeof VerifikasiAkhirRoute
+  '/balai/laporan': typeof BalaiLaporanRoute
+  '/balai/rekap': typeof BalaiRekapRoute
+  '/perencanaan/perubahan-dpp': typeof PerencanaanPerubahanDppRoute
+  '/perencanaan/rincian-dpp': typeof PerencanaanRincianDppRoute
+  '/sspsda/laporan': typeof SspsdaLaporanRoute
+  '/sspsda/rekap': typeof SspsdaRekapRoute
+  '/teknis/rekap': typeof TeknisRekapRoute
   '/usulan/baru': typeof UsulanBaruRoute
   '/usulan/': typeof UsulanIndexRoute
+  '/teknis/laporan/rekomtek': typeof TeknisLaporanRekomtekRoute
+  '/teknis/laporan/surat': typeof TeknisLaporanSuratRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/berita-acara': typeof BeritaAcaraRoute
+  '/evaluasi': typeof EvaluasiRoute
+  '/pelaksanaan': typeof PelaksanaanRoute
   '/pengaturan': typeof PengaturanRoute
+  '/peraturan': typeof PeraturanRoute
   '/riwayat': typeof RiwayatRoute
+  '/studi-pendahuluan': typeof StudiPendahuluanRoute
   '/verifikasi': typeof VerifikasiRoute
   '/verifikasi-akhir': typeof VerifikasiAkhirRoute
+  '/balai/laporan': typeof BalaiLaporanRoute
+  '/balai/rekap': typeof BalaiRekapRoute
+  '/perencanaan/perubahan-dpp': typeof PerencanaanPerubahanDppRoute
+  '/perencanaan/rincian-dpp': typeof PerencanaanRincianDppRoute
+  '/sspsda/laporan': typeof SspsdaLaporanRoute
+  '/sspsda/rekap': typeof SspsdaRekapRoute
+  '/teknis/rekap': typeof TeknisRekapRoute
   '/usulan/baru': typeof UsulanBaruRoute
   '/usulan': typeof UsulanIndexRoute
+  '/teknis/laporan/rekomtek': typeof TeknisLaporanRekomtekRoute
+  '/teknis/laporan/surat': typeof TeknisLaporanSuratRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/berita-acara': typeof BeritaAcaraRoute
+  '/evaluasi': typeof EvaluasiRoute
+  '/pelaksanaan': typeof PelaksanaanRoute
   '/pengaturan': typeof PengaturanRoute
+  '/peraturan': typeof PeraturanRoute
   '/riwayat': typeof RiwayatRoute
+  '/studi-pendahuluan': typeof StudiPendahuluanRoute
   '/verifikasi': typeof VerifikasiRoute
   '/verifikasi-akhir': typeof VerifikasiAkhirRoute
+  '/balai/laporan': typeof BalaiLaporanRoute
+  '/balai/rekap': typeof BalaiRekapRoute
+  '/perencanaan/perubahan-dpp': typeof PerencanaanPerubahanDppRoute
+  '/perencanaan/rincian-dpp': typeof PerencanaanRincianDppRoute
+  '/sspsda/laporan': typeof SspsdaLaporanRoute
+  '/sspsda/rekap': typeof SspsdaRekapRoute
+  '/teknis/rekap': typeof TeknisRekapRoute
   '/usulan/baru': typeof UsulanBaruRoute
   '/usulan/': typeof UsulanIndexRoute
+  '/teknis/laporan/rekomtek': typeof TeknisLaporanRekomtekRoute
+  '/teknis/laporan/surat': typeof TeknisLaporanSuratRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/berita-acara'
+    | '/evaluasi'
+    | '/pelaksanaan'
     | '/pengaturan'
+    | '/peraturan'
     | '/riwayat'
+    | '/studi-pendahuluan'
     | '/verifikasi'
     | '/verifikasi-akhir'
+    | '/balai/laporan'
+    | '/balai/rekap'
+    | '/perencanaan/perubahan-dpp'
+    | '/perencanaan/rincian-dpp'
+    | '/sspsda/laporan'
+    | '/sspsda/rekap'
+    | '/teknis/rekap'
     | '/usulan/baru'
     | '/usulan/'
+    | '/teknis/laporan/rekomtek'
+    | '/teknis/laporan/surat'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/berita-acara'
+    | '/evaluasi'
+    | '/pelaksanaan'
     | '/pengaturan'
+    | '/peraturan'
     | '/riwayat'
+    | '/studi-pendahuluan'
     | '/verifikasi'
     | '/verifikasi-akhir'
+    | '/balai/laporan'
+    | '/balai/rekap'
+    | '/perencanaan/perubahan-dpp'
+    | '/perencanaan/rincian-dpp'
+    | '/sspsda/laporan'
+    | '/sspsda/rekap'
+    | '/teknis/rekap'
     | '/usulan/baru'
     | '/usulan'
+    | '/teknis/laporan/rekomtek'
+    | '/teknis/laporan/surat'
   id:
     | '__root__'
     | '/'
     | '/berita-acara'
+    | '/evaluasi'
+    | '/pelaksanaan'
     | '/pengaturan'
+    | '/peraturan'
     | '/riwayat'
+    | '/studi-pendahuluan'
     | '/verifikasi'
     | '/verifikasi-akhir'
+    | '/balai/laporan'
+    | '/balai/rekap'
+    | '/perencanaan/perubahan-dpp'
+    | '/perencanaan/rincian-dpp'
+    | '/sspsda/laporan'
+    | '/sspsda/rekap'
+    | '/teknis/rekap'
     | '/usulan/baru'
     | '/usulan/'
+    | '/teknis/laporan/rekomtek'
+    | '/teknis/laporan/surat'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BeritaAcaraRoute: typeof BeritaAcaraRoute
+  EvaluasiRoute: typeof EvaluasiRoute
+  PelaksanaanRoute: typeof PelaksanaanRoute
   PengaturanRoute: typeof PengaturanRoute
+  PeraturanRoute: typeof PeraturanRoute
   RiwayatRoute: typeof RiwayatRoute
+  StudiPendahuluanRoute: typeof StudiPendahuluanRoute
   VerifikasiRoute: typeof VerifikasiRoute
   VerifikasiAkhirRoute: typeof VerifikasiAkhirRoute
+  BalaiLaporanRoute: typeof BalaiLaporanRoute
+  BalaiRekapRoute: typeof BalaiRekapRoute
+  PerencanaanPerubahanDppRoute: typeof PerencanaanPerubahanDppRoute
+  PerencanaanRincianDppRoute: typeof PerencanaanRincianDppRoute
+  SspsdaLaporanRoute: typeof SspsdaLaporanRoute
+  SspsdaRekapRoute: typeof SspsdaRekapRoute
+  TeknisRekapRoute: typeof TeknisRekapRoute
   UsulanBaruRoute: typeof UsulanBaruRoute
   UsulanIndexRoute: typeof UsulanIndexRoute
+  TeknisLaporanRekomtekRoute: typeof TeknisLaporanRekomtekRoute
+  TeknisLaporanSuratRoute: typeof TeknisLaporanSuratRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -150,6 +319,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VerifikasiRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/studi-pendahuluan': {
+      id: '/studi-pendahuluan'
+      path: '/studi-pendahuluan'
+      fullPath: '/studi-pendahuluan'
+      preLoaderRoute: typeof StudiPendahuluanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/riwayat': {
       id: '/riwayat'
       path: '/riwayat'
@@ -157,11 +333,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RiwayatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/peraturan': {
+      id: '/peraturan'
+      path: '/peraturan'
+      fullPath: '/peraturan'
+      preLoaderRoute: typeof PeraturanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/pengaturan': {
       id: '/pengaturan'
       path: '/pengaturan'
       fullPath: '/pengaturan'
       preLoaderRoute: typeof PengaturanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pelaksanaan': {
+      id: '/pelaksanaan'
+      path: '/pelaksanaan'
+      fullPath: '/pelaksanaan'
+      preLoaderRoute: typeof PelaksanaanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/evaluasi': {
+      id: '/evaluasi'
+      path: '/evaluasi'
+      fullPath: '/evaluasi'
+      preLoaderRoute: typeof EvaluasiRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/berita-acara': {
@@ -192,18 +389,94 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UsulanBaruRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/teknis/rekap': {
+      id: '/teknis/rekap'
+      path: '/teknis/rekap'
+      fullPath: '/teknis/rekap'
+      preLoaderRoute: typeof TeknisRekapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sspsda/rekap': {
+      id: '/sspsda/rekap'
+      path: '/sspsda/rekap'
+      fullPath: '/sspsda/rekap'
+      preLoaderRoute: typeof SspsdaRekapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sspsda/laporan': {
+      id: '/sspsda/laporan'
+      path: '/sspsda/laporan'
+      fullPath: '/sspsda/laporan'
+      preLoaderRoute: typeof SspsdaLaporanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/perencanaan/rincian-dpp': {
+      id: '/perencanaan/rincian-dpp'
+      path: '/perencanaan/rincian-dpp'
+      fullPath: '/perencanaan/rincian-dpp'
+      preLoaderRoute: typeof PerencanaanRincianDppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/perencanaan/perubahan-dpp': {
+      id: '/perencanaan/perubahan-dpp'
+      path: '/perencanaan/perubahan-dpp'
+      fullPath: '/perencanaan/perubahan-dpp'
+      preLoaderRoute: typeof PerencanaanPerubahanDppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/balai/rekap': {
+      id: '/balai/rekap'
+      path: '/balai/rekap'
+      fullPath: '/balai/rekap'
+      preLoaderRoute: typeof BalaiRekapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/balai/laporan': {
+      id: '/balai/laporan'
+      path: '/balai/laporan'
+      fullPath: '/balai/laporan'
+      preLoaderRoute: typeof BalaiLaporanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/teknis/laporan/surat': {
+      id: '/teknis/laporan/surat'
+      path: '/teknis/laporan/surat'
+      fullPath: '/teknis/laporan/surat'
+      preLoaderRoute: typeof TeknisLaporanSuratRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/teknis/laporan/rekomtek': {
+      id: '/teknis/laporan/rekomtek'
+      path: '/teknis/laporan/rekomtek'
+      fullPath: '/teknis/laporan/rekomtek'
+      preLoaderRoute: typeof TeknisLaporanRekomtekRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BeritaAcaraRoute: BeritaAcaraRoute,
+  EvaluasiRoute: EvaluasiRoute,
+  PelaksanaanRoute: PelaksanaanRoute,
   PengaturanRoute: PengaturanRoute,
+  PeraturanRoute: PeraturanRoute,
   RiwayatRoute: RiwayatRoute,
+  StudiPendahuluanRoute: StudiPendahuluanRoute,
   VerifikasiRoute: VerifikasiRoute,
   VerifikasiAkhirRoute: VerifikasiAkhirRoute,
+  BalaiLaporanRoute: BalaiLaporanRoute,
+  BalaiRekapRoute: BalaiRekapRoute,
+  PerencanaanPerubahanDppRoute: PerencanaanPerubahanDppRoute,
+  PerencanaanRincianDppRoute: PerencanaanRincianDppRoute,
+  SspsdaLaporanRoute: SspsdaLaporanRoute,
+  SspsdaRekapRoute: SspsdaRekapRoute,
+  TeknisRekapRoute: TeknisRekapRoute,
   UsulanBaruRoute: UsulanBaruRoute,
   UsulanIndexRoute: UsulanIndexRoute,
+  TeknisLaporanRekomtekRoute: TeknisLaporanRekomtekRoute,
+  TeknisLaporanSuratRoute: TeknisLaporanSuratRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
