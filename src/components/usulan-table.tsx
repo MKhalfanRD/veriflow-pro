@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
 import { useAppStore } from "@/lib/app-store";
 import type { Usulan, Prioritas, StatusUsulan } from "@/lib/mock-data";
-import { formatTanggal, PRIORITAS_LABEL, formatRupiah } from "@/lib/mock-data";
+import { formatTanggal, formatRupiah } from "@/lib/mock-data";
 import { StatusBadge, PrioritasBadge } from "@/components/status-badge";
 import { DetailDrawer } from "@/components/detail-drawer";
-import { Search, Filter, Download } from "lucide-react";
+import { Search, Download } from "lucide-react";
 
 interface Props {
   rows: Usulan[];
@@ -14,6 +14,8 @@ interface Props {
 }
 
 export function UsulanTable({ rows, title, description, showBalai = true }: Props) {
+  const { role } = useAppStore();
+  const isPublik = role === "publik";
   const [selected, setSelected] = useState<Usulan | null>(null);
   const [q, setQ] = useState("");
   const [prio, setPrio] = useState<Prioritas | "all">("all");
@@ -95,7 +97,9 @@ export function UsulanTable({ rows, title, description, showBalai = true }: Prop
                   <td className="px-6 py-3 text-muted-foreground font-mono text-[11px]">{(page - 1) * pageSize + i + 1}</td>
                   <td className="px-6 py-3">
                     <div className="font-medium">{u.namaKegiatan}</div>
-                    <div className="text-[10px] text-muted-foreground font-mono">{u.nomor} · {formatRupiah(u.anggaran)}</div>
+                    <div className="text-[10px] text-muted-foreground font-mono">
+                      {u.nomor}{!isPublik && ` · ${formatRupiah(u.anggaran)}`}
+                    </div>
                   </td>
                   {showBalai && <td className="px-6 py-3 text-xs text-muted-foreground">{u.balai}</td>}
                   <td className="px-6 py-3 text-xs">{u.lokasi}</td>
