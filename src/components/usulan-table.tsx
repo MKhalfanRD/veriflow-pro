@@ -15,7 +15,7 @@ interface Props {
 
 export function UsulanTable({ rows, title, description, showBalai = true }: Props) {
   const { role } = useAppStore();
-  const isPublik = role === "publik";
+  const isPublik = false;
   const [selected, setSelected] = useState<Usulan | null>(null);
   const [q, setQ] = useState("");
   const [prio, setPrio] = useState<Prioritas | "all">("all");
