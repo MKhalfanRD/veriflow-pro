@@ -1,90 +1,74 @@
-# Rencana: Landing Page Publik + Restrukturisasi Sidebar per Role
+# Revisi SIPRO-SDA
 
-## 1. Konsep akses
+## 1. Hapus akses publik → wajib login
 
-- **Publik (tanpa login)**: dapat akses landing page + dashboard ringkas (data agregat saja, tanpa detail anggaran/dokumen/catatan internal).
-- **Login (3 role)**: lihat data sesuai role + akses menu kerja masing-masing.
-- Untuk demo masih pakai role-switcher (belum integrasi auth). Tambah opsi "Publik" di switcher.
+- Hapus role `publik`. Tambah state `loggedIn` di app-store.
+- `__root.tsx`: jika belum login → render **halaman login** (tanpa sidebar/header).
+- `src/routes/login.tsx` baru: form sederhana (username + password mock) + pilihan role demo (Balai / Pembina Teknis / SSPSDA) + tombol Masuk.
+- Tombol **Keluar** di sidebar (ganti role switcher → muncul setelah login, kembali ke `/login`).
 
-## 2. Struktur route baru
+## 2. Struktur sidebar baru (sama untuk 3 role, beda di sub-menu tertentu)
 
-```text
-src/routes/
-  __root.tsx                       (shell: sidebar publik vs sidebar role)
-  index.tsx                        Landing Home (publik)
-  studi-pendahuluan.tsx            Slide preview publik
-  perencanaan.rincian-dpp.tsx      Tabel proyek per prioritas (dari usulan)
-  perencanaan.perubahan-dpp.tsx    Tabel proyek yang diedit
-  pelaksanaan.tsx                  Dummy publik
-  evaluasi.tsx                     Dummy publik
-  peraturan.tsx                    Dummy publik (list peraturan)
+Semua role melihat:
 
-  # Balai
-  balai.rekap.tsx                  Rekap T+1 (balai aktif saja)
-  usulan.baru.tsx                  (existing)
-  balai.laporan.tsx                Daftar usulan balai yang disetujui V2
+- Home
+- Studi Pendahuluan
+- **Perencanaan**
+  - Rincian DPP Awal (group, 3-level nested)
+    - Rekap Usulan
+    - Buat Usulan *(balai & sspsda)*
+    - Verif Masuk (Teknis (verif dari daftar usulan balai) & sspsda (verif dari hasil usulan yang di verif teknis))
+    - Laporan / Cetak (untuk role teknis akan muncul sub menu lagi bernama rekomtek dan surat usulan. Untuk Balai dan sspsda hanya akan muncul sub menu surat usulan)
+    - Riwayat
+  - Perubahan Rincian DPP (struktur sub-menu identik dengan Rincian DPP Awal, data = versi terbaru)
+- Pelaksanaan
+- Evaluasi
+- Peraturan
 
-  # Teknis (verif1)
-  teknis.rekap.tsx                 Rekap T+1 (lingkup teknis)
-  verifikasi.tsx                   (existing)
-  teknis.laporan.surat.tsx         Surat usulan disetujui V2
-  teknis.laporan.rekomtek.tsx      PDF rekomtek
+SSPSDA tambahan: menu **Pengaturan Menu** untuk meng-aktifkan / non-aktifkan submenu *Rincian DPP Awal* & *Perubahan Rincian DPP*.
 
-  # SSPSDA (verif2)
-  sspsda.rekap.tsx                 Rekap T+1 (semua SDA)
-  verifikasi-akhir.tsx             (existing)
-  sspsda.laporan.tsx               Semua surat disetujui V2
+## 3. Routing
 
-  riwayat.tsx                      (existing — filter per role)
-```
+Pakai dynamic segment `$dppType` (`awal` | `perubahan`) supaya satu set komponen melayani kedua sub-menu:
 
-## 3. Sidebar dinamis (`app-sidebar.tsx`)
+/perencanaan/$dppType                  → layout (cek toggle SSPSDA, jika non-aktif tampilkan pesan terkunci)  
+/perencanaan/$dppType/rekap            → Rekap Usulan T+1  
+/perencanaan/$dppType/buat-usulan      → Form Buat Usulan (balai/sspsda)  
+/perencanaan/$dppType/laporan          → Laporan / Cetak  
+/perencanaan/$dppType/riwayat          → Riwayat aktivitas (filter per role)  
+/perencanaan/$dppType/verifikasi       → Verif Masuk (teknis)  
+/perencanaan/$dppType/rekomtek         → Form & generator Rekomtek (teknis)
 
-Switch berdasar role aktif (`publik | balai | verif1 | verif2`):
+Hapus route lama: `balai.*`, `teknis.*`, `sspsda.*`, `verifikasi.tsx`, `verifikasi-akhir.tsx`, `perencanaan.rincian-dpp.tsx`, `perencanaan.perubahan-dpp.tsx`, `usulan.*`.
 
-- **Publik**: Home, Studi Pendahuluan, Perencanaan ▸ (Rincian DPP, Perubahan DPP), Pelaksanaan DPP, Evaluasi, Peraturan.
-- **Balai**: Rekap Usulan T+1, Buat Usulan, Laporan/Cetak, Riwayat.
-- **Teknis**: Rekap Usulan T+1, Verif Masuk, Laporan/Cetak ▸ (Surat Usulan, Rekomtek), Riwayat.
-- **SSPSDA**: Rekap Usulan T+1, Verif Masuk, Laporan/Cetak, Riwayat.
+## 4. Form Rekomtek (teknis)
 
-Pakai komponen `Collapsible` (sudah ada) untuk sub-menu.
+Input: Kementerian/Lembaga · Unit Eselon · Satuan Kerja · Latar Belakang · Dasar Hukum · Maksud & Tujuan · Output & Outcome · Biaya & Tahapan · Waktu Pelaksanaan.
+Preview dokumen dengan template formal + paragraf penutup auto-generate (mengandung nama proyek). Tombol **Cetak / Simpan PDF** via `window.print()` dengan stylesheet print khusus.
 
-## 4. Landing Home (publik dashboard)
+## 5. Toggle SSPSDA
 
-Dashboard mirip `index.tsx` lama tapi data yang ditampilkan publik:
-- KPI agregat: total usulan, jumlah per prioritas, jumlah disetujui V2, total balai.
-- Chart distribusi per prioritas, per balai.
-- **Tidak ditampilkan**: angka anggaran detail, catatan revisi, nama verifikator, dokumen.
-- Daftar proyek disetujui V2 (read-only, kolom: nama, balai, prioritas, status — tanpa rupiah/dokumen).
+- Tambah `dppAwalEnabled`, `dppPerubahanEnabled` di app-store.
+- Halaman `pengaturan.tsx`: dua switch (khusus role SSPSDA).
+- Layout `/perencanaan/$dppType` cek toggle: kalau non-aktif → kartu "Menu belum dapat diakses. Menunggu SSPSDA mengaktifkan." (SSPSDA tetap bisa lewat link "Buka Pengaturan").
 
-## 5. Halaman publik lain
+## 6. Studi Pendahuluan
 
-- **Studi Pendahuluan**: slide deck (prev/next + indicator), 4-5 slide dummy berisi latar belakang, tujuan, metodologi, hasil.
-- **Rincian DPP Awal**: ambil dari `usulan` store, group by prioritas (nasional → menteri → dirjen), tampil tabel nomor/kegiatan/balai/tahun. Tanpa rupiah.
-- **Perubahan Rincian DPP**: filter usulan yang status `revisi` atau pernah diedit (tandai dengan flag `diubah` di mock). Tampil perubahan + tanggal.
-- **Pelaksanaan / Evaluasi / Peraturan**: konten dummy (cards/list peraturan PUPR, dsb.).
+Ganti slide viewer → **daftar PDF per tahun** (grouped by tahun, tiap item: judul, ukuran, tombol Download). Pakai mock PDF (data-URL kecil) sehingga benar-benar bisa di-download.
 
-## 6. Halaman role baru
+## 7. Mock data
 
-- **Rekap T+1** (3 varian): heading "Rekap Usulan TA {currentYear+1}", tabel + ringkasan, filter scope:
-  - balai: `u.balai === currentBalai` (pakai "BBWS Bengawan Solo" sebagai balai aktif demo)
-  - teknis: semua kecuali `draft`
-  - sspsda: semua
-- **Laporan/Cetak**: list usulan dengan `status === 'disetujui_v2'`, tombol "Cetak" → buka berita acara existing. Untuk teknis ada sub Rekomtek (list + tombol unduh PDF dummy).
-- **Riwayat**: filter event sesuai role (balai → event balai-nya, teknis → semua verif V1, sspsda → semua verif V2 + grouping per role).
+- Tambah field `tahap: "awal" | "perubahan"` di `Usulan`. Default existing = "awal"; tambahkan beberapa mock "perubahan".
+- Hapus role `publik` dari `Role` union.
 
-## 7. Detail teknis
+## 8.  Rekomtek
 
-- Tambah `Role = "publik" | ...` di `mock-data.ts`. Default role saat load = `publik`.
-- Tambah field opsional `tanggalEdit` & flag `diubah` di beberapa mock untuk Perubahan DPP.
-- `app-header.tsx`: untuk publik sembunyikan tombol "Buat Usulan" dan ganti judul.
-- `__root.tsx`: jika role `publik`, header tampilkan tombol "Masuk" (dummy, buka switcher).
-- Berita acara & detail drawer: sembunyikan info sensitif jika role `publik`.
+adalah menu rekomendasi teknis yang berguna untuk menampilkan daftar rekomendasi teknis yang telah diinput oleh role teknis. Hasilnya adalah PDF yang memiliki template yang sama namun ada perbedaan nilai berdasarkan inputan yang telah dilakukan oleh teknis 
 
-## 8. Yang TIDAK diubah
+## File yang berubah
 
-- Skema warna / typography / komponen UI dasar.
-- Form `usulan.baru`, `detail-drawer`, `usulan-table`, `berita-acara` (hanya tambah guard publik).
-- Belum sambung backend / auth real — masih in-memory store.
+- **Baru**: `routes/login.tsx`, `routes/perencanaan.$dppType.tsx` + 7 sub-route, ulang `routes/studi-pendahuluan.tsx`.
+- **Edit**: `app-store.ts`, `mock-data.ts`, `__root.tsx`, `app-sidebar.tsx`, `app-header.tsx`, `index.tsx`, `pengaturan.tsx`, `routeTree.gen.ts`.
+- **Hapus**: balai.*, teknis.*, sspsda.*, verifikasi*.tsx, perencanaan.rincian-dpp.tsx, perencanaan.perubahan-dpp.tsx, usulan.*.
 
-Setelah disetujui, saya implementasi semua sekaligus dalam satu batch.
+Setuju saya eksekusi semuanya?

@@ -1,12 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useAppStore, ROLE_LABEL } from "@/lib/app-store";
+import { DPP_LABEL } from "@/lib/mock-data";
+import { ShieldAlert, ToggleRight } from "lucide-react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/pengaturan")({
   component: Page,
 });
 
 function Page() {
-  const { role } = useAppStore();
+  const { role, dppAwalEnabled, dppPerubahanEnabled, setDppEnabled } = useAppStore();
+
   return (
     <div className="p-8 max-w-3xl mx-auto space-y-6">
       <div className="bg-surface rounded-xl ring-1 ring-black/5 shadow-card p-6">
@@ -23,17 +27,87 @@ function Page() {
           </div>
         </dl>
       </div>
-      <div className="bg-surface rounded-xl ring-1 ring-black/5 shadow-card p-6">
-        <h2 className="text-base font-semibold">Manajemen Role (RBAC)</h2>
-        <p className="text-[11px] text-muted-foreground mb-4">
-          Sistem mendukung 3 peran utama dengan hak akses berjenjang.
-        </p>
-        <ul className="space-y-3 text-sm">
-          <li className="flex items-start gap-3"><span className="size-2 mt-1.5 rounded-full bg-brand" /><div><strong>Balai/Satker</strong> — membuat & mengirim usulan, melihat status & catatan revisi.</div></li>
-          <li className="flex items-start gap-3"><span className="size-2 mt-1.5 rounded-full bg-prio-menteri" /><div><strong>Pembina Teknis (V1)</strong> — memeriksa, meminta revisi, atau menyetujui usulan; menerbitkan Berita Acara.</div></li>
-          <li className="flex items-start gap-3"><span className="size-2 mt-1.5 rounded-full bg-prio-nasional" /><div><strong>SSPSDA (V2)</strong> — validasi akhir, melanjutkan atau menghentikan usulan.</div></li>
-        </ul>
-      </div>
+
+      {role === "verif2" ? (
+        <div className="bg-surface rounded-xl ring-1 ring-black/5 shadow-card p-6">
+          <div className="flex items-center gap-2 mb-1">
+            <ToggleRight className="size-4 text-brand" />
+            <h2 className="text-base font-semibold">Pengaturan Menu Perencanaan</h2>
+          </div>
+          <p className="text-[11px] text-muted-foreground mb-5">
+            Aktifkan atau nonaktifkan akses sub-menu Perencanaan untuk seluruh pengguna sistem.
+            Ketika dinonaktifkan, Balai/Satker & Pembina Teknis akan melihat pesan bahwa menu
+            sedang tidak dapat diakses.
+          </p>
+
+          <div className="space-y-3">
+            <Toggle
+              label={DPP_LABEL.awal}
+              hint="Sub-menu beserta seluruh sub-sub-menu di dalamnya"
+              checked={dppAwalEnabled}
+              onChange={(v) => {
+                setDppEnabled("awal", v);
+                toast.success(`${DPP_LABEL.awal} ${v ? "diaktifkan" : "dinonaktifkan"}`);
+              }}
+            />
+            <Toggle
+              label={DPP_LABEL.perubahan}
+              hint="Sub-menu beserta seluruh sub-sub-menu di dalamnya"
+              checked={dppPerubahanEnabled}
+              onChange={(v) => {
+                setDppEnabled("perubahan", v);
+                toast.success(`${DPP_LABEL.perubahan} ${v ? "diaktifkan" : "dinonaktifkan"}`);
+              }}
+            />
+          </div>
+        </div>
+      ) : (
+        <div className="bg-surface rounded-xl ring-1 ring-black/5 shadow-card p-6">
+          <div className="flex items-start gap-3">
+            <ShieldAlert className="size-5 text-status-pending mt-0.5" />
+            <div>
+              <h2 className="text-base font-semibold">Pengaturan Menu Perencanaan</h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                Hanya peran SSPSDA yang dapat mengaktifkan atau menonaktifkan sub-menu Rincian DPP
+                Awal dan Perubahan Rincian DPP.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
+  );
+}
+
+function Toggle({
+  label,
+  hint,
+  checked,
+  onChange,
+}: {
+  label: string;
+  hint: string;
+  checked: boolean;
+  onChange: (v: boolean) => void;
+}) {
+  return (
+    <label className="flex items-center justify-between p-4 rounded-lg border border-border bg-background cursor-pointer hover:border-brand/40 transition-colors">
+      <div>
+        <div className="text-sm font-medium">{label}</div>
+        <div className="text-[11px] text-muted-foreground mt-0.5">{hint}</div>
+      </div>
+      <button
+        type="button"
+        onClick={() => onChange(!checked)}
+        className={`relative w-11 h-6 rounded-full transition-colors ${checked ? "bg-brand" : "bg-muted-foreground/30"}`}
+        aria-pressed={checked}
+      >
+        <span
+          className={`absolute top-0.5 size-5 bg-white rounded-full shadow transition-transform ${
+            checked ? "translate-x-5" : "translate-x-0.5"
+          }`}
+        />
+      </button>
+    </label>
   );
 }

@@ -94,7 +94,7 @@ export function DetailDrawer({ usulan, onClose }: Props) {
           <div className="grid grid-cols-2 gap-x-6 gap-y-4">
             <Field label="Balai Pengusul">{usulan.balai}</Field>
             <Field label="Lokasi">{usulan.lokasi}</Field>
-            {role !== "publik" && (
+            {true && (
               <Field label="Anggaran">
                 <span className="font-mono font-semibold">{formatRupiah(usulan.anggaran)}</span>
               </Field>
@@ -102,13 +102,13 @@ export function DetailDrawer({ usulan, onClose }: Props) {
             <Field label="Tahun Pelaksanaan">{usulan.tahun}</Field>
             <Field label="Tanggal Pengajuan">{formatTanggal(usulan.tanggalPengajuan)}</Field>
             <Field label="Tingkat Prioritas">{PRIORITAS_LABEL[usulan.prioritas]}</Field>
-            {role !== "publik" && usulan.tanggalVerifV1 && (
+            {true && usulan.tanggalVerifV1 && (
               <Field label="Verifikasi V1">
                 {formatTanggal(usulan.tanggalVerifV1)}<br />
                 <span className="text-xs text-muted-foreground">{usulan.verifikatorV1}</span>
               </Field>
             )}
-            {role !== "publik" && usulan.verifikatorV2 && (
+            {true && usulan.verifikatorV2 && (
               <Field label="Verifikator Akhir">{usulan.verifikatorV2}</Field>
             )}
           </div>
@@ -117,7 +117,7 @@ export function DetailDrawer({ usulan, onClose }: Props) {
             <p className="text-sm leading-relaxed text-foreground/80">{usulan.deskripsi}</p>
           </Field>
 
-          {role !== "publik" && usulan.catatanRevisi && (
+          {true && usulan.catatanRevisi && (
             <div className="rounded-lg border border-status-revisi/30 bg-status-revisi-bg p-4">
               <div className="text-[10px] font-bold uppercase tracking-wider text-status-revisi mb-1">
                 Catatan Revisi
@@ -126,7 +126,7 @@ export function DetailDrawer({ usulan, onClose }: Props) {
             </div>
           )}
 
-          {role !== "publik" && usulan.alasanTidakDilanjutkan && (
+          {true && usulan.alasanTidakDilanjutkan && (
             <div className="rounded-lg border border-status-rejected/30 bg-status-rejected-bg p-4">
               <div className="text-[10px] font-bold uppercase tracking-wider text-status-rejected mb-1">
                 Alasan Tidak Dilanjutkan
@@ -135,7 +135,7 @@ export function DetailDrawer({ usulan, onClose }: Props) {
             </div>
           )}
 
-          {role !== "publik" && (
+          {true && (
             <div>
               <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-2">
                 Dokumen Pendukung

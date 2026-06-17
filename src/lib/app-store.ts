@@ -2,11 +2,17 @@ import { createContext, useContext } from "react";
 import type { Role, Usulan } from "./mock-data";
 
 export interface AppStore {
+  loggedIn: boolean;
   role: Role;
+  login: (r: Role) => void;
+  logout: () => void;
   setRole: (r: Role) => void;
   usulan: Usulan[];
   updateUsulan: (id: string, patch: Partial<Usulan>) => void;
   addUsulan: (u: Usulan) => void;
+  dppAwalEnabled: boolean;
+  dppPerubahanEnabled: boolean;
+  setDppEnabled: (t: "awal" | "perubahan", v: boolean) => void;
 }
 
 export const AppStoreContext = createContext<AppStore | null>(null);
@@ -18,14 +24,12 @@ export function useAppStore(): AppStore {
 }
 
 export const ROLE_LABEL: Record<Role, string> = {
-  publik: "Pengguna Publik",
   balai: "Balai/Satker",
   verif1: "Pembina Teknis (Verifikator 1)",
   verif2: "SSPSDA (Verifikator 2)",
 };
 
 export const ROLE_NAME: Record<Role, string> = {
-  publik: "Tamu",
   balai: "Andi Maulana",
   verif1: "Budi Santoso",
   verif2: "Hendra Wijaya",

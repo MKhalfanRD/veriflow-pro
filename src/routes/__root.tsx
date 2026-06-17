@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -86,11 +87,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:title", content: "SIPRO-SDA · Sistem Manajemen Usulan & Verifikasi Berjenjang" },
       { name: "twitter:title", content: "SIPRO-SDA · Sistem Manajemen Usulan & Verifikasi Berjenjang" },
-      { name: "description", content: "Proyek Berjalan is a web application for managing and verifying project proposals through a tiered approval process." },
-      { property: "og:description", content: "Proyek Berjalan is a web application for managing and verifying project proposals through a tiered approval process." },
-      { name: "twitter:description", content: "Proyek Berjalan is a web application for managing and verifying project proposals through a tiered approval process." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b30715e0-1169-4508-825f-04fdb42258a5/id-preview-4f3e2dca--31abbaaf-a2d1-4802-a076-0be3cc09412a.lovable.app-1780983256001.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b30715e0-1169-4508-825f-04fdb42258a5/id-preview-4f3e2dca--31abbaaf-a2d1-4802-a076-0be3cc09412a.lovable.app-1780983256001.png" },
+      { property: "og:description", content: "Sistem internal manajemen usulan kegiatan SDA dengan verifikasi berjenjang." },
+      { name: "twitter:description", content: "Sistem internal manajemen usulan kegiatan SDA dengan verifikasi berjenjang." },
       { name: "twitter:card", content: "summary_large_image" },
       { property: "og:type", content: "website" },
     ],
@@ -126,30 +124,54 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-  const [role, setRole] = useState<Role>("publik");
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [role, setRole] = useState<Role>("balai");
   const [usulan, setUsulan] = useState<Usulan[]>(USULAN_MOCK);
+  const [dppAwalEnabled, setDppAwalEnabled] = useState(true);
+  const [dppPerubahanEnabled, setDppPerubahanEnabled] = useState(true);
 
   const store = {
+    loggedIn,
     role,
+    login: (r: Role) => {
+      setRole(r);
+      setLoggedIn(true);
+    },
+    logout: () => setLoggedIn(false),
     setRole,
     usulan,
     updateUsulan: (id: string, patch: Partial<Usulan>) =>
       setUsulan((prev) => prev.map((u) => (u.id === id ? { ...u, ...patch } : u))),
     addUsulan: (u: Usulan) => setUsulan((prev) => [u, ...prev]),
+    dppAwalEnabled,
+    dppPerubahanEnabled,
+    setDppEnabled: (t: "awal" | "perubahan", v: boolean) => {
+      if (t === "awal") setDppAwalEnabled(v);
+      else setDppPerubahanEnabled(v);
+    },
   };
+
+  const isLoginRoute = pathname === "/login";
 
   return (
     <QueryClientProvider client={queryClient}>
       <AppStoreContext.Provider value={store}>
-        <div className="flex min-h-screen w-full bg-background">
-          <AppSidebar />
-          <div className="flex-1 flex flex-col min-w-0">
-            <AppHeader />
-            <main className="flex-1 overflow-y-auto">
-              <Outlet />
-            </main>
+        {!loggedIn || isLoginRoute ? (
+          <div className="min-h-screen w-full bg-background">
+            <Outlet />
           </div>
-        </div>
+        ) : (
+          <div className="flex min-h-screen w-full bg-background">
+            <AppSidebar />
+            <div className="flex-1 flex flex-col min-w-0">
+              <AppHeader />
+              <main className="flex-1 overflow-y-auto">
+                <Outlet />
+              </main>
+            </div>
+          </div>
+        )}
         <Toaster richColors position="top-right" />
       </AppStoreContext.Provider>
     </QueryClientProvider>

@@ -1,11 +1,22 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useAppStore } from "@/lib/app-store";
-import { BALAI_LIST, PRIORITAS_LABEL, PRIORITAS_NILAI, type Prioritas, type Usulan } from "@/lib/mock-data";
-import { Check, Upload, FileText, X, AlertCircle } from "lucide-react";
+import {
+  BALAI_LIST,
+  CURRENT_BALAI,
+  DPP_LABEL,
+  PRIORITAS_LABEL,
+  PRIORITAS_NILAI,
+  TAHUN_PERENCANAAN,
+  type DppType,
+  type Prioritas,
+  type Usulan,
+} from "@/lib/mock-data";
+import { DppPageLayout } from "@/components/dpp-page-layout";
+import { Check, Upload, FileText, X, AlertCircle, ShieldAlert } from "lucide-react";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/usulan/baru")({
+export const Route = createFileRoute("/perencanaan/$dppType/buat-usulan")({
   component: Page,
 });
 
@@ -16,6 +27,33 @@ interface UploadFile {
 }
 
 function Page() {
+  const { dppType } = Route.useParams() as { dppType: DppType };
+  const { role } = useAppStore();
+
+  if (role !== "balai") {
+    return (
+      <DppPageLayout dppType={dppType}>
+        <div className="p-8 max-w-2xl mx-auto">
+          <div className="bg-surface rounded-xl ring-1 ring-black/5 shadow-card p-8 text-center">
+            <ShieldAlert className="size-8 mx-auto text-status-pending mb-3" />
+            <h2 className="text-base font-semibold">Akses Terbatas</h2>
+            <p className="text-sm text-muted-foreground mt-1">
+              Hanya peran Balai/Satker yang dapat membuat usulan baru.
+            </p>
+          </div>
+        </div>
+      </DppPageLayout>
+    );
+  }
+
+  return (
+    <DppPageLayout dppType={dppType}>
+      <Form dppType={dppType} />
+    </DppPageLayout>
+  );
+}
+
+function Form({ dppType }: { dppType: DppType }) {
   const navigate = useNavigate();
   const { addUsulan } = useAppStore();
 
@@ -23,8 +61,8 @@ function Page() {
   const [lokasi, setLokasi] = useState("");
   const [deskripsi, setDeskripsi] = useState("");
   const [anggaran, setAnggaran] = useState("");
-  const [tahun, setTahun] = useState(new Date().getFullYear() + 1);
-  const [balai, setBalai] = useState(BALAI_LIST[0]);
+  const [tahun, setTahun] = useState(TAHUN_PERENCANAAN);
+  const [balai, setBalai] = useState(CURRENT_BALAI);
   const [prioritas, setPrioritas] = useState<Prioritas>("nasional");
   const [files, setFiles] = useState<UploadFile[]>([]);
 
@@ -56,24 +94,35 @@ function Page() {
 
   const handleSubmit = () => {
     if (!isComplete) return;
-    const nomor = `USL-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 9999)).padStart(4, "0")}`;
+    const nomor = `USL-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 9999)).padStart(4, "0")}${dppType === "perubahan" ? "-R1" : ""}`;
     const newUsulan: Usulan = {
       id: `u_${Date.now()}`,
       nomor,
-      namaKegiatan, lokasi, deskripsi,
-      anggaran: Number(anggaran), tahun, balai, prioritas,
+      namaKegiatan,
+      lokasi,
+      deskripsi,
+      anggaran: Number(anggaran),
+      tahun,
+      balai,
+      prioritas,
       status: "menunggu_v1",
+      tahap: dppType,
       tanggalPengajuan: new Date().toISOString().slice(0, 10),
       dokumen: files,
     };
     addUsulan(newUsulan);
-    toast.success("Usulan berhasil dikirim ke Pembina Teknis", { description: nomor });
-    navigate({ to: "/usulan" });
+    toast.success(`Usulan ${DPP_LABEL[dppType]} berhasil dikirim`, { description: nomor });
+    navigate({ to: "/perencanaan/$dppType/rekap", params: { dppType } });
   };
 
   return (
     <div className="p-8 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div className="lg:col-span-2 space-y-6">
+        <div className="bg-brand/5 border border-brand/20 rounded-xl px-5 py-3 text-xs">
+          <span className="font-semibold text-brand">{DPP_LABEL[dppType]}</span>
+          <span className="text-muted-foreground"> · usulan akan masuk ke kategori {DPP_LABEL[dppType]} TA {TAHUN_PERENCANAAN}</span>
+        </div>
+
         <Section title="Informasi Kegiatan" description="Identitas dasar usulan proyek">
           <Grid>
             <Input label="Nama Kegiatan" value={namaKegiatan} onChange={setNamaKegiatan} placeholder="Contoh: Rehabilitasi Bendungan ..." span={2} />
