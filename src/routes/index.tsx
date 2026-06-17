@@ -3,7 +3,6 @@ import { useMemo } from "react";
 import { useAppStore } from "@/lib/app-store";
 import {
   BALAI_LIST,
-  formatRupiah,
   PRIORITAS_LABEL,
   TAHUN_PERENCANAAN,
   type StatusUsulan,
@@ -17,9 +16,6 @@ import {
   CheckCircle2,
   ShieldCheck,
   XCircle,
-  Globe2,
-  Layers,
-  BookOpen,
 } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -28,7 +24,6 @@ export const Route = createFileRoute("/")({
 
 function Dashboard() {
   const { usulan, role } = useAppStore();
-  const isPublik = role === "publik";
 
   const stats = useMemo(() => {
     const by = (s: StatusUsulan) => usulan.filter((u) => u.status === s).length;
@@ -61,59 +56,25 @@ function Dashboard() {
     }));
   }, [usulan]);
 
-  const recent = isPublik
-    ? usulan.filter((u) => u.status === "disetujui_v2").slice(0, 6)
-    : usulan.slice(0, 6);
+  const recent = usulan.slice(0, 6);
   const maxBalai = Math.max(...perBalai.map((x) => x.total), 1);
 
-  const kpis = isPublik
-    ? [
-        { label: "Total Usulan TA " + TAHUN_PERENCANAAN, value: stats.total, icon: FileText, trend: "Publik", trendColor: "text-muted-foreground" },
-        { label: "Disetujui Final", value: stats.disetujui_v2, icon: ShieldCheck, trend: "SSPSDA", trendColor: "text-status-approved" },
-        { label: "Dalam Verifikasi", value: stats.menunggu + stats.disetujui_v1, icon: Clock, trend: "Proses", trendColor: "text-status-pending" },
-        { label: "Balai Terlibat", value: BALAI_LIST.length, icon: Globe2, trend: "Nasional", trendColor: "text-brand" },
-      ]
-    : [
-        { label: "Total Usulan", value: stats.total, icon: FileText, trend: "+12%", trendColor: "text-status-approved" },
-        { label: "Menunggu", value: stats.menunggu, icon: Clock, trend: "Aktif", trendColor: "text-status-pending" },
-        { label: "Revisi", value: stats.revisi, icon: RefreshCcw, trend: "Perlu tindak", trendColor: "text-status-revisi" },
-        { label: "Disetujui V1", value: stats.disetujui_v1, icon: CheckCircle2, trend: "Pembina Teknis", trendColor: "text-muted-foreground" },
-        { label: "Disetujui V2", value: stats.disetujui_v2, icon: ShieldCheck, trend: "Final", trendColor: "text-status-approved" },
-        { label: "Tidak Lanjut", value: stats.tidak, icon: XCircle, trend: "Ditolak/Stop", trendColor: "text-status-rejected" },
-      ];
+  const kpis = [
+    { label: "Total Usulan", value: stats.total, icon: FileText, trend: "+12%", trendColor: "text-status-approved" },
+    { label: "Menunggu", value: stats.menunggu, icon: Clock, trend: "Aktif", trendColor: "text-status-pending" },
+    { label: "Revisi", value: stats.revisi, icon: RefreshCcw, trend: "Perlu tindak", trendColor: "text-status-revisi" },
+    { label: "Disetujui V1", value: stats.disetujui_v1, icon: CheckCircle2, trend: "Pembina Teknis", trendColor: "text-muted-foreground" },
+    { label: "Disetujui V2", value: stats.disetujui_v2, icon: ShieldCheck, trend: "Final", trendColor: "text-status-approved" },
+    { label: "Tidak Lanjut", value: stats.tidak, icon: XCircle, trend: "Ditolak/Stop", trendColor: "text-status-rejected" },
+  ];
+
+  const seeAllLink = role === "verif1" || role === "verif2"
+    ? "/perencanaan/awal/verifikasi"
+    : "/perencanaan/awal/rekap";
 
   return (
     <div className="p-8 max-w-7xl mx-auto space-y-8">
-      {isPublik && (
-        <div className="bg-gradient-to-br from-brand to-brand/70 text-brand-foreground rounded-xl p-8 shadow-card">
-          <div className="text-[10px] uppercase tracking-widest font-semibold opacity-80">
-            Portal Informasi Publik
-          </div>
-          <h1 className="text-2xl font-semibold mt-1 tracking-tight">
-            Sistem Informasi Perencanaan Sumber Daya Air
-          </h1>
-          <p className="text-sm opacity-90 mt-2 max-w-2xl">
-            Akses informasi publik mengenai usulan kegiatan, studi pendahuluan, dan rincian
-            Daftar Program & Pendanaan (DPP) Direktorat Jenderal SDA — Kementerian PUPR.
-          </p>
-          <div className="mt-5 flex gap-3 flex-wrap">
-            <Link
-              to="/studi-pendahuluan"
-              className="text-xs font-medium bg-white/15 hover:bg-white/25 px-3 py-1.5 rounded-md inline-flex items-center gap-1.5 backdrop-blur"
-            >
-              <BookOpen className="size-3.5" /> Studi Pendahuluan
-            </Link>
-            <Link
-              to="/perencanaan/rincian-dpp"
-              className="text-xs font-medium bg-white/15 hover:bg-white/25 px-3 py-1.5 rounded-md inline-flex items-center gap-1.5 backdrop-blur"
-            >
-              <Layers className="size-3.5" /> Rincian DPP
-            </Link>
-          </div>
-        </div>
-      )}
-
-      <div className={`grid grid-cols-2 md:grid-cols-3 gap-4 ${isPublik ? "lg:grid-cols-4" : "lg:grid-cols-6"}`}>
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         {kpis.map((k) => {
           const Icon = k.icon;
           return (
@@ -194,23 +155,17 @@ function Dashboard() {
       <div className="bg-surface rounded-xl ring-1 ring-black/5 shadow-card overflow-hidden">
         <div className="px-6 py-4 border-b border-border flex items-center justify-between">
           <div>
-            <h2 className="text-base font-semibold">
-              {isPublik ? "Proyek Disetujui" : "Usulan Terbaru"}
-            </h2>
+            <h2 className="text-base font-semibold">Usulan Terbaru</h2>
             <p className="text-[11px] text-muted-foreground">
-              {isPublik
-                ? "Daftar usulan kegiatan yang telah disetujui SSPSDA"
-                : "6 usulan terakhir berdasarkan tanggal pengajuan"}
+              6 usulan terakhir berdasarkan tanggal pengajuan
             </p>
           </div>
-          {!isPublik && (
-            <Link
-              to={role === "balai" ? "/balai/rekap" : role === "verif1" ? "/verifikasi" : "/verifikasi-akhir"}
-              className="text-xs font-medium text-brand hover:underline inline-flex items-center gap-1"
-            >
-              Lihat semua <ArrowUpRight className="size-3" />
-            </Link>
-          )}
+          <Link
+            to={seeAllLink}
+            className="text-xs font-medium text-brand hover:underline inline-flex items-center gap-1"
+          >
+            Lihat semua <ArrowUpRight className="size-3" />
+          </Link>
         </div>
         <div className="overflow-x-auto max-h-[420px] overflow-y-auto">
           <table className="w-full text-left text-sm">
@@ -219,7 +174,6 @@ function Dashboard() {
                 <th className="px-6 py-3 font-semibold">Nomor</th>
                 <th className="px-6 py-3 font-semibold">Nama Kegiatan</th>
                 <th className="px-6 py-3 font-semibold">Balai</th>
-                {!isPublik && <th className="px-6 py-3 font-semibold">Anggaran</th>}
                 <th className="px-6 py-3 font-semibold">Prioritas</th>
                 <th className="px-6 py-3 font-semibold">Status</th>
               </tr>
@@ -230,9 +184,6 @@ function Dashboard() {
                   <td className="px-6 py-3 font-mono text-[11px] text-muted-foreground">{u.nomor}</td>
                   <td className="px-6 py-3 font-medium">{u.namaKegiatan}</td>
                   <td className="px-6 py-3 text-muted-foreground text-xs">{u.balai}</td>
-                  {!isPublik && (
-                    <td className="px-6 py-3 text-xs font-mono">{formatRupiah(u.anggaran)}</td>
-                  )}
                   <td className="px-6 py-3">
                     <PrioritasBadge prioritas={u.prioritas} />
                   </td>
@@ -241,22 +192,9 @@ function Dashboard() {
                   </td>
                 </tr>
               ))}
-              {recent.length === 0 && (
-                <tr>
-                  <td colSpan={isPublik ? 5 : 6} className="px-6 py-12 text-center text-sm text-muted-foreground">
-                    Belum ada data.
-                  </td>
-                </tr>
-              )}
             </tbody>
           </table>
         </div>
-        {isPublik && (
-          <div className="px-6 py-3 border-t border-border text-[11px] text-muted-foreground bg-muted/30">
-            Data anggaran detail, dokumen pendukung, dan catatan verifikasi hanya tersedia untuk
-            pengguna terdaftar sesuai kewenangan.
-          </div>
-        )}
       </div>
     </div>
   );

@@ -1,6 +1,8 @@
-export type Role = "publik" | "balai" | "verif1" | "verif2";
+export type Role = "balai" | "verif1" | "verif2";
 
 export type Prioritas = "nasional" | "menteri" | "dirjen";
+
+export type DppType = "awal" | "perubahan";
 
 export const PRIORITAS_NILAI: Record<Prioritas, number> = {
   nasional: 3,
@@ -12,6 +14,11 @@ export const PRIORITAS_LABEL: Record<Prioritas, string> = {
   nasional: "Prioritas Nasional",
   menteri: "Usulan Menteri",
   dirjen: "Usulan Dirjen",
+};
+
+export const DPP_LABEL: Record<DppType, string> = {
+  awal: "Rincian DPP Awal",
+  perubahan: "Perubahan Rincian DPP",
 };
 
 export type StatusUsulan =
@@ -52,6 +59,7 @@ export interface Usulan {
   balai: string;
   prioritas: Prioritas;
   status: StatusUsulan;
+  tahap: DppType;
   tanggalPengajuan: string;
   tanggalVerifV1?: string;
   tanggalEdit?: string;
@@ -72,10 +80,8 @@ export const BALAI_LIST = [
   "BBWS Citarum",
 ];
 
-/** Balai aktif untuk demo (role = balai) */
 export const CURRENT_BALAI = "BBWS Bengawan Solo";
 
-/** Tahun perencanaan (T+1) */
 export const TAHUN_PERENCANAAN = new Date().getFullYear() + 1;
 
 export const USULAN_MOCK: Usulan[] = [
@@ -91,6 +97,7 @@ export const USULAN_MOCK: Usulan[] = [
     balai: "BBWS Bengawan Solo",
     prioritas: "nasional",
     status: "menunggu_v1",
+    tahap: "awal",
     tanggalPengajuan: "2025-05-12",
     dokumen: [
       { nama: "KAK_Wonogiri.pdf", tipe: "teknis", ukuran: "2.4 MB" },
@@ -110,6 +117,7 @@ export const USULAN_MOCK: Usulan[] = [
     balai: "BBWS Ciliwung Cisadane",
     prioritas: "menteri",
     status: "revisi",
+    tahap: "awal",
     tanggalPengajuan: "2025-05-10",
     tanggalEdit: "2025-05-18",
     diubah: true,
@@ -134,6 +142,7 @@ export const USULAN_MOCK: Usulan[] = [
     balai: "BBWS Bengawan Solo",
     prioritas: "dirjen",
     status: "disetujui_v1",
+    tahap: "awal",
     tanggalPengajuan: "2025-05-08",
     tanggalVerifV1: "2025-05-14",
     verifikatorV1: "Ir. Budi Santoso, M.T.",
@@ -156,6 +165,7 @@ export const USULAN_MOCK: Usulan[] = [
     balai: "BBWS Cimanuk Cisanggarung",
     prioritas: "nasional",
     status: "menunggu_v2",
+    tahap: "awal",
     tanggalPengajuan: "2025-04-28",
     tanggalVerifV1: "2025-05-06",
     tanggalEdit: "2025-05-02",
@@ -179,6 +189,7 @@ export const USULAN_MOCK: Usulan[] = [
     balai: "BWS Sumatera II",
     prioritas: "menteri",
     status: "disetujui_v2",
+    tahap: "awal",
     tanggalPengajuan: "2025-04-15",
     tanggalVerifV1: "2025-04-22",
     verifikatorV1: "Ir. Budi Santoso, M.T.",
@@ -200,6 +211,7 @@ export const USULAN_MOCK: Usulan[] = [
     balai: "BBWS Citarum",
     prioritas: "dirjen",
     status: "tidak_dilanjutkan",
+    tahap: "awal",
     tanggalPengajuan: "2025-04-10",
     tanggalVerifV1: "2025-04-18",
     verifikatorV1: "Ir. Budi Santoso, M.T.",
@@ -222,10 +234,9 @@ export const USULAN_MOCK: Usulan[] = [
     balai: "BWS Nusa Tenggara II",
     prioritas: "dirjen",
     status: "draft",
+    tahap: "awal",
     tanggalPengajuan: "2025-05-20",
-    dokumen: [
-      { nama: "KAK_Draft.pdf", tipe: "teknis", ukuran: "1.2 MB" },
-    ],
+    dokumen: [{ nama: "KAK_Draft.pdf", tipe: "teknis", ukuran: "1.2 MB" }],
   },
   {
     id: "u8",
@@ -238,6 +249,7 @@ export const USULAN_MOCK: Usulan[] = [
     balai: "BBWS Bengawan Solo",
     prioritas: "menteri",
     status: "disetujui_v2",
+    tahap: "awal",
     tanggalPengajuan: "2025-03-29",
     tanggalVerifV1: "2025-04-08",
     verifikatorV1: "Ir. Budi Santoso, M.T.",
@@ -246,6 +258,50 @@ export const USULAN_MOCK: Usulan[] = [
       { nama: "KAK_Colo.pdf", tipe: "teknis", ukuran: "2.9 MB" },
       { nama: "DED.pdf", tipe: "teknis", ukuran: "6.2 MB" },
       { nama: "RAB.pdf", tipe: "teknis", ukuran: "920 KB" },
+    ],
+  },
+  // Perubahan DPP data
+  {
+    id: "p1",
+    nomor: "USL-2025-0012-R1",
+    namaKegiatan: "Rehabilitasi Bendungan Wonogiri (Revisi Lingkup)",
+    lokasi: "Wonogiri, Jawa Tengah",
+    deskripsi:
+      "Penyesuaian volume pekerjaan pasca evaluasi geoteknik; penambahan instrumentasi monitoring.",
+    anggaran: 138_000_000_000,
+    tahun: TAHUN_PERENCANAAN,
+    balai: "BBWS Bengawan Solo",
+    prioritas: "nasional",
+    status: "menunggu_v1",
+    tahap: "perubahan",
+    tanggalPengajuan: "2025-06-02",
+    diubah: true,
+    tanggalEdit: "2025-06-02",
+    dokumen: [
+      { nama: "Adendum_KAK.pdf", tipe: "teknis", ukuran: "1.6 MB" },
+      { nama: "RAB_Revisi.pdf", tipe: "teknis", ukuran: "1.0 MB" },
+    ],
+  },
+  {
+    id: "p2",
+    nomor: "USL-2025-0024-R1",
+    namaKegiatan: "Pembangunan Tanggul Kali Gading (Optimasi)",
+    lokasi: "Kalimantan Tengah",
+    deskripsi: "Optimasi trase tanggul dan penambahan pintu klep di outlet sekunder.",
+    anggaran: 68_900_000_000,
+    tahun: TAHUN_PERENCANAAN,
+    balai: "BWS Sumatera II",
+    prioritas: "menteri",
+    status: "disetujui_v1",
+    tahap: "perubahan",
+    tanggalPengajuan: "2025-06-05",
+    tanggalVerifV1: "2025-06-09",
+    diubah: true,
+    tanggalEdit: "2025-06-05",
+    verifikatorV1: "Ir. Budi Santoso, M.T.",
+    dokumen: [
+      { nama: "Adendum_DED.pdf", tipe: "teknis", ukuran: "2.0 MB" },
+      { nama: "RAB_Optimasi.pdf", tipe: "teknis", ukuran: "780 KB" },
     ],
   },
 ];
@@ -264,4 +320,20 @@ export function formatTanggal(iso: string): string {
     month: "short",
     year: "numeric",
   });
+}
+
+export function generateMockPdf(title: string): Blob {
+  const content = `%PDF-1.4\n% Mock dokumen: ${title}\n% SIPRO-SDA portal\n%%EOF`;
+  return new Blob([content], { type: "application/pdf" });
+}
+
+export function downloadBlob(blob: Blob, filename: string) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
