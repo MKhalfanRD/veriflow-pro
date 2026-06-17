@@ -9,7 +9,10 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VerifikasiAkhirRouteImport } from './routes/verifikasi-akhir'
+import { Route as VerifikasiRouteImport } from './routes/verifikasi'
 import { Route as StudiPendahuluanRouteImport } from './routes/studi-pendahuluan'
+import { Route as RiwayatRouteImport } from './routes/riwayat'
 import { Route as PeraturanRouteImport } from './routes/peraturan'
 import { Route as PengaturanRouteImport } from './routes/pengaturan'
 import { Route as PelaksanaanRouteImport } from './routes/pelaksanaan'
@@ -17,17 +20,43 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as EvaluasiRouteImport } from './routes/evaluasi'
 import { Route as BeritaAcaraRouteImport } from './routes/berita-acara'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as UsulanIndexRouteImport } from './routes/usulan.index'
+import { Route as UsulanBaruRouteImport } from './routes/usulan.baru'
+import { Route as TeknisRekapRouteImport } from './routes/teknis.rekap'
+import { Route as SspsdaRekapRouteImport } from './routes/sspsda.rekap'
+import { Route as SspsdaLaporanRouteImport } from './routes/sspsda.laporan'
+import { Route as PerencanaanRincianDppRouteImport } from './routes/perencanaan.rincian-dpp'
+import { Route as PerencanaanPerubahanDppRouteImport } from './routes/perencanaan.perubahan-dpp'
 import { Route as PerencanaanDppTypeRouteImport } from './routes/perencanaan.$dppType'
-import { Route as PerencanaanDppTypeRekapRouteImport } from './routes/perencanaan.$dppType.rekap'
-import { Route as PerencanaanDppTypeBuatUsulanRouteImport } from './routes/perencanaan.$dppType.buat-usulan'
-import { Route as PerencanaanDppTypeLaporanRouteImport } from './routes/perencanaan.$dppType.laporan'
-import { Route as PerencanaanDppTypeRekomtekRouteImport } from './routes/perencanaan.$dppType.rekomtek'
-import { Route as PerencanaanDppTypeRiwayatRouteImport } from './routes/perencanaan.$dppType.riwayat'
+import { Route as BalaiRekapRouteImport } from './routes/balai.rekap'
+import { Route as BalaiLaporanRouteImport } from './routes/balai.laporan'
+import { Route as TeknisLaporanSuratRouteImport } from './routes/teknis.laporan.surat'
+import { Route as TeknisLaporanRekomtekRouteImport } from './routes/teknis.laporan.rekomtek'
 import { Route as PerencanaanDppTypeVerifikasiRouteImport } from './routes/perencanaan.$dppType.verifikasi'
+import { Route as PerencanaanDppTypeRiwayatRouteImport } from './routes/perencanaan.$dppType.riwayat'
+import { Route as PerencanaanDppTypeRekomtekRouteImport } from './routes/perencanaan.$dppType.rekomtek'
+import { Route as PerencanaanDppTypeRekapRouteImport } from './routes/perencanaan.$dppType.rekap'
+import { Route as PerencanaanDppTypeLaporanRouteImport } from './routes/perencanaan.$dppType.laporan'
+import { Route as PerencanaanDppTypeBuatUsulanRouteImport } from './routes/perencanaan.$dppType.buat-usulan'
 
+const VerifikasiAkhirRoute = VerifikasiAkhirRouteImport.update({
+  id: '/verifikasi-akhir',
+  path: '/verifikasi-akhir',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VerifikasiRoute = VerifikasiRouteImport.update({
+  id: '/verifikasi',
+  path: '/verifikasi',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StudiPendahuluanRoute = StudiPendahuluanRouteImport.update({
   id: '/studi-pendahuluan',
   path: '/studi-pendahuluan',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RiwayatRoute = RiwayatRouteImport.update({
+  id: '/riwayat',
+  path: '/riwayat',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PeraturanRoute = PeraturanRouteImport.update({
@@ -65,41 +94,101 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UsulanIndexRoute = UsulanIndexRouteImport.update({
+  id: '/usulan/',
+  path: '/usulan/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UsulanBaruRoute = UsulanBaruRouteImport.update({
+  id: '/usulan/baru',
+  path: '/usulan/baru',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TeknisRekapRoute = TeknisRekapRouteImport.update({
+  id: '/teknis/rekap',
+  path: '/teknis/rekap',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SspsdaRekapRoute = SspsdaRekapRouteImport.update({
+  id: '/sspsda/rekap',
+  path: '/sspsda/rekap',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SspsdaLaporanRoute = SspsdaLaporanRouteImport.update({
+  id: '/sspsda/laporan',
+  path: '/sspsda/laporan',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PerencanaanRincianDppRoute = PerencanaanRincianDppRouteImport.update({
+  id: '/perencanaan/rincian-dpp',
+  path: '/perencanaan/rincian-dpp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PerencanaanPerubahanDppRoute = PerencanaanPerubahanDppRouteImport.update({
+  id: '/perencanaan/perubahan-dpp',
+  path: '/perencanaan/perubahan-dpp',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PerencanaanDppTypeRoute = PerencanaanDppTypeRouteImport.update({
   id: '/perencanaan/$dppType',
   path: '/perencanaan/$dppType',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BalaiRekapRoute = BalaiRekapRouteImport.update({
+  id: '/balai/rekap',
+  path: '/balai/rekap',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BalaiLaporanRoute = BalaiLaporanRouteImport.update({
+  id: '/balai/laporan',
+  path: '/balai/laporan',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TeknisLaporanSuratRoute = TeknisLaporanSuratRouteImport.update({
+  id: '/teknis/laporan/surat',
+  path: '/teknis/laporan/surat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TeknisLaporanRekomtekRoute = TeknisLaporanRekomtekRouteImport.update({
+  id: '/teknis/laporan/rekomtek',
+  path: '/teknis/laporan/rekomtek',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PerencanaanDppTypeVerifikasiRoute =
+  PerencanaanDppTypeVerifikasiRouteImport.update({
+    id: '/verifikasi',
+    path: '/verifikasi',
+    getParentRoute: () => PerencanaanDppTypeRoute,
+  } as any)
+const PerencanaanDppTypeRiwayatRoute =
+  PerencanaanDppTypeRiwayatRouteImport.update({
+    id: '/riwayat',
+    path: '/riwayat',
+    getParentRoute: () => PerencanaanDppTypeRoute,
+  } as any)
+const PerencanaanDppTypeRekomtekRoute =
+  PerencanaanDppTypeRekomtekRouteImport.update({
+    id: '/rekomtek',
+    path: '/rekomtek',
+    getParentRoute: () => PerencanaanDppTypeRoute,
+  } as any)
 const PerencanaanDppTypeRekapRoute = PerencanaanDppTypeRekapRouteImport.update({
-  id: '/perencanaan/$dppType/rekap',
-  path: '/perencanaan/$dppType/rekap',
-  getParentRoute: () => rootRouteImport,
+  id: '/rekap',
+  path: '/rekap',
+  getParentRoute: () => PerencanaanDppTypeRoute,
 } as any)
-const PerencanaanDppTypeBuatUsulanRoute = PerencanaanDppTypeBuatUsulanRouteImport.update({
-  id: '/perencanaan/$dppType/buat-usulan',
-  path: '/perencanaan/$dppType/buat-usulan',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PerencanaanDppTypeLaporanRoute = PerencanaanDppTypeLaporanRouteImport.update({
-  id: '/perencanaan/$dppType/laporan',
-  path: '/perencanaan/$dppType/laporan',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PerencanaanDppTypeRekomtekRoute = PerencanaanDppTypeRekomtekRouteImport.update({
-  id: '/perencanaan/$dppType/rekomtek',
-  path: '/perencanaan/$dppType/rekomtek',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PerencanaanDppTypeRiwayatRoute = PerencanaanDppTypeRiwayatRouteImport.update({
-  id: '/perencanaan/$dppType/riwayat',
-  path: '/perencanaan/$dppType/riwayat',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PerencanaanDppTypeVerifikasiRoute = PerencanaanDppTypeVerifikasiRouteImport.update({
-  id: '/perencanaan/$dppType/verifikasi',
-  path: '/perencanaan/$dppType/verifikasi',
-  getParentRoute: () => rootRouteImport,
-} as any)
+const PerencanaanDppTypeLaporanRoute =
+  PerencanaanDppTypeLaporanRouteImport.update({
+    id: '/laporan',
+    path: '/laporan',
+    getParentRoute: () => PerencanaanDppTypeRoute,
+  } as any)
+const PerencanaanDppTypeBuatUsulanRoute =
+  PerencanaanDppTypeBuatUsulanRouteImport.update({
+    id: '/buat-usulan',
+    path: '/buat-usulan',
+    getParentRoute: () => PerencanaanDppTypeRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -109,14 +198,28 @@ export interface FileRoutesByFullPath {
   '/pelaksanaan': typeof PelaksanaanRoute
   '/pengaturan': typeof PengaturanRoute
   '/peraturan': typeof PeraturanRoute
+  '/riwayat': typeof RiwayatRoute
   '/studi-pendahuluan': typeof StudiPendahuluanRoute
-  '/perencanaan/$dppType': typeof PerencanaanDppTypeRoute
-  '/perencanaan/$dppType/rekap': typeof PerencanaanDppTypeRekapRoute
+  '/verifikasi': typeof VerifikasiRoute
+  '/verifikasi-akhir': typeof VerifikasiAkhirRoute
+  '/balai/laporan': typeof BalaiLaporanRoute
+  '/balai/rekap': typeof BalaiRekapRoute
+  '/perencanaan/$dppType': typeof PerencanaanDppTypeRouteWithChildren
+  '/perencanaan/perubahan-dpp': typeof PerencanaanPerubahanDppRoute
+  '/perencanaan/rincian-dpp': typeof PerencanaanRincianDppRoute
+  '/sspsda/laporan': typeof SspsdaLaporanRoute
+  '/sspsda/rekap': typeof SspsdaRekapRoute
+  '/teknis/rekap': typeof TeknisRekapRoute
+  '/usulan/baru': typeof UsulanBaruRoute
+  '/usulan/': typeof UsulanIndexRoute
   '/perencanaan/$dppType/buat-usulan': typeof PerencanaanDppTypeBuatUsulanRoute
   '/perencanaan/$dppType/laporan': typeof PerencanaanDppTypeLaporanRoute
+  '/perencanaan/$dppType/rekap': typeof PerencanaanDppTypeRekapRoute
   '/perencanaan/$dppType/rekomtek': typeof PerencanaanDppTypeRekomtekRoute
   '/perencanaan/$dppType/riwayat': typeof PerencanaanDppTypeRiwayatRoute
   '/perencanaan/$dppType/verifikasi': typeof PerencanaanDppTypeVerifikasiRoute
+  '/teknis/laporan/rekomtek': typeof TeknisLaporanRekomtekRoute
+  '/teknis/laporan/surat': typeof TeknisLaporanSuratRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -126,14 +229,28 @@ export interface FileRoutesByTo {
   '/pelaksanaan': typeof PelaksanaanRoute
   '/pengaturan': typeof PengaturanRoute
   '/peraturan': typeof PeraturanRoute
+  '/riwayat': typeof RiwayatRoute
   '/studi-pendahuluan': typeof StudiPendahuluanRoute
-  '/perencanaan/$dppType': typeof PerencanaanDppTypeRoute
-  '/perencanaan/$dppType/rekap': typeof PerencanaanDppTypeRekapRoute
+  '/verifikasi': typeof VerifikasiRoute
+  '/verifikasi-akhir': typeof VerifikasiAkhirRoute
+  '/balai/laporan': typeof BalaiLaporanRoute
+  '/balai/rekap': typeof BalaiRekapRoute
+  '/perencanaan/$dppType': typeof PerencanaanDppTypeRouteWithChildren
+  '/perencanaan/perubahan-dpp': typeof PerencanaanPerubahanDppRoute
+  '/perencanaan/rincian-dpp': typeof PerencanaanRincianDppRoute
+  '/sspsda/laporan': typeof SspsdaLaporanRoute
+  '/sspsda/rekap': typeof SspsdaRekapRoute
+  '/teknis/rekap': typeof TeknisRekapRoute
+  '/usulan/baru': typeof UsulanBaruRoute
+  '/usulan': typeof UsulanIndexRoute
   '/perencanaan/$dppType/buat-usulan': typeof PerencanaanDppTypeBuatUsulanRoute
   '/perencanaan/$dppType/laporan': typeof PerencanaanDppTypeLaporanRoute
+  '/perencanaan/$dppType/rekap': typeof PerencanaanDppTypeRekapRoute
   '/perencanaan/$dppType/rekomtek': typeof PerencanaanDppTypeRekomtekRoute
   '/perencanaan/$dppType/riwayat': typeof PerencanaanDppTypeRiwayatRoute
   '/perencanaan/$dppType/verifikasi': typeof PerencanaanDppTypeVerifikasiRoute
+  '/teknis/laporan/rekomtek': typeof TeknisLaporanRekomtekRoute
+  '/teknis/laporan/surat': typeof TeknisLaporanSuratRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -144,14 +261,28 @@ export interface FileRoutesById {
   '/pelaksanaan': typeof PelaksanaanRoute
   '/pengaturan': typeof PengaturanRoute
   '/peraturan': typeof PeraturanRoute
+  '/riwayat': typeof RiwayatRoute
   '/studi-pendahuluan': typeof StudiPendahuluanRoute
-  '/perencanaan/$dppType': typeof PerencanaanDppTypeRoute
-  '/perencanaan/$dppType/rekap': typeof PerencanaanDppTypeRekapRoute
+  '/verifikasi': typeof VerifikasiRoute
+  '/verifikasi-akhir': typeof VerifikasiAkhirRoute
+  '/balai/laporan': typeof BalaiLaporanRoute
+  '/balai/rekap': typeof BalaiRekapRoute
+  '/perencanaan/$dppType': typeof PerencanaanDppTypeRouteWithChildren
+  '/perencanaan/perubahan-dpp': typeof PerencanaanPerubahanDppRoute
+  '/perencanaan/rincian-dpp': typeof PerencanaanRincianDppRoute
+  '/sspsda/laporan': typeof SspsdaLaporanRoute
+  '/sspsda/rekap': typeof SspsdaRekapRoute
+  '/teknis/rekap': typeof TeknisRekapRoute
+  '/usulan/baru': typeof UsulanBaruRoute
+  '/usulan/': typeof UsulanIndexRoute
   '/perencanaan/$dppType/buat-usulan': typeof PerencanaanDppTypeBuatUsulanRoute
   '/perencanaan/$dppType/laporan': typeof PerencanaanDppTypeLaporanRoute
+  '/perencanaan/$dppType/rekap': typeof PerencanaanDppTypeRekapRoute
   '/perencanaan/$dppType/rekomtek': typeof PerencanaanDppTypeRekomtekRoute
   '/perencanaan/$dppType/riwayat': typeof PerencanaanDppTypeRiwayatRoute
   '/perencanaan/$dppType/verifikasi': typeof PerencanaanDppTypeVerifikasiRoute
+  '/teknis/laporan/rekomtek': typeof TeknisLaporanRekomtekRoute
+  '/teknis/laporan/surat': typeof TeknisLaporanSuratRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -163,14 +294,28 @@ export interface FileRouteTypes {
     | '/pelaksanaan'
     | '/pengaturan'
     | '/peraturan'
+    | '/riwayat'
     | '/studi-pendahuluan'
+    | '/verifikasi'
+    | '/verifikasi-akhir'
+    | '/balai/laporan'
+    | '/balai/rekap'
     | '/perencanaan/$dppType'
-    | '/perencanaan/$dppType/rekap'
+    | '/perencanaan/perubahan-dpp'
+    | '/perencanaan/rincian-dpp'
+    | '/sspsda/laporan'
+    | '/sspsda/rekap'
+    | '/teknis/rekap'
+    | '/usulan/baru'
+    | '/usulan/'
     | '/perencanaan/$dppType/buat-usulan'
     | '/perencanaan/$dppType/laporan'
+    | '/perencanaan/$dppType/rekap'
     | '/perencanaan/$dppType/rekomtek'
     | '/perencanaan/$dppType/riwayat'
     | '/perencanaan/$dppType/verifikasi'
+    | '/teknis/laporan/rekomtek'
+    | '/teknis/laporan/surat'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -180,14 +325,28 @@ export interface FileRouteTypes {
     | '/pelaksanaan'
     | '/pengaturan'
     | '/peraturan'
+    | '/riwayat'
     | '/studi-pendahuluan'
+    | '/verifikasi'
+    | '/verifikasi-akhir'
+    | '/balai/laporan'
+    | '/balai/rekap'
     | '/perencanaan/$dppType'
-    | '/perencanaan/$dppType/rekap'
+    | '/perencanaan/perubahan-dpp'
+    | '/perencanaan/rincian-dpp'
+    | '/sspsda/laporan'
+    | '/sspsda/rekap'
+    | '/teknis/rekap'
+    | '/usulan/baru'
+    | '/usulan'
     | '/perencanaan/$dppType/buat-usulan'
     | '/perencanaan/$dppType/laporan'
+    | '/perencanaan/$dppType/rekap'
     | '/perencanaan/$dppType/rekomtek'
     | '/perencanaan/$dppType/riwayat'
     | '/perencanaan/$dppType/verifikasi'
+    | '/teknis/laporan/rekomtek'
+    | '/teknis/laporan/surat'
   id:
     | '__root__'
     | '/'
@@ -197,14 +356,28 @@ export interface FileRouteTypes {
     | '/pelaksanaan'
     | '/pengaturan'
     | '/peraturan'
+    | '/riwayat'
     | '/studi-pendahuluan'
+    | '/verifikasi'
+    | '/verifikasi-akhir'
+    | '/balai/laporan'
+    | '/balai/rekap'
     | '/perencanaan/$dppType'
-    | '/perencanaan/$dppType/rekap'
+    | '/perencanaan/perubahan-dpp'
+    | '/perencanaan/rincian-dpp'
+    | '/sspsda/laporan'
+    | '/sspsda/rekap'
+    | '/teknis/rekap'
+    | '/usulan/baru'
+    | '/usulan/'
     | '/perencanaan/$dppType/buat-usulan'
     | '/perencanaan/$dppType/laporan'
+    | '/perencanaan/$dppType/rekap'
     | '/perencanaan/$dppType/rekomtek'
     | '/perencanaan/$dppType/riwayat'
     | '/perencanaan/$dppType/verifikasi'
+    | '/teknis/laporan/rekomtek'
+    | '/teknis/laporan/surat'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -215,23 +388,52 @@ export interface RootRouteChildren {
   PelaksanaanRoute: typeof PelaksanaanRoute
   PengaturanRoute: typeof PengaturanRoute
   PeraturanRoute: typeof PeraturanRoute
+  RiwayatRoute: typeof RiwayatRoute
   StudiPendahuluanRoute: typeof StudiPendahuluanRoute
-  PerencanaanDppTypeRoute: typeof PerencanaanDppTypeRoute
-  PerencanaanDppTypeRekapRoute: typeof PerencanaanDppTypeRekapRoute
-  PerencanaanDppTypeBuatUsulanRoute: typeof PerencanaanDppTypeBuatUsulanRoute
-  PerencanaanDppTypeLaporanRoute: typeof PerencanaanDppTypeLaporanRoute
-  PerencanaanDppTypeRekomtekRoute: typeof PerencanaanDppTypeRekomtekRoute
-  PerencanaanDppTypeRiwayatRoute: typeof PerencanaanDppTypeRiwayatRoute
-  PerencanaanDppTypeVerifikasiRoute: typeof PerencanaanDppTypeVerifikasiRoute
+  VerifikasiRoute: typeof VerifikasiRoute
+  VerifikasiAkhirRoute: typeof VerifikasiAkhirRoute
+  BalaiLaporanRoute: typeof BalaiLaporanRoute
+  BalaiRekapRoute: typeof BalaiRekapRoute
+  PerencanaanDppTypeRoute: typeof PerencanaanDppTypeRouteWithChildren
+  PerencanaanPerubahanDppRoute: typeof PerencanaanPerubahanDppRoute
+  PerencanaanRincianDppRoute: typeof PerencanaanRincianDppRoute
+  SspsdaLaporanRoute: typeof SspsdaLaporanRoute
+  SspsdaRekapRoute: typeof SspsdaRekapRoute
+  TeknisRekapRoute: typeof TeknisRekapRoute
+  UsulanBaruRoute: typeof UsulanBaruRoute
+  UsulanIndexRoute: typeof UsulanIndexRoute
+  TeknisLaporanRekomtekRoute: typeof TeknisLaporanRekomtekRoute
+  TeknisLaporanSuratRoute: typeof TeknisLaporanSuratRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/verifikasi-akhir': {
+      id: '/verifikasi-akhir'
+      path: '/verifikasi-akhir'
+      fullPath: '/verifikasi-akhir'
+      preLoaderRoute: typeof VerifikasiAkhirRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/verifikasi': {
+      id: '/verifikasi'
+      path: '/verifikasi'
+      fullPath: '/verifikasi'
+      preLoaderRoute: typeof VerifikasiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/studi-pendahuluan': {
       id: '/studi-pendahuluan'
       path: '/studi-pendahuluan'
       fullPath: '/studi-pendahuluan'
       preLoaderRoute: typeof StudiPendahuluanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/riwayat': {
+      id: '/riwayat'
+      path: '/riwayat'
+      fullPath: '/riwayat'
+      preLoaderRoute: typeof RiwayatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/peraturan': {
@@ -283,6 +485,55 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/usulan/': {
+      id: '/usulan/'
+      path: '/usulan'
+      fullPath: '/usulan/'
+      preLoaderRoute: typeof UsulanIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/usulan/baru': {
+      id: '/usulan/baru'
+      path: '/usulan/baru'
+      fullPath: '/usulan/baru'
+      preLoaderRoute: typeof UsulanBaruRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/teknis/rekap': {
+      id: '/teknis/rekap'
+      path: '/teknis/rekap'
+      fullPath: '/teknis/rekap'
+      preLoaderRoute: typeof TeknisRekapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sspsda/rekap': {
+      id: '/sspsda/rekap'
+      path: '/sspsda/rekap'
+      fullPath: '/sspsda/rekap'
+      preLoaderRoute: typeof SspsdaRekapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sspsda/laporan': {
+      id: '/sspsda/laporan'
+      path: '/sspsda/laporan'
+      fullPath: '/sspsda/laporan'
+      preLoaderRoute: typeof SspsdaLaporanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/perencanaan/rincian-dpp': {
+      id: '/perencanaan/rincian-dpp'
+      path: '/perencanaan/rincian-dpp'
+      fullPath: '/perencanaan/rincian-dpp'
+      preLoaderRoute: typeof PerencanaanRincianDppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/perencanaan/perubahan-dpp': {
+      id: '/perencanaan/perubahan-dpp'
+      path: '/perencanaan/perubahan-dpp'
+      fullPath: '/perencanaan/perubahan-dpp'
+      preLoaderRoute: typeof PerencanaanPerubahanDppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/perencanaan/$dppType': {
       id: '/perencanaan/$dppType'
       path: '/perencanaan/$dppType'
@@ -290,50 +541,99 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PerencanaanDppTypeRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/perencanaan/$dppType/rekap': {
-      id: '/perencanaan/$dppType/rekap'
-      path: '/perencanaan/$dppType/rekap'
-      fullPath: '/perencanaan/$dppType/rekap'
-      preLoaderRoute: typeof PerencanaanDppTypeRekapRouteImport
+    '/balai/rekap': {
+      id: '/balai/rekap'
+      path: '/balai/rekap'
+      fullPath: '/balai/rekap'
+      preLoaderRoute: typeof BalaiRekapRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/perencanaan/$dppType/buat-usulan': {
-      id: '/perencanaan/$dppType/buat-usulan'
-      path: '/perencanaan/$dppType/buat-usulan'
-      fullPath: '/perencanaan/$dppType/buat-usulan'
-      preLoaderRoute: typeof PerencanaanDppTypeBuatUsulanRouteImport
+    '/balai/laporan': {
+      id: '/balai/laporan'
+      path: '/balai/laporan'
+      fullPath: '/balai/laporan'
+      preLoaderRoute: typeof BalaiLaporanRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/perencanaan/$dppType/laporan': {
-      id: '/perencanaan/$dppType/laporan'
-      path: '/perencanaan/$dppType/laporan'
-      fullPath: '/perencanaan/$dppType/laporan'
-      preLoaderRoute: typeof PerencanaanDppTypeLaporanRouteImport
+    '/teknis/laporan/surat': {
+      id: '/teknis/laporan/surat'
+      path: '/teknis/laporan/surat'
+      fullPath: '/teknis/laporan/surat'
+      preLoaderRoute: typeof TeknisLaporanSuratRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/perencanaan/$dppType/rekomtek': {
-      id: '/perencanaan/$dppType/rekomtek'
-      path: '/perencanaan/$dppType/rekomtek'
-      fullPath: '/perencanaan/$dppType/rekomtek'
-      preLoaderRoute: typeof PerencanaanDppTypeRekomtekRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/perencanaan/$dppType/riwayat': {
-      id: '/perencanaan/$dppType/riwayat'
-      path: '/perencanaan/$dppType/riwayat'
-      fullPath: '/perencanaan/$dppType/riwayat'
-      preLoaderRoute: typeof PerencanaanDppTypeRiwayatRouteImport
+    '/teknis/laporan/rekomtek': {
+      id: '/teknis/laporan/rekomtek'
+      path: '/teknis/laporan/rekomtek'
+      fullPath: '/teknis/laporan/rekomtek'
+      preLoaderRoute: typeof TeknisLaporanRekomtekRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/perencanaan/$dppType/verifikasi': {
       id: '/perencanaan/$dppType/verifikasi'
-      path: '/perencanaan/$dppType/verifikasi'
+      path: '/verifikasi'
       fullPath: '/perencanaan/$dppType/verifikasi'
       preLoaderRoute: typeof PerencanaanDppTypeVerifikasiRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof PerencanaanDppTypeRoute
+    }
+    '/perencanaan/$dppType/riwayat': {
+      id: '/perencanaan/$dppType/riwayat'
+      path: '/riwayat'
+      fullPath: '/perencanaan/$dppType/riwayat'
+      preLoaderRoute: typeof PerencanaanDppTypeRiwayatRouteImport
+      parentRoute: typeof PerencanaanDppTypeRoute
+    }
+    '/perencanaan/$dppType/rekomtek': {
+      id: '/perencanaan/$dppType/rekomtek'
+      path: '/rekomtek'
+      fullPath: '/perencanaan/$dppType/rekomtek'
+      preLoaderRoute: typeof PerencanaanDppTypeRekomtekRouteImport
+      parentRoute: typeof PerencanaanDppTypeRoute
+    }
+    '/perencanaan/$dppType/rekap': {
+      id: '/perencanaan/$dppType/rekap'
+      path: '/rekap'
+      fullPath: '/perencanaan/$dppType/rekap'
+      preLoaderRoute: typeof PerencanaanDppTypeRekapRouteImport
+      parentRoute: typeof PerencanaanDppTypeRoute
+    }
+    '/perencanaan/$dppType/laporan': {
+      id: '/perencanaan/$dppType/laporan'
+      path: '/laporan'
+      fullPath: '/perencanaan/$dppType/laporan'
+      preLoaderRoute: typeof PerencanaanDppTypeLaporanRouteImport
+      parentRoute: typeof PerencanaanDppTypeRoute
+    }
+    '/perencanaan/$dppType/buat-usulan': {
+      id: '/perencanaan/$dppType/buat-usulan'
+      path: '/buat-usulan'
+      fullPath: '/perencanaan/$dppType/buat-usulan'
+      preLoaderRoute: typeof PerencanaanDppTypeBuatUsulanRouteImport
+      parentRoute: typeof PerencanaanDppTypeRoute
     }
   }
 }
+
+interface PerencanaanDppTypeRouteChildren {
+  PerencanaanDppTypeBuatUsulanRoute: typeof PerencanaanDppTypeBuatUsulanRoute
+  PerencanaanDppTypeLaporanRoute: typeof PerencanaanDppTypeLaporanRoute
+  PerencanaanDppTypeRekapRoute: typeof PerencanaanDppTypeRekapRoute
+  PerencanaanDppTypeRekomtekRoute: typeof PerencanaanDppTypeRekomtekRoute
+  PerencanaanDppTypeRiwayatRoute: typeof PerencanaanDppTypeRiwayatRoute
+  PerencanaanDppTypeVerifikasiRoute: typeof PerencanaanDppTypeVerifikasiRoute
+}
+
+const PerencanaanDppTypeRouteChildren: PerencanaanDppTypeRouteChildren = {
+  PerencanaanDppTypeBuatUsulanRoute: PerencanaanDppTypeBuatUsulanRoute,
+  PerencanaanDppTypeLaporanRoute: PerencanaanDppTypeLaporanRoute,
+  PerencanaanDppTypeRekapRoute: PerencanaanDppTypeRekapRoute,
+  PerencanaanDppTypeRekomtekRoute: PerencanaanDppTypeRekomtekRoute,
+  PerencanaanDppTypeRiwayatRoute: PerencanaanDppTypeRiwayatRoute,
+  PerencanaanDppTypeVerifikasiRoute: PerencanaanDppTypeVerifikasiRoute,
+}
+
+const PerencanaanDppTypeRouteWithChildren =
+  PerencanaanDppTypeRoute._addFileChildren(PerencanaanDppTypeRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -343,14 +643,22 @@ const rootRouteChildren: RootRouteChildren = {
   PelaksanaanRoute: PelaksanaanRoute,
   PengaturanRoute: PengaturanRoute,
   PeraturanRoute: PeraturanRoute,
+  RiwayatRoute: RiwayatRoute,
   StudiPendahuluanRoute: StudiPendahuluanRoute,
-  PerencanaanDppTypeRoute: PerencanaanDppTypeRoute,
-  PerencanaanDppTypeRekapRoute: PerencanaanDppTypeRekapRoute,
-  PerencanaanDppTypeBuatUsulanRoute: PerencanaanDppTypeBuatUsulanRoute,
-  PerencanaanDppTypeLaporanRoute: PerencanaanDppTypeLaporanRoute,
-  PerencanaanDppTypeRekomtekRoute: PerencanaanDppTypeRekomtekRoute,
-  PerencanaanDppTypeRiwayatRoute: PerencanaanDppTypeRiwayatRoute,
-  PerencanaanDppTypeVerifikasiRoute: PerencanaanDppTypeVerifikasiRoute,
+  VerifikasiRoute: VerifikasiRoute,
+  VerifikasiAkhirRoute: VerifikasiAkhirRoute,
+  BalaiLaporanRoute: BalaiLaporanRoute,
+  BalaiRekapRoute: BalaiRekapRoute,
+  PerencanaanDppTypeRoute: PerencanaanDppTypeRouteWithChildren,
+  PerencanaanPerubahanDppRoute: PerencanaanPerubahanDppRoute,
+  PerencanaanRincianDppRoute: PerencanaanRincianDppRoute,
+  SspsdaLaporanRoute: SspsdaLaporanRoute,
+  SspsdaRekapRoute: SspsdaRekapRoute,
+  TeknisRekapRoute: TeknisRekapRoute,
+  UsulanBaruRoute: UsulanBaruRoute,
+  UsulanIndexRoute: UsulanIndexRoute,
+  TeknisLaporanRekomtekRoute: TeknisLaporanRekomtekRoute,
+  TeknisLaporanSuratRoute: TeknisLaporanSuratRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
