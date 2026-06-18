@@ -100,7 +100,7 @@ function Dashboard() {
             <div>
               <h3 className="text-sm font-semibold">Usulan per Balai/Satker</h3>
               <p className="text-[11px] text-muted-foreground">
-                Distribusi pengusul tahun anggaran {TAHUN_PERENCANAAN}
+                Distribusi pengusul tahun anggaran {tahunAnggaran}
               </p>
             </div>
           </div>
