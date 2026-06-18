@@ -4,7 +4,7 @@ import { useAppStore } from "@/lib/app-store";
 import {
   BALAI_LIST,
   PRIORITAS_LABEL,
-  TAHUN_PERENCANAAN,
+  
   type StatusUsulan,
 } from "@/lib/mock-data";
 import { StatusBadge, PrioritasBadge } from "@/components/status-badge";
