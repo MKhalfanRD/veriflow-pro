@@ -7,7 +7,7 @@ import {
   DPP_LABEL,
   PRIORITAS_LABEL,
   PRIORITAS_NILAI,
-  TAHUN_PERENCANAAN,
+  
   type DppType,
   type Prioritas,
   type Usulan,
