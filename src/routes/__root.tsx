@@ -125,12 +125,22 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const router = useRouter();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [loggedIn, setLoggedIn] = useState(false);
   const [role, setRole] = useState<Role>("balai");
   const [usulan, setUsulan] = useState<Usulan[]>(USULAN_MOCK);
   const [dppAwalEnabled, setDppAwalEnabled] = useState(true);
   const [dppPerubahanEnabled, setDppPerubahanEnabled] = useState(true);
+
+  const isLoginRoute = pathname === "/login";
+
+  // Force redirect to /login when not logged in
+  useEffect(() => {
+    if (!loggedIn && !isLoginRoute) {
+      router.navigate({ to: "/login", replace: true });
+    }
+  }, [loggedIn, isLoginRoute, router]);
 
   const store = {
     loggedIn,
@@ -139,7 +149,10 @@ function RootComponent() {
       setRole(r);
       setLoggedIn(true);
     },
-    logout: () => setLoggedIn(false),
+    logout: () => {
+      setLoggedIn(false);
+      router.navigate({ to: "/login", replace: true });
+    },
     setRole,
     usulan,
     updateUsulan: (id: string, patch: Partial<Usulan>) =>
@@ -153,16 +166,12 @@ function RootComponent() {
     },
   };
 
-  const isLoginRoute = pathname === "/login";
+  const showShell = loggedIn && !isLoginRoute;
 
   return (
     <QueryClientProvider client={queryClient}>
       <AppStoreContext.Provider value={store}>
-        {!loggedIn || isLoginRoute ? (
-          <div className="min-h-screen w-full bg-background">
-            <Outlet />
-          </div>
-        ) : (
+        {showShell ? (
           <div className="flex min-h-screen w-full bg-background">
             <AppSidebar />
             <div className="flex-1 flex flex-col min-w-0">
@@ -172,6 +181,12 @@ function RootComponent() {
               </main>
             </div>
           </div>
+        ) : isLoginRoute ? (
+          <div className="min-h-screen w-full bg-background">
+            <Outlet />
+          </div>
+        ) : (
+          <div className="min-h-screen w-full bg-background" />
         )}
         <Toaster richColors position="top-right" />
       </AppStoreContext.Provider>
