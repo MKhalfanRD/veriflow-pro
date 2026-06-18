@@ -16,7 +16,14 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AppSidebar } from "@/components/app-sidebar";
 import { AppHeader } from "@/components/app-header";
 import { AppStoreContext } from "@/lib/app-store";
-import { USULAN_MOCK, type Role, type Usulan } from "@/lib/mock-data";
+import { USULAN_MOCK, TAHUN_PERENCANAAN, type Role, type Usulan } from "@/lib/mock-data";
+
+const TAHUN_OPTIONS = [
+  TAHUN_PERENCANAAN - 2,
+  TAHUN_PERENCANAAN - 1,
+  TAHUN_PERENCANAAN,
+  TAHUN_PERENCANAAN + 1,
+];
 import { Toaster } from "sonner";
 
 function NotFoundComponent() {
@@ -132,6 +139,7 @@ function RootComponent() {
   const [usulan, setUsulan] = useState<Usulan[]>(USULAN_MOCK);
   const [dppAwalEnabled, setDppAwalEnabled] = useState(true);
   const [dppPerubahanEnabled, setDppPerubahanEnabled] = useState(true);
+  const [tahunAnggaran, setTahunAnggaran] = useState<number>(TAHUN_PERENCANAAN);
 
   const isLoginRoute = pathname === "/login";
 
@@ -155,6 +163,7 @@ function RootComponent() {
     },
     setRole,
     usulan,
+    usulanTahun: usulan.filter((u) => u.tahun === tahunAnggaran),
     updateUsulan: (id: string, patch: Partial<Usulan>) =>
       setUsulan((prev) => prev.map((u) => (u.id === id ? { ...u, ...patch } : u))),
     addUsulan: (u: Usulan) => setUsulan((prev) => [u, ...prev]),
@@ -164,6 +173,9 @@ function RootComponent() {
       if (t === "awal") setDppAwalEnabled(v);
       else setDppPerubahanEnabled(v);
     },
+    tahunAnggaran,
+    setTahunAnggaran,
+    tahunOptions: TAHUN_OPTIONS,
   };
 
   const showShell = loggedIn && !isLoginRoute;
