@@ -91,14 +91,20 @@ function Toggle({
   onChange: (v: boolean) => void;
 }) {
   return (
-    <label className="flex items-center justify-between p-4 rounded-lg border border-border bg-background cursor-pointer hover:border-brand/40 transition-colors">
+    <div
+      onClick={() => onChange(!checked)}
+      className="flex items-center justify-between p-4 rounded-lg border border-border bg-background cursor-pointer hover:border-brand/40 transition-colors"
+    >
       <div>
         <div className="text-sm font-medium">{label}</div>
         <div className="text-[11px] text-muted-foreground mt-0.5">{hint}</div>
       </div>
       <button
         type="button"
-        onClick={() => onChange(!checked)}
+        onClick={(e) => {
+          e.stopPropagation();
+          onChange(!checked);
+        }}
         className={`relative w-11 h-6 rounded-full transition-colors ${checked ? "bg-brand" : "bg-muted-foreground/30"}`}
         aria-pressed={checked}
       >
@@ -108,6 +114,6 @@ function Toggle({
           }`}
         />
       </button>
-    </label>
+    </div>
   );
 }
