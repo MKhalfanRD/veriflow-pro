@@ -10,7 +10,7 @@ export const Route = createFileRoute("/berita-acara")({
 });
 
 function Page() {
-  const { usulan } = useAppStore();
+  const { usulanTahun: usulan } = useAppStore();
   const eligible = usulan.filter((u) =>
     ["disetujui_v1", "menunggu_v2", "disetujui_v2"].includes(u.status),
   );

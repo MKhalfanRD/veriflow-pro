@@ -11,7 +11,7 @@ export const Route = createFileRoute("/perencanaan/$dppType/verifikasi")({
 
 function Page() {
   const { dppType } = Route.useParams() as { dppType: DppType };
-  const { usulan, role } = useAppStore();
+  const { usulan: _allUsulan, usulanTahun: usulan, role } = useAppStore();
 
   if (role === "balai") {
     return (

@@ -15,7 +15,7 @@ export const Route = createFileRoute("/perencanaan/$dppType/rekap")({
 
 function Page() {
   const { dppType } = Route.useParams() as { dppType: DppType };
-  const { usulan, role } = useAppStore();
+  const { usulan: _allUsulan, usulanTahun: usulan, role } = useAppStore();
 
   let rows = usulan.filter((u) => u.tahap === dppType && u.tahun === TAHUN_PERENCANAAN);
   if (role === "balai") rows = rows.filter((u) => u.balai === CURRENT_BALAI);

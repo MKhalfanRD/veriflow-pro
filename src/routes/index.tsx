@@ -23,7 +23,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Dashboard() {
-  const { usulan, role } = useAppStore();
+  const { usulan: _allUsulan, usulanTahun: usulan, role } = useAppStore();
 
   const stats = useMemo(() => {
     const by = (s: StatusUsulan) => usulan.filter((u) => u.status === s).length;
