@@ -7,7 +7,7 @@ import {
   DPP_LABEL,
   PRIORITAS_LABEL,
   PRIORITAS_NILAI,
-  TAHUN_PERENCANAAN,
+  
   type DppType,
   type Prioritas,
   type Usulan,
@@ -55,13 +55,13 @@ function Page() {
 
 function Form({ dppType }: { dppType: DppType }) {
   const navigate = useNavigate();
-  const { addUsulan } = useAppStore();
+  const { addUsulan, tahunAnggaran } = useAppStore();
 
   const [namaKegiatan, setNamaKegiatan] = useState("");
   const [lokasi, setLokasi] = useState("");
   const [deskripsi, setDeskripsi] = useState("");
   const [anggaran, setAnggaran] = useState("");
-  const [tahun, setTahun] = useState(TAHUN_PERENCANAAN);
+  const [tahun, setTahun] = useState(tahunAnggaran);
   const [balai, setBalai] = useState(CURRENT_BALAI);
   const [prioritas, setPrioritas] = useState<Prioritas>("nasional");
   const [files, setFiles] = useState<UploadFile[]>([]);
@@ -120,7 +120,7 @@ function Form({ dppType }: { dppType: DppType }) {
       <div className="lg:col-span-2 space-y-6">
         <div className="bg-brand/5 border border-brand/20 rounded-xl px-5 py-3 text-xs">
           <span className="font-semibold text-brand">{DPP_LABEL[dppType]}</span>
-          <span className="text-muted-foreground"> · usulan akan masuk ke kategori {DPP_LABEL[dppType]} TA {TAHUN_PERENCANAAN}</span>
+          <span className="text-muted-foreground"> · usulan akan masuk ke kategori {DPP_LABEL[dppType]} TA {tahun}</span>
         </div>
 
         <Section title="Informasi Kegiatan" description="Identitas dasar usulan proyek">

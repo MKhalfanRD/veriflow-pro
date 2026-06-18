@@ -24,7 +24,7 @@ type Event = {
 
 function Page() {
   const { dppType } = Route.useParams() as { dppType: DppType };
-  const { usulan, role } = useAppStore();
+  const { usulan: _allUsulan, usulanTahun: usulan, role } = useAppStore();
 
   const scoped = usulan.filter((u) => u.tahap === dppType);
 

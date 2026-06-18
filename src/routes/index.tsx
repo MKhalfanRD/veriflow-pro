@@ -4,7 +4,7 @@ import { useAppStore } from "@/lib/app-store";
 import {
   BALAI_LIST,
   PRIORITAS_LABEL,
-  TAHUN_PERENCANAAN,
+  
   type StatusUsulan,
 } from "@/lib/mock-data";
 import { StatusBadge, PrioritasBadge } from "@/components/status-badge";
@@ -23,7 +23,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Dashboard() {
-  const { usulan, role } = useAppStore();
+  const { usulanTahun: usulan, role, tahunAnggaran } = useAppStore();
 
   const stats = useMemo(() => {
     const by = (s: StatusUsulan) => usulan.filter((u) => u.status === s).length;
@@ -100,7 +100,7 @@ function Dashboard() {
             <div>
               <h3 className="text-sm font-semibold">Usulan per Balai/Satker</h3>
               <p className="text-[11px] text-muted-foreground">
-                Distribusi pengusul tahun anggaran {TAHUN_PERENCANAAN}
+                Distribusi pengusul tahun anggaran {tahunAnggaran}
               </p>
             </div>
           </div>

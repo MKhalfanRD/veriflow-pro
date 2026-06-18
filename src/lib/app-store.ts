@@ -8,11 +8,15 @@ export interface AppStore {
   logout: () => void;
   setRole: (r: Role) => void;
   usulan: Usulan[];
+  usulanTahun: Usulan[];
   updateUsulan: (id: string, patch: Partial<Usulan>) => void;
   addUsulan: (u: Usulan) => void;
   dppAwalEnabled: boolean;
   dppPerubahanEnabled: boolean;
   setDppEnabled: (t: "awal" | "perubahan", v: boolean) => void;
+  tahunAnggaran: number;
+  setTahunAnggaran: (y: number) => void;
+  tahunOptions: number[];
 }
 
 export const AppStoreContext = createContext<AppStore | null>(null);

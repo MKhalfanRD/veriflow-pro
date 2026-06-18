@@ -82,22 +82,35 @@ function buildNav(role: Role): NavTop[] {
 }
 
 export function AppSidebar() {
-  const { role, logout } = useAppStore();
+  const { role, logout, tahunAnggaran, setTahunAnggaran, tahunOptions } = useAppStore();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const items = buildNav(role);
 
   return (
     <aside className="w-72 bg-sidebar-bg flex flex-col shrink-0 h-screen sticky top-0">
-      <div className="h-16 flex items-center px-6 border-b border-sidebar-border">
-        <div className="size-7 bg-brand rounded flex items-center justify-center shadow-inner">
+      <div className="h-16 flex items-center px-6 border-b border-sidebar-border gap-3">
+        <div className="size-7 bg-brand rounded flex items-center justify-center shadow-inner shrink-0">
           <ShieldCheck className="size-4 text-brand-foreground" />
         </div>
-        <div className="ml-3 leading-tight">
+        <div className="leading-tight min-w-0 flex-1">
           <div className="text-sidebar-fg font-semibold tracking-tight text-sm">SIPRO-SDA</div>
-          <div className="text-[9px] text-sidebar-muted uppercase tracking-widest">
+          <div className="text-[9px] text-sidebar-muted uppercase tracking-widest truncate">
             e-Verifikasi Berjenjang
           </div>
         </div>
+        <select
+          aria-label="Tahun anggaran"
+          value={tahunAnggaran}
+          onChange={(e) => setTahunAnggaran(Number(e.target.value))}
+          title="Tahun Anggaran"
+          className="bg-sidebar-bg text-sidebar-fg text-xs font-medium border border-sidebar-border rounded-md px-2 py-1 focus:outline-none focus:ring-1 focus:ring-brand cursor-pointer hover:bg-white/5"
+        >
+          {tahunOptions.map((y) => (
+            <option key={y} value={y} className="bg-surface text-foreground">
+              TA {y}
+            </option>
+          ))}
+        </select>
       </div>
 
       <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
