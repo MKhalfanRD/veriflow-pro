@@ -146,6 +146,45 @@ function Form({ dppType }: { dppType: DppType }) {
           <span className="text-muted-foreground"> · usulan akan masuk ke kategori {DPP_LABEL[dppType]} TA {tahun}</span>
         </div>
 
+        <Section title="Struktur Program & Kegiatan" description="Pemetaan usulan ke struktur program/kegiatan Ditjen SDA">
+          <Grid>
+            <SelectField label="Program" value={program} onChange={setProgram} options={PROGRAM_OPTIONS.map((p) => ({ value: p, label: p }))} span={2} />
+            <SelectField
+              label="Sasaran Program"
+              value={sasaranProgram}
+              onChange={(v) => { setSasaranProgram(v); setIndikatorSP(""); }}
+              options={SASARAN_PROGRAM.map((s) => ({ value: s.kode, label: s.label }))}
+              placeholder="-- Pilih Sasaran Program --"
+            />
+            <SelectField
+              label="Indikator Sasaran Program"
+              value={indikatorSP}
+              onChange={setIndikatorSP}
+              options={indikatorSPOptions.map((i) => ({ value: i, label: i }))}
+              placeholder={sasaranProgram ? "-- Pilih Indikator --" : "Pilih Sasaran Program dulu"}
+              disabled={!sasaranProgram}
+            />
+            <SelectField
+              label="Kegiatan"
+              value={kegiatan}
+              onChange={(v) => { setKegiatan(v); setSasaranKegiatan(""); }}
+              options={KEGIATAN_LIST.map((k) => ({ value: k.kode, label: `${k.kode} — ${k.nama}` }))}
+              placeholder="-- Pilih Kegiatan --"
+              span={2}
+            />
+            <SelectField
+              label="Sasaran Kegiatan"
+              value={sasaranKegiatan}
+              onChange={setSasaranKegiatan}
+              options={sasaranKegiatanOptions.map((s) => ({ value: s, label: s }))}
+              placeholder={kegiatan ? "-- Pilih Sasaran Kegiatan --" : "Pilih Kegiatan dulu"}
+              disabled={!kegiatan}
+              span={2}
+            />
+            <Input label="Indikator Sasaran Kegiatan" value={indikatorSK} onChange={setIndikatorSK} placeholder="Tuliskan indikator sasaran kegiatan" span={2} />
+          </Grid>
+        </Section>
+
         <Section title="Informasi Kegiatan" description="Identitas dasar usulan proyek">
           <Grid>
             <Input label="Nama Kegiatan" value={namaKegiatan} onChange={setNamaKegiatan} placeholder="Contoh: Rehabilitasi Bendungan ..." span={2} />
