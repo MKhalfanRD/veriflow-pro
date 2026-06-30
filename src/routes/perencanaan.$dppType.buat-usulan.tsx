@@ -15,6 +15,13 @@ import {
 import { DppPageLayout } from "@/components/dpp-page-layout";
 import { Check, Upload, FileText, X, AlertCircle, ShieldAlert } from "lucide-react";
 import { toast } from "sonner";
+import {
+  PROGRAM_OPTIONS,
+  SASARAN_PROGRAM,
+  INDIKATOR_SASARAN_PROGRAM,
+  KEGIATAN_LIST,
+  SASARAN_KEGIATAN,
+} from "@/lib/program-kegiatan";
 
 export const Route = createFileRoute("/perencanaan/$dppType/buat-usulan")({
   component: Page,
@@ -57,6 +64,13 @@ function Form({ dppType }: { dppType: DppType }) {
   const navigate = useNavigate();
   const { addUsulan, tahunAnggaran } = useAppStore();
 
+  const [program, setProgram] = useState<string>(PROGRAM_OPTIONS[0]);
+  const [sasaranProgram, setSasaranProgram] = useState<string>("");
+  const [indikatorSP, setIndikatorSP] = useState<string>("");
+  const [kegiatan, setKegiatan] = useState<string>("");
+  const [sasaranKegiatan, setSasaranKegiatan] = useState<string>("");
+  const [indikatorSK, setIndikatorSK] = useState<string>("");
+
   const [namaKegiatan, setNamaKegiatan] = useState("");
   const [lokasi, setLokasi] = useState("");
   const [deskripsi, setDeskripsi] = useState("");
@@ -66,10 +80,19 @@ function Form({ dppType }: { dppType: DppType }) {
   const [prioritas, setPrioritas] = useState<Prioritas>("nasional");
   const [files, setFiles] = useState<UploadFile[]>([]);
 
+  const indikatorSPOptions = sasaranProgram ? INDIKATOR_SASARAN_PROGRAM[sasaranProgram] ?? [] : [];
+  const sasaranKegiatanOptions = kegiatan ? SASARAN_KEGIATAN[kegiatan] ?? [] : [];
+
   const checklist = useMemo(() => {
     const hasTeknis = files.some((f) => f.tipe === "teknis");
     const hasAdmin = files.some((f) => f.tipe === "administrasi");
     return [
+      { label: "Program dipilih", done: !!program },
+      { label: "Sasaran Program dipilih", done: !!sasaranProgram },
+      { label: "Indikator Sasaran Program dipilih", done: !!indikatorSP },
+      { label: "Kegiatan dipilih", done: !!kegiatan },
+      { label: "Sasaran Kegiatan dipilih", done: !!sasaranKegiatan },
+      { label: "Indikator Sasaran Kegiatan diisi", done: indikatorSK.trim().length >= 3 },
       { label: "Nama kegiatan diisi", done: namaKegiatan.trim().length >= 5 },
       { label: "Lokasi kegiatan diisi", done: lokasi.trim().length >= 3 },
       { label: "Deskripsi minimal 30 karakter", done: deskripsi.trim().length >= 30 },
@@ -80,7 +103,7 @@ function Form({ dppType }: { dppType: DppType }) {
       { label: "Dokumen teknis diunggah", done: hasTeknis },
       { label: "Dokumen administrasi diunggah", done: hasAdmin },
     ];
-  }, [namaKegiatan, lokasi, deskripsi, anggaran, tahun, balai, prioritas, files]);
+  }, [program, sasaranProgram, indikatorSP, kegiatan, sasaranKegiatan, indikatorSK, namaKegiatan, lokasi, deskripsi, anggaran, tahun, balai, prioritas, files]);
 
   const completedCount = checklist.filter((c) => c.done).length;
   const isComplete = completedCount === checklist.length;
@@ -122,6 +145,45 @@ function Form({ dppType }: { dppType: DppType }) {
           <span className="font-semibold text-brand">{DPP_LABEL[dppType]}</span>
           <span className="text-muted-foreground"> · usulan akan masuk ke kategori {DPP_LABEL[dppType]} TA {tahun}</span>
         </div>
+
+        <Section title="Struktur Program & Kegiatan" description="Pemetaan usulan ke struktur program/kegiatan Ditjen SDA">
+          <Grid>
+            <SelectField label="Program" value={program} onChange={setProgram} options={PROGRAM_OPTIONS.map((p) => ({ value: p, label: p }))} span={2} />
+            <SelectField
+              label="Sasaran Program"
+              value={sasaranProgram}
+              onChange={(v) => { setSasaranProgram(v); setIndikatorSP(""); }}
+              options={SASARAN_PROGRAM.map((s) => ({ value: s.kode, label: s.label }))}
+              placeholder="-- Pilih Sasaran Program --"
+            />
+            <SelectField
+              label="Indikator Sasaran Program"
+              value={indikatorSP}
+              onChange={setIndikatorSP}
+              options={indikatorSPOptions.map((i) => ({ value: i, label: i }))}
+              placeholder={sasaranProgram ? "-- Pilih Indikator --" : "Pilih Sasaran Program dulu"}
+              disabled={!sasaranProgram}
+            />
+            <SelectField
+              label="Kegiatan"
+              value={kegiatan}
+              onChange={(v) => { setKegiatan(v); setSasaranKegiatan(""); }}
+              options={KEGIATAN_LIST.map((k) => ({ value: k.kode, label: `${k.kode} — ${k.nama}` }))}
+              placeholder="-- Pilih Kegiatan --"
+              span={2}
+            />
+            <SelectField
+              label="Sasaran Kegiatan"
+              value={sasaranKegiatan}
+              onChange={setSasaranKegiatan}
+              options={sasaranKegiatanOptions.map((s) => ({ value: s, label: s }))}
+              placeholder={kegiatan ? "-- Pilih Sasaran Kegiatan --" : "Pilih Kegiatan dulu"}
+              disabled={!kegiatan}
+              span={2}
+            />
+            <Input label="Indikator Sasaran Kegiatan" value={indikatorSK} onChange={setIndikatorSK} placeholder="Tuliskan indikator sasaran kegiatan" span={2} />
+          </Grid>
+        </Section>
 
         <Section title="Informasi Kegiatan" description="Identitas dasar usulan proyek">
           <Grid>
@@ -283,6 +345,32 @@ function NumberInput({ label, value, onChange, min, max }: { label: string; valu
       <Label>{label}</Label>
       <input type="number" value={value} min={min} max={max} onChange={(e) => onChange(Number(e.target.value))}
         className="w-full mt-1.5 border border-border rounded-md px-3 py-2 text-sm bg-background focus:outline-none focus:ring-1 focus:ring-brand" />
+    </div>
+  );
+}
+function SelectField({ label, value, onChange, options, placeholder, disabled, span }: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  options: { value: string; label: string }[];
+  placeholder?: string;
+  disabled?: boolean;
+  span?: number;
+}) {
+  return (
+    <div className={span === 2 ? "md:col-span-2" : ""}>
+      <Label>{label}</Label>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        disabled={disabled}
+        className="w-full mt-1.5 border border-border rounded-md px-3 py-2 text-sm bg-background focus:outline-none focus:ring-1 focus:ring-brand disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <option value="">{placeholder ?? "-- Pilih --"}</option>
+        {options.map((o) => (
+          <option key={o.value} value={o.value}>{o.label}</option>
+        ))}
+      </select>
     </div>
   );
 }
