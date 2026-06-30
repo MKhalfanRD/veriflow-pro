@@ -15,6 +15,13 @@ import {
 import { DppPageLayout } from "@/components/dpp-page-layout";
 import { Check, Upload, FileText, X, AlertCircle, ShieldAlert } from "lucide-react";
 import { toast } from "sonner";
+import {
+  PROGRAM_OPTIONS,
+  SASARAN_PROGRAM,
+  INDIKATOR_SASARAN_PROGRAM,
+  KEGIATAN_LIST,
+  SASARAN_KEGIATAN,
+} from "@/lib/program-kegiatan";
 
 export const Route = createFileRoute("/perencanaan/$dppType/buat-usulan")({
   component: Page,
