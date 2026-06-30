@@ -64,6 +64,13 @@ function Form({ dppType }: { dppType: DppType }) {
   const navigate = useNavigate();
   const { addUsulan, tahunAnggaran } = useAppStore();
 
+  const [program, setProgram] = useState<string>(PROGRAM_OPTIONS[0]);
+  const [sasaranProgram, setSasaranProgram] = useState<string>("");
+  const [indikatorSP, setIndikatorSP] = useState<string>("");
+  const [kegiatan, setKegiatan] = useState<string>("");
+  const [sasaranKegiatan, setSasaranKegiatan] = useState<string>("");
+  const [indikatorSK, setIndikatorSK] = useState<string>("");
+
   const [namaKegiatan, setNamaKegiatan] = useState("");
   const [lokasi, setLokasi] = useState("");
   const [deskripsi, setDeskripsi] = useState("");
@@ -73,10 +80,19 @@ function Form({ dppType }: { dppType: DppType }) {
   const [prioritas, setPrioritas] = useState<Prioritas>("nasional");
   const [files, setFiles] = useState<UploadFile[]>([]);
 
+  const indikatorSPOptions = sasaranProgram ? INDIKATOR_SASARAN_PROGRAM[sasaranProgram] ?? [] : [];
+  const sasaranKegiatanOptions = kegiatan ? SASARAN_KEGIATAN[kegiatan] ?? [] : [];
+
   const checklist = useMemo(() => {
     const hasTeknis = files.some((f) => f.tipe === "teknis");
     const hasAdmin = files.some((f) => f.tipe === "administrasi");
     return [
+      { label: "Program dipilih", done: !!program },
+      { label: "Sasaran Program dipilih", done: !!sasaranProgram },
+      { label: "Indikator Sasaran Program dipilih", done: !!indikatorSP },
+      { label: "Kegiatan dipilih", done: !!kegiatan },
+      { label: "Sasaran Kegiatan dipilih", done: !!sasaranKegiatan },
+      { label: "Indikator Sasaran Kegiatan diisi", done: indikatorSK.trim().length >= 3 },
       { label: "Nama kegiatan diisi", done: namaKegiatan.trim().length >= 5 },
       { label: "Lokasi kegiatan diisi", done: lokasi.trim().length >= 3 },
       { label: "Deskripsi minimal 30 karakter", done: deskripsi.trim().length >= 30 },
@@ -87,7 +103,7 @@ function Form({ dppType }: { dppType: DppType }) {
       { label: "Dokumen teknis diunggah", done: hasTeknis },
       { label: "Dokumen administrasi diunggah", done: hasAdmin },
     ];
-  }, [namaKegiatan, lokasi, deskripsi, anggaran, tahun, balai, prioritas, files]);
+  }, [program, sasaranProgram, indikatorSP, kegiatan, sasaranKegiatan, indikatorSK, namaKegiatan, lokasi, deskripsi, anggaran, tahun, balai, prioritas, files]);
 
   const completedCount = checklist.filter((c) => c.done).length;
   const isComplete = completedCount === checklist.length;
