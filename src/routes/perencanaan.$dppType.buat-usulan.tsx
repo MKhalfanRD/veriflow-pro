@@ -348,3 +348,29 @@ function NumberInput({ label, value, onChange, min, max }: { label: string; valu
     </div>
   );
 }
+function SelectField({ label, value, onChange, options, placeholder, disabled, span }: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  options: { value: string; label: string }[];
+  placeholder?: string;
+  disabled?: boolean;
+  span?: number;
+}) {
+  return (
+    <div className={span === 2 ? "md:col-span-2" : ""}>
+      <Label>{label}</Label>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        disabled={disabled}
+        className="w-full mt-1.5 border border-border rounded-md px-3 py-2 text-sm bg-background focus:outline-none focus:ring-1 focus:ring-brand disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <option value="">{placeholder ?? "-- Pilih --"}</option>
+        {options.map((o) => (
+          <option key={o.value} value={o.value}>{o.label}</option>
+        ))}
+      </select>
+    </div>
+  );
+}
