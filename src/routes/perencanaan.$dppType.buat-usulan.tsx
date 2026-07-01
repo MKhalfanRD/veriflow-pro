@@ -83,6 +83,10 @@ function Form({ dppType }: { dppType: DppType }) {
 
   const indikatorSPOptions = sasaranProgram ? INDIKATOR_SASARAN_PROGRAM[sasaranProgram] ?? [] : [];
   const sasaranKegiatanOptions = kegiatan ? SASARAN_KEGIATAN[kegiatan] ?? [] : [];
+  const indikatorSKOptions =
+    kegiatan && sasaranKegiatan
+      ? INDIKATOR_SASARAN_KEGIATAN[kegiatan]?.[sasaranKegiatan.slice(0, 2)] ?? []
+      : [];
 
   const checklist = useMemo(() => {
     const hasTeknis = files.some((f) => f.tipe === "teknis");
