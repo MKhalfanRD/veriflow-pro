@@ -21,6 +21,7 @@ import {
   INDIKATOR_SASARAN_PROGRAM,
   KEGIATAN_LIST,
   SASARAN_KEGIATAN,
+  INDIKATOR_SASARAN_KEGIATAN,
 } from "@/lib/program-kegiatan";
 
 export const Route = createFileRoute("/perencanaan/$dppType/buat-usulan")({
@@ -82,6 +83,10 @@ function Form({ dppType }: { dppType: DppType }) {
 
   const indikatorSPOptions = sasaranProgram ? INDIKATOR_SASARAN_PROGRAM[sasaranProgram] ?? [] : [];
   const sasaranKegiatanOptions = kegiatan ? SASARAN_KEGIATAN[kegiatan] ?? [] : [];
+  const indikatorSKOptions =
+    kegiatan && sasaranKegiatan
+      ? INDIKATOR_SASARAN_KEGIATAN[kegiatan]?.[sasaranKegiatan.slice(0, 2)] ?? []
+      : [];
 
   const checklist = useMemo(() => {
     const hasTeknis = files.some((f) => f.tipe === "teknis");
@@ -167,7 +172,7 @@ function Form({ dppType }: { dppType: DppType }) {
             <SelectField
               label="Kegiatan"
               value={kegiatan}
-              onChange={(v) => { setKegiatan(v); setSasaranKegiatan(""); }}
+              onChange={(v) => { setKegiatan(v); setSasaranKegiatan(""); setIndikatorSK(""); }}
               options={KEGIATAN_LIST.map((k) => ({ value: k.kode, label: `${k.kode} — ${k.nama}` }))}
               placeholder="-- Pilih Kegiatan --"
               span={2}
@@ -175,13 +180,21 @@ function Form({ dppType }: { dppType: DppType }) {
             <SelectField
               label="Sasaran Kegiatan"
               value={sasaranKegiatan}
-              onChange={setSasaranKegiatan}
+              onChange={(v) => { setSasaranKegiatan(v); setIndikatorSK(""); }}
               options={sasaranKegiatanOptions.map((s) => ({ value: s, label: s }))}
               placeholder={kegiatan ? "-- Pilih Sasaran Kegiatan --" : "Pilih Kegiatan dulu"}
               disabled={!kegiatan}
               span={2}
             />
-            <Input label="Indikator Sasaran Kegiatan" value={indikatorSK} onChange={setIndikatorSK} placeholder="Tuliskan indikator sasaran kegiatan" span={2} />
+            <SelectField
+              label="Indikator Sasaran Kegiatan"
+              value={indikatorSK}
+              onChange={setIndikatorSK}
+              options={indikatorSKOptions.map((i) => ({ value: i, label: i }))}
+              placeholder={sasaranKegiatan ? "-- Pilih Indikator Sasaran Kegiatan --" : "Pilih Sasaran Kegiatan dulu"}
+              disabled={!sasaranKegiatan}
+              span={2}
+            />
           </Grid>
         </Section>
 
