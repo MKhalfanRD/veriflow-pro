@@ -180,13 +180,21 @@ function Form({ dppType }: { dppType: DppType }) {
             <SelectField
               label="Sasaran Kegiatan"
               value={sasaranKegiatan}
-              onChange={setSasaranKegiatan}
+              onChange={(v) => { setSasaranKegiatan(v); setIndikatorSK(""); }}
               options={sasaranKegiatanOptions.map((s) => ({ value: s, label: s }))}
               placeholder={kegiatan ? "-- Pilih Sasaran Kegiatan --" : "Pilih Kegiatan dulu"}
               disabled={!kegiatan}
               span={2}
             />
-            <Input label="Indikator Sasaran Kegiatan" value={indikatorSK} onChange={setIndikatorSK} placeholder="Tuliskan indikator sasaran kegiatan" span={2} />
+            <SelectField
+              label="Indikator Sasaran Kegiatan"
+              value={indikatorSK}
+              onChange={setIndikatorSK}
+              options={indikatorSKOptions.map((i) => ({ value: i, label: i }))}
+              placeholder={sasaranKegiatan ? "-- Pilih Indikator Sasaran Kegiatan --" : "Pilih Sasaran Kegiatan dulu"}
+              disabled={!sasaranKegiatan}
+              span={2}
+            />
           </Grid>
         </Section>
 
