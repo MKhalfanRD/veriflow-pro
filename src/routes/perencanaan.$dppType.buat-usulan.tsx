@@ -21,6 +21,7 @@ import {
   INDIKATOR_SASARAN_PROGRAM,
   KEGIATAN_LIST,
   SASARAN_KEGIATAN,
+  INDIKATOR_SASARAN_KEGIATAN,
 } from "@/lib/program-kegiatan";
 
 export const Route = createFileRoute("/perencanaan/$dppType/buat-usulan")({
