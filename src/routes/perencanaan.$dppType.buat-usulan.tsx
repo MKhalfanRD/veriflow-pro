@@ -202,7 +202,7 @@ function Form({ dppType }: { dppType: DppType }) {
             <SelectField
               label="Kegiatan"
               value={kegiatan}
-              onChange={(v) => { setKegiatan(v); setSasaranKegiatan(""); setIndikatorSK(""); }}
+              onChange={(v) => { setKegiatan(v); setSasaranKegiatan(""); setIndikatorSK(""); setKro(""); setRo(""); setAddingRo(false); }}
               options={KEGIATAN_LIST.map((k) => ({ value: k.kode, label: `${k.kode} — ${k.nama}` }))}
               placeholder="-- Pilih Kegiatan --"
               span={2}
