@@ -122,6 +122,12 @@ function Form({ dppType }: { dppType: DppType }) {
       { label: "Kegiatan dipilih", done: !!kegiatan },
       { label: "Sasaran Kegiatan dipilih", done: !!sasaranKegiatan },
       { label: "Indikator Sasaran Kegiatan diisi", done: indikatorSK.trim().length >= 3 },
+      ...(kroOptions.length > 0
+        ? [
+            { label: "KRO dipilih", done: !!kro },
+            { label: "RO dipilih", done: !!ro },
+          ]
+        : []),
       { label: "Nama kegiatan diisi", done: namaKegiatan.trim().length >= 5 },
       { label: "Lokasi kegiatan diisi", done: lokasi.trim().length >= 3 },
       { label: "Deskripsi minimal 30 karakter", done: deskripsi.trim().length >= 30 },
