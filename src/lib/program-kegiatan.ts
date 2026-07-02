@@ -271,3 +271,466 @@ export const INDIKATOR_SASARAN_KEGIATAN: Record<string, Record<string, string[]>
     ]
   }
 };
+
+export interface RO { code: string; name: string; }
+export interface KRO { code: string; name: string; ros: RO[]; }
+export const KRO_BY_KEGIATAN: Record<string, KRO[]> = {
+  "7691": [
+    {
+      "code": "7691.RBS",
+      "name": "Prasarana Jaringan Sumber Daya Air",
+      "ros": [
+        {
+          "code": "7691.RBS.001",
+          "name": "Jaringan Irigasi Waduk"
+        },
+        {
+          "code": "7691.RBS.003",
+          "name": "Jaringan Irigasi di Sentra Produksi Lumbung Pangan"
+        },
+        {
+          "code": "7691.RBS.004",
+          "name": "Jaringan Irigasi di Lokasi Optimasi Lahan Kementerian Pertanian"
+        },
+        {
+          "code": "7691.RBS.005",
+          "name": "Jaringan Irigasi Kewenangan Pemerintah Daerah"
+        },
+        {
+          "code": "7691.RBS.011",
+          "name": "Jaringan Irigasi di Kawasan Sentra Produksi Pangan (KSPP) Kalimantan Tengah"
+        },
+        {
+          "code": "7691.RBS.014",
+          "name": "Jaringan Irigasi di Kawasan Sentra Produksi Pangan (KSPP) Papua Selatan"
+        },
+        {
+          "code": "7691.RBS.101",
+          "name": "Jaringan Irigasi Daerah Irigasi Batang Asai"
+        },
+        {
+          "code": "7691.RBS.102",
+          "name": "Jaringan Irigasi Daerah Irigasi Serayu"
+        },
+        {
+          "code": "7691.RBS.501",
+          "name": "Jaringan Irigasi DI Rentang (RIMP)"
+        },
+        {
+          "code": "7691.RBS.502",
+          "name": "Jaringan Irigasi DI Komering (KIP)"
+        },
+        {
+          "code": "7691.RBS.503",
+          "name": "Jaringan Irigasi Wilayah Barat Indonesia (URSIP)"
+        },
+        {
+          "code": "7691.RBS.701",
+          "name": "Jaringan Irigasi Daerah Irigasi Cisadane"
+        },
+        {
+          "code": "7691.RBS.709",
+          "name": "Jaringan Irigasi Daerah Irigasi Air Seluma"
+        },
+        {
+          "code": "7691.RBS.717",
+          "name": "Jaringan Irigasi DI Waduk Bening"
+        },
+        {
+          "code": "7691.RBS.718",
+          "name": "Jaringan Irigasi DI Siman"
+        },
+        {
+          "code": "7691.RBS.719",
+          "name": "Jaringan Irigasi DI Mrican"
+        },
+        {
+          "code": "7691.RBS.720",
+          "name": "Jaringan Irigasi DI Bondoyudo"
+        },
+        {
+          "code": "7691.RBS.721",
+          "name": "Jaringan Irigasi DI Pondok Waluh"
+        },
+        {
+          "code": "7691.RBS.722",
+          "name": "Jaringan Irigasi DI Talang"
+        },
+        {
+          "code": "7691.RBS.723",
+          "name": "Jaringan Irigasi DI Katon Kompleks"
+        },
+        {
+          "code": "7691.RBS.724",
+          "name": "Jaringan Irigasi DI Manganti"
+        },
+        {
+          "code": "7691.RBS.725",
+          "name": "Jaringan Irigasi DI Jatiluhur"
+        },
+        {
+          "code": "7691.RBS.726",
+          "name": "Jaringan Irigasi DI Lematang"
+        },
+        {
+          "code": "7691.RBS.727",
+          "name": "Jaringan Irigasi DI Cikunten II"
+        },
+        {
+          "code": "7691.RBS.728",
+          "name": "Jaringan Irigasi DI Kumisik"
+        },
+        {
+          "code": "7691.RBS.729",
+          "name": "Jaringan Irigasi DI Molek"
+        },
+        {
+          "code": "7691.RBS.730",
+          "name": "Jaringan Irigasi DI Komering"
+        },
+        {
+          "code": "7691.RBS.731",
+          "name": "Jaringan Irigasi DI Klambu"
+        },
+        {
+          "code": "7691.RBS.732",
+          "name": "Jaringan Irigasi DI Pemali"
+        }
+      ]
+    },
+    {
+      "code": "7691.RBG",
+      "name": "Prasarana Bidang SDA dan Irigasi",
+      "ros": [
+        {
+          "code": "7691.RBG.001",
+          "name": "Bangunan Irigasi di Lokasi Optimasi Lahan Kementerian Pertanian"
+        },
+        {
+          "code": "7691.RBG.002",
+          "name": "Bangunan Irigasi Kewenangan Pemerintah Daerah"
+        },
+        {
+          "code": "7691.RBG.101",
+          "name": "Bendung Cariang"
+        },
+        {
+          "code": "7691.RBG.102",
+          "name": "Bendung Jatimlerek"
+        },
+        {
+          "code": "7691.RBG.701",
+          "name": "Bendung Irigasi Pasar Baru"
+        }
+      ]
+    }
+  ],
+  "7692": [
+    {
+      "code": "7692.RBH",
+      "name": "Prasarana Bidang Penanggulangan Bencana",
+      "ros": [
+        {
+          "code": "7692.RBH.001",
+          "name": "Prasarana Pengendalian Banjir di Kawasan Metropolitan Strategis"
+        },
+        {
+          "code": "7692.RBH.002",
+          "name": "Bangunan Pendukung Pengendali Banjir IKN"
+        },
+        {
+          "code": "7692.RBH.003",
+          "name": "Prasarana Pengendali Risiko Daya Rusak Air di Perkotaan Pesisir Utara Jawa"
+        },
+        {
+          "code": "7692.RBH.004",
+          "name": "Prasarana Pengendalian Lahar/Sedimen di Kawasan Strategis Ekonomi, Kawasan Perkotaan, 3T, dan Daerah Berisiko Tinggi"
+        },
+        {
+          "code": "7692.RBH.101",
+          "name": "Prasarana Pengendali Sedimen Pulau Ternate"
+        }
+      ]
+    },
+    {
+      "code": "7692.RBS",
+      "name": "Prasarana Jaringan Sumber Daya Air",
+      "ros": [
+        {
+          "code": "7692.RBS.001",
+          "name": "Prasarana Pengendalian Banjir di Kawasan Metropolitan Strategis"
+        },
+        {
+          "code": "7692.RBS.002",
+          "name": "Prasarana Jaringan Pengendali Risiko Daya Rusak Air di Perkotaan Pesisir Utara Jawa"
+        },
+        {
+          "code": "7692.RBS.003",
+          "name": "Prasarana Pengendalian Banjir di Kawasan Strategis Ekonomi, Kawasan Perkotaan, 3T, dan Daerah Berisiko Tinggi dari Daya Rusak Air"
+        },
+        {
+          "code": "7692.RBS.004",
+          "name": "Prasarana Perlindungan Abrasi Kawasan Pesisir Perkotaan, Strategis Ekonomi, 3T, dan Kawasan Berisiko Abrasi Tinggi"
+        },
+        {
+          "code": "7692.RBS.005",
+          "name": "Prasarana Pengendalian Banjir Mendukung Ketahanan Pangan"
+        },
+        {
+          "code": "7692.RBS.006",
+          "name": "Prasarana Pengendalian Banjir di Kawasan Sentra Produksi Pangan (KSPP) Papua Selatan"
+        },
+        {
+          "code": "7692.RBS.036",
+          "name": "Prasarana Pengendali Banjir Kali Bekasi"
+        },
+        {
+          "code": "7692.RBS.501",
+          "name": "Prasarana Pengaman Pantai Bali (BBCP)"
+        },
+        {
+          "code": "7692.RBS.502",
+          "name": "Prasarana Perlindungan Daya Rusak Air di Sulawesi Tengah (IRSL)"
+        },
+        {
+          "code": "7692.RBS.503",
+          "name": "Prasarana Pengendalian Banjir di Kawasan Metropolitan Strategis (UFCS)"
+        },
+        {
+          "code": "7692.RBS.504",
+          "name": "Prasarana Pengendalian Banjir di Kawasan Metropolitan Strategis (NUFREP)"
+        },
+        {
+          "code": "7692.RBS.505",
+          "name": "Prasarana Perlindungan Kawasan Pantai Utara Jawa dari Daya Rusak Air (FMNJP)"
+        },
+        {
+          "code": "7692.RBS.701",
+          "name": "Prasarana Pengaman Pantai Pulau Terluar di Provinsi Kepulauan Riau"
+        },
+        {
+          "code": "7692.RBS.704",
+          "name": "Prasarana Pengaman Pantai Congot"
+        },
+        {
+          "code": "7692.RBS.711",
+          "name": "Prasarana Pengendalian Banjir di Kab. Dharmasraya"
+        },
+        {
+          "code": "7692.RBS.737",
+          "name": "Prasarana Pengaman Pantai Jakarta"
+        },
+        {
+          "code": "7692.RBS.738",
+          "name": "Prasarana Pengendalian Banjir Kota Meulaboh"
+        },
+        {
+          "code": "7692.RBS.739",
+          "name": "Prasarana Pengaman Pantai Pulau Terluar Provinsi Riau"
+        },
+        {
+          "code": "7692.RBS.740",
+          "name": "Prasarana Pengaman Pantai Bintaro"
+        },
+        {
+          "code": "7692.RBS.741",
+          "name": "Prasarana Pengendalian Banjir Sungai Cibanten"
+        },
+        {
+          "code": "7692.RBS.742",
+          "name": "Prasarana Pengendalian Banjir Sungai Jawi"
+        },
+        {
+          "code": "7692.RBS.743",
+          "name": "Prasarana Pengendalian Banjir Sudetan Floodway (Plangwoot-Sedayu Lawas)"
+        },
+        {
+          "code": "7692.RBS.744",
+          "name": "Prasarana Pengendalian Banjir Kali Konto"
+        },
+        {
+          "code": "7692.RBS.745",
+          "name": "Prasarana Pengaman Pantai Kab. Sambas"
+        },
+        {
+          "code": "7692.RBS.746",
+          "name": "Prasarana Pengendalian Banjir Sungai Klagison"
+        },
+        {
+          "code": "7692.RBS.747",
+          "name": "Prasarana Pengendalian Banjir Kali Perawan"
+        },
+        {
+          "code": "7692.RBS.748",
+          "name": "Prasarana Pengendalian Banjir dan Rob Bremi Meduri"
+        }
+      ]
+    }
+  ],
+  "7693": [
+    {
+      "code": "7693.RBG",
+      "name": "Prasarana Bidang SDA dan Irigasi",
+      "ros": [
+        {
+          "code": "7693.RBG.004",
+          "name": "Bendungan Cibeet"
+        },
+        {
+          "code": "7693.RBG.005",
+          "name": "Bendungan Cijurey"
+        },
+        {
+          "code": "7693.RBG.006",
+          "name": "Bendungan Kedunglanggar"
+        },
+        {
+          "code": "7693.RBG.007",
+          "name": "Bendungan Mbay"
+        },
+        {
+          "code": "7693.RBG.009",
+          "name": "Bendungan Jenelata"
+        },
+        {
+          "code": "7693.RBG.013",
+          "name": "Bangunan Pengarah Bendungan Rukoh"
+        },
+        {
+          "code": "7693.RBG.015",
+          "name": "Bendungan Tiga Dihaji"
+        },
+        {
+          "code": "7693.RBG.028",
+          "name": "Bendungan Jragung"
+        },
+        {
+          "code": "7693.RBG.029",
+          "name": "Bendungan Bener"
+        },
+        {
+          "code": "7693.RBG.035",
+          "name": "Bendungan Bagong"
+        },
+        {
+          "code": "7693.RBG.045",
+          "name": "Bendungan Manikin"
+        },
+        {
+          "code": "7693.RBG.050",
+          "name": "Bendungan Bulango Ulu"
+        },
+        {
+          "code": "7693.RBG.051",
+          "name": "Bendungan Budong-Budong"
+        },
+        {
+          "code": "7693.RBG.056",
+          "name": "Bendungan Way Apu"
+        },
+        {
+          "code": "7693.RBG.068",
+          "name": "Bendungan Cabean"
+        },
+        {
+          "code": "7693.RBG.077",
+          "name": "Bendungan Karangnongko"
+        },
+        {
+          "code": "7693.RBG.501",
+          "name": "Bendungan Karian"
+        },
+        {
+          "code": "7693.RBG.502",
+          "name": "Bendungan Pelosika"
+        },
+        {
+          "code": "7693.RBG.702",
+          "name": "Danau Ranau"
+        },
+        {
+          "code": "7693.RBG.703",
+          "name": "Danau Singkarak"
+        },
+        {
+          "code": "7693.RBG.704",
+          "name": "Danau Limboto"
+        },
+        {
+          "code": "7693.RBG.705",
+          "name": "Danau Ayamaru"
+        }
+      ]
+    }
+  ],
+  "7694": [
+    {
+      "code": "7694.RBG",
+      "name": "Prasarana Bidang SDA dan Irigasi",
+      "ros": [
+        {
+          "code": "7694.RBG.001",
+          "name": "Embung dan Tampungan Air Lainnya pada Kawasan IKN"
+        },
+        {
+          "code": "7694.RBG.002",
+          "name": "Prasarana Air Baku Mendukung Irigasi Kewenangan Pemerintah Daerah"
+        },
+        {
+          "code": "7694.RBG.701",
+          "name": "Prasarana Air Baku Bendung Gerak Sembayat"
+        }
+      ]
+    },
+    {
+      "code": "7694.RBS",
+      "name": "Prasarana Jaringan Sumber Daya Air",
+      "ros": [
+        {
+          "code": "7694.RBS.001",
+          "name": "Prasarana Penyediaan Air Baku Bersumber dari Bendungan"
+        },
+        {
+          "code": "7694.RBS.002",
+          "name": "Prasarana Air Baku IKN"
+        },
+        {
+          "code": "7694.RBS.003",
+          "name": "Prasarana Air Baku di Kawasan Sentra Produksi Pangan"
+        },
+        {
+          "code": "7694.RBS.004",
+          "name": "Jaringan Air Baku di Perkotaan Pesisir Utara Jawa"
+        },
+        {
+          "code": "7694.RBS.005",
+          "name": "Prasarana Air Baku Kawasan Metropolitan, Kawasan Perkotaan, dan Kawasan Strategis"
+        },
+        {
+          "code": "7694.RBS.006",
+          "name": "Jaringan Irigasi Air Tanah Mendukung Irigasi Kewenangan Pemerintah Daerah"
+        },
+        {
+          "code": "7694.RBS.501",
+          "name": "Prasarana Air Baku Karian Serpong (KSCS)"
+        },
+        {
+          "code": "7694.RBS.701",
+          "name": "Prasarana Air Baku Karian Serpong"
+        },
+        {
+          "code": "7694.RBS.706",
+          "name": "Prasarana Air Baku Kertasari"
+        },
+        {
+          "code": "7694.RBS.708",
+          "name": "Prasarana Air Baku DAS Kawal"
+        },
+        {
+          "code": "7694.RBS.709",
+          "name": "Prasarana Air Baku Paisu Lalamo"
+        }
+      ]
+    }
+  ]
+};
