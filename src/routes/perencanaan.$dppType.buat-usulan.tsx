@@ -73,6 +73,11 @@ function Form({ dppType }: { dppType: DppType }) {
   const [kegiatan, setKegiatan] = useState<string>("");
   const [sasaranKegiatan, setSasaranKegiatan] = useState<string>("");
   const [indikatorSK, setIndikatorSK] = useState<string>("");
+  const [kro, setKro] = useState<string>("");
+  const [ro, setRo] = useState<string>("");
+  const [customRos, setCustomRos] = useState<Record<string, RO[]>>({});
+  const [addingRo, setAddingRo] = useState(false);
+  const [newRoName, setNewRoName] = useState("");
 
   const [namaKegiatan, setNamaKegiatan] = useState("");
   const [lokasi, setLokasi] = useState("");
@@ -89,6 +94,23 @@ function Form({ dppType }: { dppType: DppType }) {
     kegiatan && sasaranKegiatan
       ? INDIKATOR_SASARAN_KEGIATAN[kegiatan]?.[sasaranKegiatan.slice(0, 2)] ?? []
       : [];
+  const kroOptions = kegiatan ? KRO_BY_KEGIATAN[kegiatan] ?? [] : [];
+  const selectedKro = kroOptions.find((k) => k.code === kro);
+  const roOptions: RO[] = selectedKro
+    ? [...selectedKro.ros, ...(customRos[kro] ?? [])]
+    : [];
+
+  const generateNextRoCode = (): string => {
+    if (!selectedKro) return "";
+    const all = [...selectedKro.ros, ...(customRos[kro] ?? [])];
+    let maxNum = 0;
+    for (const r of all) {
+      const parts = r.code.split(".");
+      const n = parseInt(parts[parts.length - 1], 10);
+      if (!isNaN(n) && n > maxNum) maxNum = n;
+    }
+    return `${kro}.${String(maxNum + 1).padStart(3, "0")}`;
+  };
 
   const checklist = useMemo(() => {
     const hasTeknis = files.some((f) => f.tipe === "teknis");
