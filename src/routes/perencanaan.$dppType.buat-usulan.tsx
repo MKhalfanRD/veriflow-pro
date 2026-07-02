@@ -225,6 +225,87 @@ function Form({ dppType }: { dppType: DppType }) {
               disabled={!sasaranKegiatan}
               span={2}
             />
+            {kroOptions.length > 0 && (
+              <SelectField
+                label="KRO (Klasifikasi Rincian Output)"
+                value={kro}
+                onChange={(v) => { setKro(v); setRo(""); setAddingRo(false); }}
+                options={kroOptions.map((k) => ({ value: k.code, label: `${k.code} — ${k.name}` }))}
+                placeholder={kegiatan ? "-- Pilih KRO --" : "Pilih Kegiatan dulu"}
+                disabled={!kegiatan}
+                span={2}
+              />
+            )}
+            {kroOptions.length > 0 && (
+              <div className="md:col-span-2">
+                <div className="flex items-center justify-between mb-1.5">
+                  <Label>RO (Rincian Output)</Label>
+                  {kro && !addingRo && (
+                    <button
+                      type="button"
+                      onClick={() => { setAddingRo(true); setNewRoName(""); }}
+                      className="inline-flex items-center gap-1 text-[11px] font-semibold text-brand hover:underline"
+                    >
+                      <Plus className="size-3" /> Tambah RO baru
+                    </button>
+                  )}
+                </div>
+                <select
+                  value={ro}
+                  onChange={(e) => setRo(e.target.value)}
+                  disabled={!kro}
+                  className="w-full border border-border rounded-md px-3 py-2 text-sm bg-background focus:outline-none focus:ring-1 focus:ring-brand disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <option value="">{kro ? "-- Pilih RO --" : "Pilih KRO dulu"}</option>
+                  {roOptions.map((r) => (
+                    <option key={r.code} value={r.code}>{r.code} — {r.name}</option>
+                  ))}
+                </select>
+                {addingRo && (
+                  <div className="mt-3 p-3 rounded-lg border border-brand/30 bg-brand/5 space-y-2">
+                    <div className="text-[10px] font-semibold uppercase tracking-wider text-brand">Tambah RO Baru</div>
+                    <div className="flex flex-col md:flex-row gap-2">
+                      <div className="md:w-40">
+                        <div className="text-[10px] text-muted-foreground mb-1">Kode (otomatis)</div>
+                        <div className="px-3 py-2 rounded-md bg-background border border-border font-mono text-sm">
+                          {generateNextRoCode()}
+                        </div>
+                      </div>
+                      <div className="flex-1">
+                        <div className="text-[10px] text-muted-foreground mb-1">Nama RO</div>
+                        <input
+                          value={newRoName}
+                          onChange={(e) => setNewRoName(e.target.value)}
+                          placeholder="Isi nama RO baru..."
+                          className="w-full border border-border rounded-md px-3 py-2 text-sm bg-background focus:outline-none focus:ring-1 focus:ring-brand"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex gap-2 justify-end">
+                      <button
+                        type="button"
+                        onClick={() => { setAddingRo(false); setNewRoName(""); }}
+                        className="px-3 py-1.5 rounded-md text-xs font-semibold border border-border hover:bg-muted"
+                      >Batal</button>
+                      <button
+                        type="button"
+                        disabled={newRoName.trim().length < 3}
+                        onClick={() => {
+                          const code = generateNextRoCode();
+                          const newRo: RO = { code, name: newRoName.trim() };
+                          setCustomRos((p) => ({ ...p, [kro]: [...(p[kro] ?? []), newRo] }));
+                          setRo(code);
+                          setAddingRo(false);
+                          setNewRoName("");
+                          toast.success("RO baru ditambahkan", { description: `${code} — ${newRo.name}` });
+                        }}
+                        className="px-3 py-1.5 rounded-md text-xs font-semibold bg-brand text-brand-foreground disabled:opacity-40 disabled:cursor-not-allowed"
+                      >Simpan RO</button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </Grid>
         </Section>
 
