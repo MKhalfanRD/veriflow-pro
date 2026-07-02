@@ -13,7 +13,7 @@ import {
   type Usulan,
 } from "@/lib/mock-data";
 import { DppPageLayout } from "@/components/dpp-page-layout";
-import { Check, Upload, FileText, X, AlertCircle, ShieldAlert } from "lucide-react";
+import { Check, Upload, FileText, X, AlertCircle, ShieldAlert, Plus } from "lucide-react";
 import { toast } from "sonner";
 import {
   PROGRAM_OPTIONS,
@@ -22,6 +22,8 @@ import {
   KEGIATAN_LIST,
   SASARAN_KEGIATAN,
   INDIKATOR_SASARAN_KEGIATAN,
+  KRO_BY_KEGIATAN,
+  type RO,
 } from "@/lib/program-kegiatan";
 
 export const Route = createFileRoute("/perencanaan/$dppType/buat-usulan")({
@@ -71,6 +73,11 @@ function Form({ dppType }: { dppType: DppType }) {
   const [kegiatan, setKegiatan] = useState<string>("");
   const [sasaranKegiatan, setSasaranKegiatan] = useState<string>("");
   const [indikatorSK, setIndikatorSK] = useState<string>("");
+  const [kro, setKro] = useState<string>("");
+  const [ro, setRo] = useState<string>("");
+  const [customRos, setCustomRos] = useState<Record<string, RO[]>>({});
+  const [addingRo, setAddingRo] = useState(false);
+  const [newRoName, setNewRoName] = useState("");
 
   const [namaKegiatan, setNamaKegiatan] = useState("");
   const [lokasi, setLokasi] = useState("");
@@ -87,6 +94,23 @@ function Form({ dppType }: { dppType: DppType }) {
     kegiatan && sasaranKegiatan
       ? INDIKATOR_SASARAN_KEGIATAN[kegiatan]?.[sasaranKegiatan.slice(0, 2)] ?? []
       : [];
+  const kroOptions = kegiatan ? KRO_BY_KEGIATAN[kegiatan] ?? [] : [];
+  const selectedKro = kroOptions.find((k) => k.code === kro);
+  const roOptions: RO[] = selectedKro
+    ? [...selectedKro.ros, ...(customRos[kro] ?? [])]
+    : [];
+
+  const generateNextRoCode = (): string => {
+    if (!selectedKro) return "";
+    const all = [...selectedKro.ros, ...(customRos[kro] ?? [])];
+    let maxNum = 0;
+    for (const r of all) {
+      const parts = r.code.split(".");
+      const n = parseInt(parts[parts.length - 1], 10);
+      if (!isNaN(n) && n > maxNum) maxNum = n;
+    }
+    return `${kro}.${String(maxNum + 1).padStart(3, "0")}`;
+  };
 
   const checklist = useMemo(() => {
     const hasTeknis = files.some((f) => f.tipe === "teknis");
@@ -98,6 +122,12 @@ function Form({ dppType }: { dppType: DppType }) {
       { label: "Kegiatan dipilih", done: !!kegiatan },
       { label: "Sasaran Kegiatan dipilih", done: !!sasaranKegiatan },
       { label: "Indikator Sasaran Kegiatan diisi", done: indikatorSK.trim().length >= 3 },
+      ...(kroOptions.length > 0
+        ? [
+            { label: "KRO dipilih", done: !!kro },
+            { label: "RO dipilih", done: !!ro },
+          ]
+        : []),
       { label: "Nama kegiatan diisi", done: namaKegiatan.trim().length >= 5 },
       { label: "Lokasi kegiatan diisi", done: lokasi.trim().length >= 3 },
       { label: "Deskripsi minimal 30 karakter", done: deskripsi.trim().length >= 30 },
@@ -108,7 +138,7 @@ function Form({ dppType }: { dppType: DppType }) {
       { label: "Dokumen teknis diunggah", done: hasTeknis },
       { label: "Dokumen administrasi diunggah", done: hasAdmin },
     ];
-  }, [program, sasaranProgram, indikatorSP, kegiatan, sasaranKegiatan, indikatorSK, namaKegiatan, lokasi, deskripsi, anggaran, tahun, balai, prioritas, files]);
+  }, [program, sasaranProgram, indikatorSP, kegiatan, sasaranKegiatan, indikatorSK, kro, ro, kroOptions.length, namaKegiatan, lokasi, deskripsi, anggaran, tahun, balai, prioritas, files]);
 
   const completedCount = checklist.filter((c) => c.done).length;
   const isComplete = completedCount === checklist.length;
@@ -172,7 +202,7 @@ function Form({ dppType }: { dppType: DppType }) {
             <SelectField
               label="Kegiatan"
               value={kegiatan}
-              onChange={(v) => { setKegiatan(v); setSasaranKegiatan(""); setIndikatorSK(""); }}
+              onChange={(v) => { setKegiatan(v); setSasaranKegiatan(""); setIndikatorSK(""); setKro(""); setRo(""); setAddingRo(false); }}
               options={KEGIATAN_LIST.map((k) => ({ value: k.kode, label: `${k.kode} — ${k.nama}` }))}
               placeholder="-- Pilih Kegiatan --"
               span={2}
@@ -195,6 +225,87 @@ function Form({ dppType }: { dppType: DppType }) {
               disabled={!sasaranKegiatan}
               span={2}
             />
+            {kroOptions.length > 0 && (
+              <SelectField
+                label="KRO (Klasifikasi Rincian Output)"
+                value={kro}
+                onChange={(v) => { setKro(v); setRo(""); setAddingRo(false); }}
+                options={kroOptions.map((k) => ({ value: k.code, label: `${k.code} — ${k.name}` }))}
+                placeholder={kegiatan ? "-- Pilih KRO --" : "Pilih Kegiatan dulu"}
+                disabled={!kegiatan}
+                span={2}
+              />
+            )}
+            {kroOptions.length > 0 && (
+              <div className="md:col-span-2">
+                <div className="flex items-center justify-between mb-1.5">
+                  <Label>RO (Rincian Output)</Label>
+                  {kro && !addingRo && (
+                    <button
+                      type="button"
+                      onClick={() => { setAddingRo(true); setNewRoName(""); }}
+                      className="inline-flex items-center gap-1 text-[11px] font-semibold text-brand hover:underline"
+                    >
+                      <Plus className="size-3" /> Tambah RO baru
+                    </button>
+                  )}
+                </div>
+                <select
+                  value={ro}
+                  onChange={(e) => setRo(e.target.value)}
+                  disabled={!kro}
+                  className="w-full border border-border rounded-md px-3 py-2 text-sm bg-background focus:outline-none focus:ring-1 focus:ring-brand disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <option value="">{kro ? "-- Pilih RO --" : "Pilih KRO dulu"}</option>
+                  {roOptions.map((r) => (
+                    <option key={r.code} value={r.code}>{r.code} — {r.name}</option>
+                  ))}
+                </select>
+                {addingRo && (
+                  <div className="mt-3 p-3 rounded-lg border border-brand/30 bg-brand/5 space-y-2">
+                    <div className="text-[10px] font-semibold uppercase tracking-wider text-brand">Tambah RO Baru</div>
+                    <div className="flex flex-col md:flex-row gap-2">
+                      <div className="md:w-40">
+                        <div className="text-[10px] text-muted-foreground mb-1">Kode (otomatis)</div>
+                        <div className="px-3 py-2 rounded-md bg-background border border-border font-mono text-sm">
+                          {generateNextRoCode()}
+                        </div>
+                      </div>
+                      <div className="flex-1">
+                        <div className="text-[10px] text-muted-foreground mb-1">Nama RO</div>
+                        <input
+                          value={newRoName}
+                          onChange={(e) => setNewRoName(e.target.value)}
+                          placeholder="Isi nama RO baru..."
+                          className="w-full border border-border rounded-md px-3 py-2 text-sm bg-background focus:outline-none focus:ring-1 focus:ring-brand"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex gap-2 justify-end">
+                      <button
+                        type="button"
+                        onClick={() => { setAddingRo(false); setNewRoName(""); }}
+                        className="px-3 py-1.5 rounded-md text-xs font-semibold border border-border hover:bg-muted"
+                      >Batal</button>
+                      <button
+                        type="button"
+                        disabled={newRoName.trim().length < 3}
+                        onClick={() => {
+                          const code = generateNextRoCode();
+                          const newRo: RO = { code, name: newRoName.trim() };
+                          setCustomRos((p) => ({ ...p, [kro]: [...(p[kro] ?? []), newRo] }));
+                          setRo(code);
+                          setAddingRo(false);
+                          setNewRoName("");
+                          toast.success("RO baru ditambahkan", { description: `${code} — ${newRo.name}` });
+                        }}
+                        className="px-3 py-1.5 rounded-md text-xs font-semibold bg-brand text-brand-foreground disabled:opacity-40 disabled:cursor-not-allowed"
+                      >Simpan RO</button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </Grid>
         </Section>
 
