@@ -13,7 +13,7 @@ import {
   type Usulan,
 } from "@/lib/mock-data";
 import { DppPageLayout } from "@/components/dpp-page-layout";
-import { Check, Upload, FileText, X, AlertCircle, ShieldAlert } from "lucide-react";
+import { Check, Upload, FileText, X, AlertCircle, ShieldAlert, Plus } from "lucide-react";
 import { toast } from "sonner";
 import {
   PROGRAM_OPTIONS,
@@ -22,6 +22,8 @@ import {
   KEGIATAN_LIST,
   SASARAN_KEGIATAN,
   INDIKATOR_SASARAN_KEGIATAN,
+  KRO_BY_KEGIATAN,
+  type RO,
 } from "@/lib/program-kegiatan";
 
 export const Route = createFileRoute("/perencanaan/$dppType/buat-usulan")({
