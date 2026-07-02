@@ -138,7 +138,7 @@ function Form({ dppType }: { dppType: DppType }) {
       { label: "Dokumen teknis diunggah", done: hasTeknis },
       { label: "Dokumen administrasi diunggah", done: hasAdmin },
     ];
-  }, [program, sasaranProgram, indikatorSP, kegiatan, sasaranKegiatan, indikatorSK, namaKegiatan, lokasi, deskripsi, anggaran, tahun, balai, prioritas, files]);
+  }, [program, sasaranProgram, indikatorSP, kegiatan, sasaranKegiatan, indikatorSK, kro, ro, kroOptions.length, namaKegiatan, lokasi, deskripsi, anggaran, tahun, balai, prioritas, files]);
 
   const completedCount = checklist.filter((c) => c.done).length;
   const isComplete = completedCount === checklist.length;
