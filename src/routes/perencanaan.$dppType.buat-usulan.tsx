@@ -80,6 +80,7 @@ function Form({ dppType }: { dppType: DppType }) {
   const navigate = useNavigate();
   const { addUsulan, tahunAnggaran } = useAppStore();
 
+  // Struktur Program & Kegiatan
   const [program, setProgram] = useState<string>(PROGRAM_OPTIONS[0]);
   const [sasaranProgram, setSasaranProgram] = useState<string>("");
   const [indikatorSP, setIndikatorSP] = useState<string>("");
@@ -92,12 +93,56 @@ function Form({ dppType }: { dppType: DppType }) {
   const [addingRo, setAddingRo] = useState(false);
   const [newRoName, setNewRoName] = useState("");
 
-  const [namaKegiatan, setNamaKegiatan] = useState("");
-  const [lokasi, setLokasi] = useState("");
-  const [deskripsi, setDeskripsi] = useState("");
-  const [anggaran, setAnggaran] = useState("");
-  const [tahun, setTahun] = useState(tahunAnggaran);
-  const [balai, setBalai] = useState(CURRENT_BALAI);
+  // Satker & Balai
+  const [satker, setSatker] = useState<string>("");
+  const satkerObj = SATUAN_KERJA_LIST.find((s) => s.kode === satker);
+  const balai = satkerObj?.balai ?? CURRENT_BALAI;
+
+  // SBSN
+  const [sbsnJenis, setSbsnJenis] = useState<string>("");
+  const [sbsnNama, setSbsnNama] = useState<string>("");
+  const [tahap, setTahap] = useState<string>("-");
+  const [tahapRomawi, setTahapRomawi] = useState<string>("-");
+
+  // Paket Pekerjaan
+  interface Paket { jenis: string; nama: string }
+  const [paket, setPaket] = useState<Paket[]>([{ jenis: "Fisik", nama: "" }]);
+
+  // Waktu Pelaksanaan
+  const [tglMulai, setTglMulai] = useState<string>("");
+  const [tglSelesai, setTglSelesai] = useState<string>("");
+  const totalHari = diffDays(tglMulai, tglSelesai);
+
+  // Alokasi Anggaran
+  interface Alokasi { jenis: string; nilai: string }
+  const [alokasi, setAlokasi] = useState<Alokasi[]>([{ jenis: "Fisik", nilai: "" }]);
+  const totalAlokasi = alokasi.reduce((sum, a) => sum + Number(a.nilai || 0), 0);
+
+  // Skema Kontrak & Tahun
+  const [skema, setSkema] = useState<string>("Kontrak Tahun Tunggal");
+  const [tahunAkhirJamak, setTahunAkhirJamak] = useState<number>(SBSN_START_YEAR + 1);
+
+  // Pengadaan
+  const [jenisPengadaan, setJenisPengadaan] = useState<string>("");
+
+  // Volume Output
+  interface Output { volume: string; satuan: string }
+  const [outputs, setOutputs] = useState<Output[]>([{ volume: "", satuan: "km" }]);
+  interface YearRow { tahun: number; volume: string; satuan: string }
+  const [outputPerTahun, setOutputPerTahun] = useState<YearRow[]>([{ tahun: SBSN_START_YEAR, volume: "", satuan: "km" }]);
+
+  // Volume Outcome
+  interface Outcome { volume: string; satuan: string }
+  const [outcomes, setOutcomes] = useState<Outcome[]>([{ volume: "", satuan: "Ha" }]);
+  const [outcomePerTahun, setOutcomePerTahun] = useState<YearRow[]>([{ tahun: SBSN_START_YEAR, volume: "", satuan: "Ha" }]);
+
+  // Lokasi
+  const [provinsi, setProvinsi] = useState<string>("");
+  const [kabupaten, setKabupaten] = useState<string>("");
+  const [kecamatan, setKecamatan] = useState<string>("");
+  const [desa, setDesa] = useState<string>("");
+
+  // Legacy fields — kept minimally for Usulan record
   const [prioritas, setPrioritas] = useState<Prioritas>("nasional");
   const [files, setFiles] = useState<UploadFile[]>([]);
 
@@ -109,9 +154,7 @@ function Form({ dppType }: { dppType: DppType }) {
       : [];
   const kroOptions = kegiatan ? KRO_BY_KEGIATAN[kegiatan] ?? [] : [];
   const selectedKro = kroOptions.find((k) => k.code === kro);
-  const roOptions: RO[] = selectedKro
-    ? [...selectedKro.ros, ...(customRos[kro] ?? [])]
-    : [];
+  const roOptions: RO[] = selectedKro ? [...selectedKro.ros, ...(customRos[kro] ?? [])] : [];
 
   const generateNextRoCode = (): string => {
     if (!selectedKro) return "";
@@ -125,33 +168,33 @@ function Form({ dppType }: { dppType: DppType }) {
     return `${kro}.${String(maxNum + 1).padStart(3, "0")}`;
   };
 
+  // Auto-set romawi to "-" when tahap is "-"
+  const effRomawi = tahap === "-" ? "-" : tahapRomawi === "-" ? "" : tahapRomawi;
+  const namaProyekLengkap = [sbsnJenis, sbsnNama, tahap !== "-" ? `Tahap ${effRomawi}` : ""]
+    .filter(Boolean)
+    .join(" ")
+    .trim();
+
   const checklist = useMemo(() => {
     const hasTeknis = files.some((f) => f.tipe === "teknis");
     const hasAdmin = files.some((f) => f.tipe === "administrasi");
     return [
-      { label: "Program dipilih", done: !!program },
-      { label: "Sasaran Program dipilih", done: !!sasaranProgram },
-      { label: "Indikator Sasaran Program dipilih", done: !!indikatorSP },
-      { label: "Kegiatan dipilih", done: !!kegiatan },
-      { label: "Sasaran Kegiatan dipilih", done: !!sasaranKegiatan },
-      { label: "Indikator Sasaran Kegiatan diisi", done: indikatorSK.trim().length >= 3 },
-      ...(kroOptions.length > 0
-        ? [
-            { label: "KRO dipilih", done: !!kro },
-            { label: "RO dipilih", done: !!ro },
-          ]
-        : []),
-      { label: "Nama kegiatan diisi", done: namaKegiatan.trim().length >= 5 },
-      { label: "Lokasi kegiatan diisi", done: lokasi.trim().length >= 3 },
-      { label: "Deskripsi minimal 30 karakter", done: deskripsi.trim().length >= 30 },
-      { label: "Anggaran valid (> 0)", done: Number(anggaran) > 0 },
-      { label: "Tahun pelaksanaan dipilih", done: tahun >= 2024 && tahun <= 2035 },
-      { label: "Balai/Satker dipilih", done: !!balai },
+      { label: "Program & Sasaran Program dipilih", done: !!program && !!sasaranProgram && !!indikatorSP },
+      { label: "Kegiatan & Sasaran Kegiatan dipilih", done: !!kegiatan && !!sasaranKegiatan && !!indikatorSK },
+      { label: "KRO & RO dipilih", done: kroOptions.length === 0 || (!!kro && !!ro) },
+      { label: "Satuan Kerja dipilih", done: !!satker },
+      { label: "Nama Proyek SBSN diisi", done: !!sbsnJenis && sbsnNama.trim().length >= 3 },
+      { label: "Minimal 1 paket pekerjaan", done: paket.some((p) => p.nama.trim().length > 0) },
+      { label: "Waktu pelaksanaan diisi", done: totalHari > 0 },
+      { label: "Alokasi anggaran diisi", done: totalAlokasi > 0 },
+      { label: "Skema kontrak & jenis pengadaan", done: !!skema && !!jenisPengadaan },
+      { label: "Minimal 1 output diisi", done: outputs.some((o) => Number(o.volume) > 0) },
+      { label: "Minimal 1 outcome diisi", done: outcomes.some((o) => Number(o.volume) > 0) },
+      { label: "Lokasi (provinsi & kabupaten) dipilih", done: !!provinsi && !!kabupaten },
       { label: "Tingkat prioritas dipilih", done: !!prioritas },
-      { label: "Dokumen teknis diunggah", done: hasTeknis },
-      { label: "Dokumen administrasi diunggah", done: hasAdmin },
+      { label: "Dokumen teknis & administrasi", done: hasTeknis && hasAdmin },
     ];
-  }, [program, sasaranProgram, indikatorSP, kegiatan, sasaranKegiatan, indikatorSK, kro, ro, kroOptions.length, namaKegiatan, lokasi, deskripsi, anggaran, tahun, balai, prioritas, files]);
+  }, [program, sasaranProgram, indikatorSP, kegiatan, sasaranKegiatan, indikatorSK, kro, ro, kroOptions.length, satker, sbsnJenis, sbsnNama, paket, totalHari, totalAlokasi, skema, jenisPengadaan, outputs, outcomes, provinsi, kabupaten, prioritas, files]);
 
   const completedCount = checklist.filter((c) => c.done).length;
   const isComplete = completedCount === checklist.length;
@@ -166,14 +209,16 @@ function Form({ dppType }: { dppType: DppType }) {
   const handleSubmit = () => {
     if (!isComplete) return;
     const nomor = `USL-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 9999)).padStart(4, "0")}${dppType === "perubahan" ? "-R1" : ""}`;
+    const lokasi = [desa, kecamatan, kabupaten, provinsi].filter(Boolean).join(", ");
+    const deskripsi = `${namaProyekLengkap}. Paket: ${paket.map((p) => `${p.jenis}-${p.nama}`).join("; ")}. Skema: ${skema}. Pengadaan: ${jenisPengadaan}.`;
     const newUsulan: Usulan = {
       id: `u_${Date.now()}`,
       nomor,
-      namaKegiatan,
+      namaKegiatan: namaProyekLengkap,
       lokasi,
       deskripsi,
-      anggaran: Number(anggaran),
-      tahun,
+      anggaran: totalAlokasi,
+      tahun: tahunAnggaran,
       balai,
       prioritas,
       status: "menunggu_v1",
@@ -191,7 +236,7 @@ function Form({ dppType }: { dppType: DppType }) {
       <div className="lg:col-span-2 space-y-6">
         <div className="bg-brand/5 border border-brand/20 rounded-xl px-5 py-3 text-xs">
           <span className="font-semibold text-brand">{DPP_LABEL[dppType]}</span>
-          <span className="text-muted-foreground"> · usulan akan masuk ke kategori {DPP_LABEL[dppType]} TA {tahun}</span>
+          <span className="text-muted-foreground"> · usulan akan masuk ke kategori {DPP_LABEL[dppType]} TA {tahunAnggaran}</span>
         </div>
 
         <Section title="Struktur Program & Kegiatan" description="Pemetaan usulan ke struktur program/kegiatan Ditjen SDA">
@@ -238,117 +283,324 @@ function Form({ dppType }: { dppType: DppType }) {
               disabled={!sasaranKegiatan}
               span={2}
             />
-            {kroOptions.length > 0 && (
-              <SelectField
-                label="KRO (Klasifikasi Rincian Output)"
-                value={kro}
-                onChange={(v) => { setKro(v); setRo(""); setAddingRo(false); }}
-                options={kroOptions.map((k) => ({ value: k.code, label: `${k.code} — ${k.name}` }))}
-                placeholder={kegiatan ? "-- Pilih KRO --" : "Pilih Kegiatan dulu"}
-                disabled={!kegiatan}
-                span={2}
-              />
-            )}
-            {kroOptions.length > 0 && (
-              <div className="md:col-span-2">
-                <div className="flex items-center justify-between mb-1.5">
-                  <Label>RO (Rincian Output)</Label>
-                  {kro && !addingRo && (
-                    <button
-                      type="button"
-                      onClick={() => { setAddingRo(true); setNewRoName(""); }}
-                      className="inline-flex items-center gap-1 text-[11px] font-semibold text-brand hover:underline"
-                    >
-                      <Plus className="size-3" /> Tambah RO baru
-                    </button>
-                  )}
-                </div>
-                <select
-                  value={ro}
-                  onChange={(e) => setRo(e.target.value)}
-                  disabled={!kro}
-                  className="w-full border border-border rounded-md px-3 py-2 text-sm bg-background focus:outline-none focus:ring-1 focus:ring-brand disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <option value="">{kro ? "-- Pilih RO --" : "Pilih KRO dulu"}</option>
-                  {roOptions.map((r) => (
-                    <option key={r.code} value={r.code}>{r.code} — {r.name}</option>
-                  ))}
-                </select>
-                {addingRo && (
-                  <div className="mt-3 p-3 rounded-lg border border-brand/30 bg-brand/5 space-y-2">
-                    <div className="text-[10px] font-semibold uppercase tracking-wider text-brand">Tambah RO Baru</div>
-                    <div className="flex flex-col md:flex-row gap-2">
-                      <div className="md:w-40">
-                        <div className="text-[10px] text-muted-foreground mb-1">Kode (otomatis)</div>
-                        <div className="px-3 py-2 rounded-md bg-background border border-border font-mono text-sm">
-                          {generateNextRoCode()}
-                        </div>
-                      </div>
-                      <div className="flex-1">
-                        <div className="text-[10px] text-muted-foreground mb-1">Nama RO</div>
-                        <input
-                          value={newRoName}
-                          onChange={(e) => setNewRoName(e.target.value)}
-                          placeholder="Isi nama RO baru..."
-                          className="w-full border border-border rounded-md px-3 py-2 text-sm bg-background focus:outline-none focus:ring-1 focus:ring-brand"
-                        />
-                      </div>
-                    </div>
-                    <div className="flex gap-2 justify-end">
-                      <button
-                        type="button"
-                        onClick={() => { setAddingRo(false); setNewRoName(""); }}
-                        className="px-3 py-1.5 rounded-md text-xs font-semibold border border-border hover:bg-muted"
-                      >Batal</button>
-                      <button
-                        type="button"
-                        disabled={newRoName.trim().length < 3}
-                        onClick={() => {
-                          const code = generateNextRoCode();
-                          const newRo: RO = { code, name: newRoName.trim() };
-                          setCustomRos((p) => ({ ...p, [kro]: [...(p[kro] ?? []), newRo] }));
-                          setRo(code);
-                          setAddingRo(false);
-                          setNewRoName("");
-                          toast.success("RO baru ditambahkan", { description: `${code} — ${newRo.name}` });
-                        }}
-                        className="px-3 py-1.5 rounded-md text-xs font-semibold bg-brand text-brand-foreground disabled:opacity-40 disabled:cursor-not-allowed"
-                      >Simpan RO</button>
-                    </div>
-                  </div>
+            <SelectField
+              label="KRO (Klasifikasi Rincian Output)"
+              value={kro}
+              onChange={(v) => { setKro(v); setRo(""); setAddingRo(false); }}
+              options={kroOptions.map((k) => ({ value: k.code, label: `${k.code} — ${k.name}` }))}
+              placeholder={kegiatan ? (kroOptions.length ? "-- Pilih KRO --" : "Tidak ada KRO untuk kegiatan ini") : "Pilih Kegiatan dulu"}
+              disabled={!kegiatan || kroOptions.length === 0}
+              span={2}
+            />
+            <div className="md:col-span-2">
+              <div className="flex items-center justify-between mb-1.5">
+                <Label>RO (Rincian Output)</Label>
+                {kro && !addingRo && (
+                  <button
+                    type="button"
+                    onClick={() => { setAddingRo(true); setNewRoName(""); }}
+                    className="inline-flex items-center gap-1 text-[11px] font-semibold text-brand hover:underline"
+                  >
+                    <Plus className="size-3" /> Tambah RO baru
+                  </button>
                 )}
               </div>
-            )}
+              <select
+                value={ro}
+                onChange={(e) => setRo(e.target.value)}
+                disabled={!kro}
+                className="w-full border border-border rounded-md px-3 py-2 text-sm bg-background focus:outline-none focus:ring-1 focus:ring-brand disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <option value="">{kro ? "-- Pilih RO --" : "Pilih KRO dulu"}</option>
+                {roOptions.map((r) => (
+                  <option key={r.code} value={r.code}>{r.code} — {r.name}</option>
+                ))}
+              </select>
+              {addingRo && (
+                <div className="mt-3 p-3 rounded-lg border border-brand/30 bg-brand/5 space-y-2">
+                  <div className="text-[10px] font-semibold uppercase tracking-wider text-brand">Tambah RO Baru</div>
+                  <div className="flex flex-col md:flex-row gap-2">
+                    <div className="md:w-40">
+                      <div className="text-[10px] text-muted-foreground mb-1">Kode (otomatis)</div>
+                      <div className="px-3 py-2 rounded-md bg-background border border-border font-mono text-sm">
+                        {generateNextRoCode()}
+                      </div>
+                    </div>
+                    <div className="flex-1">
+                      <div className="text-[10px] text-muted-foreground mb-1">Nama RO</div>
+                      <input
+                        value={newRoName}
+                        onChange={(e) => setNewRoName(e.target.value)}
+                        placeholder="Isi nama RO baru..."
+                        className="w-full border border-border rounded-md px-3 py-2 text-sm bg-background focus:outline-none focus:ring-1 focus:ring-brand"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex gap-2 justify-end">
+                    <button type="button" onClick={() => { setAddingRo(false); setNewRoName(""); }}
+                      className="px-3 py-1.5 rounded-md text-xs font-semibold border border-border hover:bg-muted">Batal</button>
+                    <button
+                      type="button"
+                      disabled={newRoName.trim().length < 3}
+                      onClick={() => {
+                        const code = generateNextRoCode();
+                        const newRo: RO = { code, name: newRoName.trim() };
+                        setCustomRos((p) => ({ ...p, [kro]: [...(p[kro] ?? []), newRo] }));
+                        setRo(code);
+                        setAddingRo(false);
+                        setNewRoName("");
+                        toast.success("RO baru ditambahkan", { description: `${code} — ${newRo.name}` });
+                      }}
+                      className="px-3 py-1.5 rounded-md text-xs font-semibold bg-brand text-brand-foreground disabled:opacity-40 disabled:cursor-not-allowed"
+                    >Simpan RO</button>
+                  </div>
+                </div>
+              )}
+            </div>
           </Grid>
         </Section>
 
-        <Section title="Informasi Kegiatan" description="Identitas dasar usulan proyek">
+        <Section title="Satuan Kerja & Balai" description="Pilih satuan kerja pengusul; balai terisi otomatis">
           <Grid>
-            <Input label="Nama Kegiatan" value={namaKegiatan} onChange={setNamaKegiatan} placeholder="Contoh: Rehabilitasi Bendungan ..." span={2} />
-            <Input label="Lokasi Kegiatan" value={lokasi} onChange={setLokasi} placeholder="Kabupaten, Provinsi" />
-            <NumberInput label="Tahun Pelaksanaan" value={tahun} onChange={setTahun} min={2024} max={2035} />
-          </Grid>
-          <div className="mt-4">
-            <Label>Deskripsi Kegiatan</Label>
-            <textarea
-              value={deskripsi} onChange={(e) => setDeskripsi(e.target.value)} rows={4}
-              placeholder="Jelaskan latar belakang, ruang lingkup, dan target kegiatan minimal 30 karakter..."
-              className="w-full mt-1.5 border border-border rounded-md px-3 py-2 text-sm bg-background focus:outline-none focus:ring-1 focus:ring-brand"
+            <SelectField
+              label="Satuan Kerja"
+              value={satker}
+              onChange={setSatker}
+              options={SATUAN_KERJA_LIST.map((s) => ({ value: s.kode, label: `${s.kode} — ${s.nama}` }))}
+              placeholder="-- Pilih Satuan Kerja --"
             />
-            <div className="text-[10px] text-muted-foreground mt-1">{deskripsi.length} karakter</div>
+            <div>
+              <Label>Balai (otomatis)</Label>
+              <div className="w-full mt-1.5 border border-border rounded-md px-3 py-2 text-sm bg-muted/50 text-foreground">
+                {satker ? balai : <span className="text-muted-foreground">— pilih satuan kerja dulu —</span>}
+              </div>
+            </div>
+          </Grid>
+        </Section>
+
+        <Section title="Nama Proyek SBSN" description="Struktur nama proyek: [Jenis] [Nama] [Tahap ...]">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
+            <div className="md:col-span-3">
+              <Label>Nama Proyek SBSN</Label>
+              <select value={sbsnJenis} onChange={(e) => setSbsnJenis(e.target.value)}
+                className="w-full mt-1.5 border border-border rounded-md px-3 py-2 text-sm bg-background focus:outline-none focus:ring-1 focus:ring-brand">
+                <option value="">-- Pilih --</option>
+                {SBSN_JENIS.map((j) => <option key={j} value={j}>{j}</option>)}
+              </select>
+            </div>
+            <div className="md:col-span-5">
+              <Label>Nama Proyek</Label>
+              <input value={sbsnNama} onChange={(e) => setSbsnNama(e.target.value)} placeholder="Isi nama proyek..."
+                className="w-full mt-1.5 border border-border rounded-md px-3 py-2 text-sm bg-background focus:outline-none focus:ring-1 focus:ring-brand" />
+            </div>
+            <div className="md:col-span-2">
+              <Label>Tahap</Label>
+              <select value={tahap} onChange={(e) => { setTahap(e.target.value); if (e.target.value === "-") setTahapRomawi("-"); else if (tahapRomawi === "-") setTahapRomawi("I"); }}
+                className="w-full mt-1.5 border border-border rounded-md px-3 py-2 text-sm bg-background focus:outline-none focus:ring-1 focus:ring-brand">
+                <option value="-">-</option>
+                <option value="Tahap">Tahap</option>
+              </select>
+            </div>
+            <div className="md:col-span-2">
+              <Label>Romawi</Label>
+              <select value={tahapRomawi} onChange={(e) => setTahapRomawi(e.target.value)} disabled={tahap === "-"}
+                className="w-full mt-1.5 border border-border rounded-md px-3 py-2 text-sm bg-background focus:outline-none focus:ring-1 focus:ring-brand disabled:opacity-50">
+                <option value="-">-</option>
+                {ROMAWI.map((r) => <option key={r} value={r}>{r}</option>)}
+              </select>
+            </div>
+          </div>
+          {namaProyekLengkap && (
+            <div className="mt-3 p-2.5 rounded-md bg-brand/5 border border-brand/20 text-xs">
+              <span className="text-muted-foreground">Preview:</span>{" "}
+              <span className="font-semibold text-brand">{namaProyekLengkap}</span>
+            </div>
+          )}
+        </Section>
+
+        <Section title="Nama Paket Pekerjaan" description="Daftar paket pekerjaan (Fisik/Supervisi)">
+          <div className="space-y-2">
+            <div className="grid grid-cols-12 gap-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+              <div className="col-span-1">No</div>
+              <div className="col-span-3">Jenis Paket</div>
+              <div className="col-span-7">Nama Paket</div>
+              <div className="col-span-1"></div>
+            </div>
+            {paket.map((p, i) => (
+              <div key={i} className="grid grid-cols-12 gap-2 items-center">
+                <div className="col-span-1 text-sm text-muted-foreground pl-2">{i + 1}</div>
+                <div className="col-span-3">
+                  <select value={p.jenis} onChange={(e) => setPaket((arr) => arr.map((r, j) => j === i ? { ...r, jenis: e.target.value } : r))}
+                    className="w-full border border-border rounded-md px-2 py-1.5 text-sm bg-background">
+                    {JENIS_PAKET.map((j) => <option key={j} value={j}>{j}</option>)}
+                  </select>
+                </div>
+                <div className="col-span-7">
+                  <input value={p.nama} onChange={(e) => setPaket((arr) => arr.map((r, j) => j === i ? { ...r, nama: e.target.value } : r))}
+                    placeholder="Nama paket pekerjaan..."
+                    className="w-full border border-border rounded-md px-2 py-1.5 text-sm bg-background" />
+                </div>
+                <div className="col-span-1 flex justify-end">
+                  <button type="button" onClick={() => setPaket((arr) => arr.filter((_, j) => j !== i))} disabled={paket.length === 1}
+                    className="p-1.5 text-muted-foreground hover:text-destructive disabled:opacity-30 disabled:cursor-not-allowed">
+                    <Trash2 className="size-3.5" />
+                  </button>
+                </div>
+              </div>
+            ))}
+            <button type="button" onClick={() => setPaket((p) => [...p, { jenis: "Fisik", nama: "" }])}
+              className="inline-flex items-center gap-1 text-[11px] font-semibold text-brand hover:underline mt-1">
+              <Plus className="size-3" /> Tambah paket
+            </button>
           </div>
         </Section>
 
-        <Section title="Anggaran & Pengusul" description="Pagu anggaran dan unit kerja pengusul">
-          <Grid>
-            <Input label="Anggaran (Rp)" value={anggaran} onChange={setAnggaran} placeholder="0" type="number" />
+        <Section title="Waktu Pelaksanaan" description="Rentang tanggal pelaksanaan pekerjaan">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <div>
-              <Label>Balai/Satker Pengusul</Label>
-              <select value={balai} onChange={(e) => setBalai(e.target.value)}
-                className="w-full mt-1.5 border border-border rounded-md px-3 py-2 text-sm bg-background focus:outline-none focus:ring-1 focus:ring-brand">
-                {BALAI_LIST.map((b) => <option key={b}>{b}</option>)}
+              <Label>Tanggal Mulai</Label>
+              <input type="date" value={tglMulai} onChange={(e) => setTglMulai(e.target.value)}
+                className="w-full mt-1.5 border border-border rounded-md px-3 py-2 text-sm bg-background" />
+            </div>
+            <div>
+              <Label>Tanggal Selesai</Label>
+              <input type="date" value={tglSelesai} onChange={(e) => setTglSelesai(e.target.value)} min={tglMulai}
+                className="w-full mt-1.5 border border-border rounded-md px-3 py-2 text-sm bg-background" />
+            </div>
+            <div>
+              <Label>Total Waktu</Label>
+              <div className="w-full mt-1.5 border border-border rounded-md px-3 py-2 text-sm bg-muted/50 font-semibold">
+                {totalHari > 0 ? `${totalHari} hari` : <span className="text-muted-foreground font-normal">—</span>}
+              </div>
+            </div>
+          </div>
+        </Section>
+
+        <Section title="Alokasi Anggaran" description="Rincian alokasi anggaran per jenis paket">
+          <div className="space-y-2">
+            <div className="grid grid-cols-12 gap-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+              <div className="col-span-1">No</div>
+              <div className="col-span-3">Jenis</div>
+              <div className="col-span-7">Alokasi (Rp)</div>
+              <div className="col-span-1"></div>
+            </div>
+            {alokasi.map((a, i) => (
+              <div key={i} className="grid grid-cols-12 gap-2 items-center">
+                <div className="col-span-1 text-sm text-muted-foreground pl-2">{i + 1}</div>
+                <div className="col-span-3">
+                  <select value={a.jenis} onChange={(e) => setAlokasi((arr) => arr.map((r, j) => j === i ? { ...r, jenis: e.target.value } : r))}
+                    className="w-full border border-border rounded-md px-2 py-1.5 text-sm bg-background">
+                    {JENIS_PAKET.map((j) => <option key={j} value={j}>{j}</option>)}
+                  </select>
+                </div>
+                <div className="col-span-7">
+                  <div className="flex gap-2 items-center">
+                    <input type="number" value={a.nilai} onChange={(e) => setAlokasi((arr) => arr.map((r, j) => j === i ? { ...r, nilai: e.target.value } : r))}
+                      placeholder="0"
+                      className="flex-1 border border-border rounded-md px-2 py-1.5 text-sm bg-background" />
+                    <span className="text-[11px] text-muted-foreground w-40 truncate">{formatRupiah(a.nilai)}</span>
+                  </div>
+                </div>
+                <div className="col-span-1 flex justify-end">
+                  <button type="button" onClick={() => setAlokasi((arr) => arr.filter((_, j) => j !== i))} disabled={alokasi.length === 1}
+                    className="p-1.5 text-muted-foreground hover:text-destructive disabled:opacity-30 disabled:cursor-not-allowed">
+                    <Trash2 className="size-3.5" />
+                  </button>
+                </div>
+              </div>
+            ))}
+            <div className="flex items-center justify-between mt-2">
+              <button type="button" onClick={() => setAlokasi((p) => [...p, { jenis: "Fisik", nilai: "" }])}
+                className="inline-flex items-center gap-1 text-[11px] font-semibold text-brand hover:underline">
+                <Plus className="size-3" /> Tambah alokasi
+              </button>
+              <div className="text-xs">
+                <span className="text-muted-foreground">Total: </span>
+                <span className="font-semibold">{formatRupiah(totalAlokasi)}</span>
+              </div>
+            </div>
+          </div>
+        </Section>
+
+        <Section title="Skema Kontrak & Pengadaan" description="Skema kontrak, tahun anggaran, dan jenis pengadaan">
+          <Grid>
+            <div>
+              <Label>Skema Kontrak</Label>
+              <select value={skema} onChange={(e) => setSkema(e.target.value)}
+                className="w-full mt-1.5 border border-border rounded-md px-3 py-2 text-sm bg-background">
+                {SKEMA_KONTRAK.map((s) => <option key={s} value={s}>{s}</option>)}
               </select>
             </div>
+            <div>
+              <Label>Tahun Anggaran</Label>
+              {skema === "Kontrak Tahun Tunggal" ? (
+                <div className="w-full mt-1.5 border border-border rounded-md px-3 py-2 text-sm bg-muted/50 font-semibold">
+                  {SBSN_START_YEAR} <span className="text-[10px] font-normal text-muted-foreground ml-1">(SYC)</span>
+                </div>
+              ) : (
+                <div className="flex gap-2 mt-1.5">
+                  <div className="flex-1 border border-border rounded-md px-3 py-2 text-sm bg-muted/50 font-semibold">{SBSN_START_YEAR}</div>
+                  <select value={tahunAkhirJamak} onChange={(e) => setTahunAkhirJamak(Number(e.target.value))}
+                    className="flex-1 border border-border rounded-md px-3 py-2 text-sm bg-background">
+                    {[1, 2, 3, 4, 5].map((n) => <option key={n} value={SBSN_START_YEAR + n}>{SBSN_START_YEAR + n}</option>)}
+                  </select>
+                </div>
+              )}
+            </div>
+            <SelectField
+              label="Jenis Pengadaan"
+              value={jenisPengadaan}
+              onChange={setJenisPengadaan}
+              options={JENIS_PENGADAAN.map((j) => ({ value: j, label: j }))}
+              placeholder="-- Pilih Jenis Pengadaan --"
+              span={2}
+            />
+          </Grid>
+        </Section>
+
+        <VolumeSection
+          title="Volume Rencana Output Pekerjaan"
+          note="Contoh: pembangunan jaringan irigasi 30 km merupakan 1 output; pembangunan turap 3 km & kolam retensi 1 unit merupakan 2 output."
+          rows={outputs}
+          setRows={setOutputs as any}
+          perTahun={outputPerTahun}
+          setPerTahun={setOutputPerTahun as any}
+          satuanOptions={SATUAN_OUTPUT as unknown as string[]}
+          skema={skema}
+          labelSingular="Output"
+        />
+
+        <VolumeSection
+          title="Volume Rencana Outcome Pekerjaan"
+          note="Contoh: irigasi 1000 Ha merupakan 1 outcome; pembangunan turap melindungi 200 Ha sawah dan 20 Ha kawasan pemukiman merupakan 2 outcome."
+          rows={outcomes}
+          setRows={setOutcomes as any}
+          perTahun={outcomePerTahun}
+          setPerTahun={setOutcomePerTahun as any}
+          satuanOptions={SATUAN_OUTCOME as unknown as string[]}
+          skema={skema}
+          labelSingular="Outcome"
+        />
+
+        <Section title="Lokasi" description="Lokasi pelaksanaan proyek">
+          <Grid>
+            <SelectField
+              label="Provinsi"
+              value={provinsi}
+              onChange={(v) => { setProvinsi(v); setKabupaten(""); }}
+              options={PROVINSI_LIST.map((p) => ({ value: p, label: p }))}
+              placeholder="-- Pilih Provinsi --"
+            />
+            <SelectField
+              label="Kabupaten/Kota"
+              value={kabupaten}
+              onChange={setKabupaten}
+              options={(provinsi ? PROVINSI_KABUPATEN[provinsi] ?? [] : []).map((k) => ({ value: k, label: k }))}
+              placeholder={provinsi ? "-- Pilih Kabupaten/Kota --" : "Pilih Provinsi dulu"}
+              disabled={!provinsi}
+            />
+            <Input label="Kecamatan" value={kecamatan} onChange={setKecamatan} placeholder="Nama kecamatan" />
+            <Input label="Desa/Kelurahan" value={desa} onChange={setDesa} placeholder="Nama desa/kelurahan" />
           </Grid>
         </Section>
 
@@ -363,11 +615,6 @@ function Form({ dppType }: { dppType: DppType }) {
                     <span className={`text-[10px] font-bold uppercase tracking-wider ${active ? "text-brand" : "text-muted-foreground"}`}>{PRIORITAS_LABEL[p]}</span>
                     <span className={`size-6 rounded-full flex items-center justify-center text-[11px] font-bold font-mono ${active ? "bg-brand text-brand-foreground" : "bg-muted text-muted-foreground"}`}>{PRIORITAS_NILAI[p]}</span>
                   </div>
-                  <p className="text-xs text-muted-foreground">
-                    {p === "nasional" && "Tercantum dalam dokumen prioritas pembangunan nasional."}
-                    {p === "menteri" && "Usulan atas arahan langsung dari Menteri."}
-                    {p === "dirjen" && "Usulan dari Direktur Jenderal terkait."}
-                  </p>
                 </button>
               );
             })}
@@ -445,6 +692,109 @@ function Form({ dppType }: { dppType: DppType }) {
         </div>
       </aside>
     </div>
+  );
+}
+
+interface VolumeRow { volume: string; satuan: string }
+interface YearVolumeRow { tahun: number; volume: string; satuan: string }
+
+function VolumeSection({
+  title, note, rows, setRows, perTahun, setPerTahun, satuanOptions, skema, labelSingular,
+}: {
+  title: string;
+  note: string;
+  rows: VolumeRow[];
+  setRows: (fn: (prev: VolumeRow[]) => VolumeRow[]) => void;
+  perTahun: YearVolumeRow[];
+  setPerTahun: (fn: (prev: YearVolumeRow[]) => YearVolumeRow[]) => void;
+  satuanOptions: string[];
+  skema: string;
+  labelSingular: string;
+}) {
+  const isJamak = skema === "Kontrak Tahun Jamak";
+  const defaultSatuan = satuanOptions[0];
+  return (
+    <Section title={title} description={note}>
+      <div className="space-y-2">
+        <div className="grid grid-cols-12 gap-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+          <div className="col-span-3">{labelSingular}</div>
+          <div className="col-span-5">Volume</div>
+          <div className="col-span-3">Satuan</div>
+          <div className="col-span-1"></div>
+        </div>
+        {rows.map((r, i) => (
+          <div key={i} className="grid grid-cols-12 gap-2 items-center">
+            <div className="col-span-3 text-sm font-medium pl-2">{labelSingular} {i + 1}</div>
+            <div className="col-span-5">
+              <input type="number" step="0.01" value={r.volume} onChange={(e) => setRows((arr) => arr.map((x, j) => j === i ? { ...x, volume: e.target.value } : x))}
+                placeholder="0" className="w-full border border-border rounded-md px-2 py-1.5 text-sm bg-background" />
+            </div>
+            <div className="col-span-3">
+              <select value={r.satuan} onChange={(e) => setRows((arr) => arr.map((x, j) => j === i ? { ...x, satuan: e.target.value } : x))}
+                className="w-full border border-border rounded-md px-2 py-1.5 text-sm bg-background">
+                {satuanOptions.map((s) => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </div>
+            <div className="col-span-1 flex justify-end">
+              <button type="button" onClick={() => setRows((arr) => arr.filter((_, j) => j !== i))} disabled={rows.length === 1}
+                className="p-1.5 text-muted-foreground hover:text-destructive disabled:opacity-30 disabled:cursor-not-allowed">
+                <Trash2 className="size-3.5" />
+              </button>
+            </div>
+          </div>
+        ))}
+        <button type="button" onClick={() => setRows((p) => [...p, { volume: "", satuan: defaultSatuan }])}
+          className="inline-flex items-center gap-1 text-[11px] font-semibold text-brand hover:underline mt-1">
+          <Plus className="size-3" /> Tambah {labelSingular.toLowerCase()}
+        </button>
+      </div>
+
+      <div className="mt-6 pt-5 border-t border-border">
+        <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-3">
+          Rencana {labelSingular} Per Tahun {isJamak ? "(Tahun Jamak)" : "(Tahun Tunggal)"}
+        </div>
+        <div className="space-y-2">
+          <div className="grid grid-cols-12 gap-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+            <div className="col-span-3">Tahun</div>
+            <div className="col-span-5">Volume</div>
+            <div className="col-span-3">Satuan</div>
+            <div className="col-span-1"></div>
+          </div>
+          {perTahun.map((r, i) => (
+            <div key={i} className="grid grid-cols-12 gap-2 items-center">
+              <div className="col-span-3 text-sm font-semibold pl-2">{r.tahun}</div>
+              <div className="col-span-5">
+                <input type="number" step="0.01" value={r.volume} onChange={(e) => setPerTahun((arr) => arr.map((x, j) => j === i ? { ...x, volume: e.target.value } : x))}
+                  placeholder="0" className="w-full border border-border rounded-md px-2 py-1.5 text-sm bg-background" />
+              </div>
+              <div className="col-span-3">
+                <select value={r.satuan} onChange={(e) => setPerTahun((arr) => arr.map((x, j) => j === i ? { ...x, satuan: e.target.value } : x))}
+                  className="w-full border border-border rounded-md px-2 py-1.5 text-sm bg-background">
+                  {satuanOptions.map((s) => <option key={s} value={s}>{s}</option>)}
+                </select>
+              </div>
+              <div className="col-span-1 flex justify-end">
+                {isJamak && (
+                  <button type="button" onClick={() => setPerTahun((arr) => arr.filter((_, j) => j !== i))} disabled={perTahun.length === 1}
+                    className="p-1.5 text-muted-foreground hover:text-destructive disabled:opacity-30 disabled:cursor-not-allowed">
+                    <Trash2 className="size-3.5" />
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
+          {isJamak && (
+            <button type="button" onClick={() => setPerTahun((p) => {
+              const lastYear = p.length ? p[p.length - 1].tahun : SBSN_START_YEAR - 1;
+              return [...p, { tahun: lastYear + 1, volume: "", satuan: defaultSatuan }];
+            })}
+              className="inline-flex items-center gap-1 text-[11px] font-semibold text-brand hover:underline mt-1">
+              <Plus className="size-3" /> Tambah tahun
+            </button>
+          )}
+        </div>
+      </div>
+    </Section>
   );
 }
 
