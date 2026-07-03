@@ -2,18 +2,16 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useAppStore } from "@/lib/app-store";
 import {
-  BALAI_LIST,
   CURRENT_BALAI,
   DPP_LABEL,
   PRIORITAS_LABEL,
   PRIORITAS_NILAI,
-  
   type DppType,
   type Prioritas,
   type Usulan,
 } from "@/lib/mock-data";
 import { DppPageLayout } from "@/components/dpp-page-layout";
-import { Check, Upload, FileText, X, AlertCircle, ShieldAlert, Plus } from "lucide-react";
+import { Check, Upload, FileText, X, AlertCircle, ShieldAlert, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import {
   PROGRAM_OPTIONS,
@@ -25,6 +23,21 @@ import {
   KRO_BY_KEGIATAN,
   type RO,
 } from "@/lib/program-kegiatan";
+import {
+  SATUAN_KERJA_LIST,
+  PROVINSI_LIST,
+  PROVINSI_KABUPATEN,
+  SBSN_JENIS,
+  ROMAWI,
+  JENIS_PAKET,
+  SATUAN_OUTPUT,
+  SATUAN_OUTCOME,
+  SKEMA_KONTRAK,
+  JENIS_PENGADAAN,
+  SBSN_START_YEAR,
+  formatRupiah,
+  diffDays,
+} from "@/lib/sda-lookup";
 
 export const Route = createFileRoute("/perencanaan/$dppType/buat-usulan")({
   component: Page,
