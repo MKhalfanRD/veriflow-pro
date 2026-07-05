@@ -114,10 +114,9 @@ function Form({ dppType }: { dppType: DppType }) {
   const [tglSelesai, setTglSelesai] = useState<string>("");
   const totalHari = diffDays(tglMulai, tglSelesai);
 
-  // Alokasi Anggaran
-  interface Alokasi { jenis: string; nilai: string }
-  const [alokasi, setAlokasi] = useState<Alokasi[]>([{ jenis: "Fisik", nilai: "" }]);
-  const totalAlokasi = alokasi.reduce((sum, a) => sum + Number(a.nilai || 0), 0);
+  // Alokasi Anggaran — nilai per paket (indeks sinkron dengan paket)
+  const [alokasiNilai, setAlokasiNilai] = useState<string[]>([""]);
+  const totalAlokasi = paket.reduce((sum, _p, i) => sum + Number(alokasiNilai[i] || 0), 0);
 
   // Skema Kontrak & Tahun
   const [skema, setSkema] = useState<string>("Kontrak Tahun Tunggal");
