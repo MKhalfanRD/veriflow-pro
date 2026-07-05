@@ -482,7 +482,12 @@ function Form({ dppType }: { dppType: DppType }) {
             <div>
               <Label>Total Waktu</Label>
               <div className="w-full mt-1.5 border border-border rounded-md px-3 py-2 text-sm bg-muted/50 font-semibold">
-                {totalHari > 0 ? `${totalHari} hari` : <span className="text-muted-foreground font-normal">—</span>}
+                {totalHari > 0 ? (
+                  <>
+                    <div>{totalHari} hari</div>
+                    <div className="text-[11px] font-normal text-muted-foreground mt-0.5">{formatDuration(totalHari)}</div>
+                  </>
+                ) : <span className="text-muted-foreground font-normal">—</span>}
               </div>
             </div>
           </div>
