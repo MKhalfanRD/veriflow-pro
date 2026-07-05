@@ -476,44 +476,51 @@ function Form({ dppType }: { dppType: DppType }) {
           </div>
         </Section>
 
-        <Section title="Alokasi Anggaran" description="Rincian alokasi anggaran per jenis paket">
+        <Section title="Alokasi Anggaran" description="Nilai alokasi diambil otomatis dari daftar paket pekerjaan — cukup isi nilainya">
           <div className="space-y-2">
             <div className="grid grid-cols-12 gap-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
               <div className="col-span-1">No</div>
-              <div className="col-span-3">Jenis</div>
-              <div className="col-span-7">Alokasi (Rp)</div>
-              <div className="col-span-1"></div>
+              <div className="col-span-2">Jenis</div>
+              <div className="col-span-4">Nama Paket</div>
+              <div className="col-span-5">Alokasi (Rp)</div>
             </div>
-            {alokasi.map((a, i) => (
-              <div key={i} className="grid grid-cols-12 gap-2 items-center">
-                <div className="col-span-1 text-sm text-muted-foreground pl-2">{i + 1}</div>
-                <div className="col-span-3">
-                  <select value={a.jenis} onChange={(e) => setAlokasi((arr) => arr.map((r, j) => j === i ? { ...r, jenis: e.target.value } : r))}
-                    className="w-full border border-border rounded-md px-2 py-1.5 text-sm bg-background">
-                    {JENIS_PAKET.map((j) => <option key={j} value={j}>{j}</option>)}
-                  </select>
-                </div>
-                <div className="col-span-7">
-                  <div className="flex gap-2 items-center">
-                    <input type="number" value={a.nilai} onChange={(e) => setAlokasi((arr) => arr.map((r, j) => j === i ? { ...r, nilai: e.target.value } : r))}
-                      placeholder="0"
-                      className="flex-1 border border-border rounded-md px-2 py-1.5 text-sm bg-background" />
-                    <span className="text-[11px] text-muted-foreground w-40 truncate">{formatRupiah(a.nilai)}</span>
-                  </div>
-                </div>
-                <div className="col-span-1 flex justify-end">
-                  <button type="button" onClick={() => setAlokasi((arr) => arr.filter((_, j) => j !== i))} disabled={alokasi.length === 1}
-                    className="p-1.5 text-muted-foreground hover:text-destructive disabled:opacity-30 disabled:cursor-not-allowed">
-                    <Trash2 className="size-3.5" />
-                  </button>
-                </div>
+            {paket.length === 0 || paket.every((p) => !p.nama.trim()) ? (
+              <div className="text-xs text-muted-foreground italic px-2 py-3 border border-dashed border-border rounded-md text-center">
+                Isi Nama Paket Pekerjaan terlebih dahulu — daftar paket akan otomatis muncul di sini.
               </div>
-            ))}
-            <div className="flex items-center justify-between mt-2">
-              <button type="button" onClick={() => setAlokasi((p) => [...p, { jenis: "Fisik", nilai: "" }])}
-                className="inline-flex items-center gap-1 text-[11px] font-semibold text-brand hover:underline">
-                <Plus className="size-3" /> Tambah alokasi
-              </button>
+            ) : (
+              paket.map((p, i) => {
+                const nilai = alokasiNilai[i] ?? "";
+                return (
+                  <div key={i} className="grid grid-cols-12 gap-2 items-center">
+                    <div className="col-span-1 text-sm text-muted-foreground pl-2">{i + 1}</div>
+                    <div className="col-span-2 text-xs px-2 py-1.5 rounded-md bg-muted/50 border border-border truncate">{p.jenis}</div>
+                    <div className="col-span-4 text-xs px-2 py-1.5 rounded-md bg-muted/50 border border-border truncate" title={p.nama}>
+                      {p.nama.trim() || <span className="text-muted-foreground italic">— belum diisi —</span>}
+                    </div>
+                    <div className="col-span-5">
+                      <div className="flex gap-2 items-center">
+                        <input
+                          type="number"
+                          value={nilai}
+                          disabled={!p.nama.trim()}
+                          onChange={(e) => setAlokasiNilai((arr) => {
+                            const next = [...arr];
+                            while (next.length < paket.length) next.push("");
+                            next[i] = e.target.value;
+                            return next;
+                          })}
+                          placeholder="0"
+                          className="flex-1 border border-border rounded-md px-2 py-1.5 text-sm bg-background disabled:opacity-50"
+                        />
+                        <span className="text-[11px] text-muted-foreground w-40 truncate">{formatRupiah(nilai)}</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+            <div className="flex items-center justify-end mt-2">
               <div className="text-xs">
                 <span className="text-muted-foreground">Total: </span>
                 <span className="font-semibold">{formatRupiah(totalAlokasi)}</span>
