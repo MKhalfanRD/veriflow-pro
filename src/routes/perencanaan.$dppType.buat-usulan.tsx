@@ -133,8 +133,8 @@ function Form({ dppType }: { dppType: DppType }) {
 
   // Volume Outcome
   interface Outcome { volume: string; satuan: string }
-  const [outcomes, setOutcomes] = useState<Outcome[]>([{ volume: "", satuan: "Ha" }]);
-  const [outcomePerTahun, setOutcomePerTahun] = useState<YearRow[]>([{ tahun: SBSN_START_YEAR, volume: "", satuan: "Ha" }]);
+  const [outcomes, setOutcomes] = useState<Outcome[]>([{ volume: "", satuan: "ha" }]);
+  const [outcomePerTahun, setOutcomePerTahun] = useState<YearRow[]>([{ tahun: SBSN_START_YEAR, volume: "", satuan: "ha" }]);
 
   // Lokasi
   const [provinsi, setProvinsi] = useState<string>("");
