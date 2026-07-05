@@ -58,7 +58,7 @@ export const SBSN_JENIS = ["Rehabilitasi", "Pembangunan", "Peningkatan", "Optima
 export const ROMAWI = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"] as const;
 export const JENIS_PAKET = ["Fisik", "Supervisi"] as const;
 export const SATUAN_OUTPUT = ["km", "unit", "m3", "dt"] as const;
-export const SATUAN_OUTCOME = ["Ha", "dt", "m3"] as const;
+export const SATUAN_OUTCOME = ["ha", "m3/dt", "m3"] as const;
 export const SKEMA_KONTRAK = ["Kontrak Tahun Tunggal", "Kontrak Tahun Jamak"] as const;
 export const JENIS_PENGADAAN = ["Kontraktual", "Pengadaan Langsung", "Swakelola"] as const;
 
