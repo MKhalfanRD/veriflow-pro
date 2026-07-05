@@ -58,7 +58,7 @@ export const SBSN_JENIS = ["Rehabilitasi", "Pembangunan", "Peningkatan", "Optima
 export const ROMAWI = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"] as const;
 export const JENIS_PAKET = ["Fisik", "Supervisi"] as const;
 export const SATUAN_OUTPUT = ["km", "unit", "m3", "dt"] as const;
-export const SATUAN_OUTCOME = ["Ha", "dt", "m3"] as const;
+export const SATUAN_OUTCOME = ["ha", "m3/dt", "m3"] as const;
 export const SKEMA_KONTRAK = ["Kontrak Tahun Tunggal", "Kontrak Tahun Jamak"] as const;
 export const JENIS_PENGADAAN = ["Kontraktual", "Pengadaan Langsung", "Swakelola"] as const;
 
@@ -76,4 +76,16 @@ export function diffDays(start: string, end: string): number {
   const e = new Date(end).getTime();
   if (isNaN(s) || isNaN(e) || e < s) return 0;
   return Math.round((e - s) / 86400000) + 1;
+}
+
+export function formatDuration(days: number): string {
+  if (!days || days <= 0) return "";
+  const months = Math.floor(days / 30);
+  const remDays = days % 30;
+  const hours = days * 24;
+  const parts: string[] = [];
+  if (months > 0) parts.push(`${months} bulan${remDays > 0 ? ` ${remDays} hari` : ""}`);
+  else parts.push(`${days} hari`);
+  parts.push(`${hours.toLocaleString("id-ID")} jam`);
+  return parts.join(" · ");
 }
