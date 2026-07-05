@@ -79,7 +79,7 @@ function Page() {
 
 function Form({ dppType }: { dppType: DppType }) {
   const navigate = useNavigate();
-  const { addUsulan, tahunAnggaran } = useAppStore();
+  const { addUsulan, tahunAnggaran, usulan } = useAppStore();
 
   // Struktur Program & Kegiatan
   const [program, setProgram] = useState<string>(PROGRAM_OPTIONS[0]);
