@@ -175,6 +175,12 @@ function Form({ dppType }: { dppType: DppType }) {
     .join(" ")
     .trim();
 
+  const isDuplicateNama = useMemo(() => {
+    const n = namaProyekLengkap.trim().toLowerCase();
+    if (!n) return false;
+    return usulan.some((u) => (u.namaKegiatan ?? "").trim().toLowerCase() === n);
+  }, [namaProyekLengkap, usulan]);
+
   const checklist = useMemo(() => {
     const hasTeknis = files.some((f) => f.tipe === "teknis");
     const hasAdmin = files.some((f) => f.tipe === "administrasi");
@@ -183,7 +189,7 @@ function Form({ dppType }: { dppType: DppType }) {
       { label: "Kegiatan & Sasaran Kegiatan dipilih", done: !!kegiatan && !!sasaranKegiatan && !!indikatorSK },
       { label: "KRO & RO dipilih", done: kroOptions.length === 0 || (!!kro && !!ro) },
       { label: "Satuan Kerja dipilih", done: !!satker },
-      { label: "Nama Proyek SBSN diisi", done: !!sbsnJenis && sbsnNama.trim().length >= 3 },
+      { label: "Nama Proyek SBSN diisi & tidak duplikat", done: !!sbsnJenis && sbsnNama.trim().length >= 3 && !isDuplicateNama },
       { label: "Minimal 1 paket pekerjaan", done: paket.some((p) => p.nama.trim().length > 0) },
       { label: "Waktu pelaksanaan diisi", done: totalHari > 0 },
       { label: "Alokasi anggaran diisi", done: totalAlokasi > 0 },
@@ -194,7 +200,7 @@ function Form({ dppType }: { dppType: DppType }) {
       { label: "Tingkat prioritas dipilih", done: !!prioritas },
       { label: "Dokumen teknis & administrasi", done: hasTeknis && hasAdmin },
     ];
-  }, [program, sasaranProgram, indikatorSP, kegiatan, sasaranKegiatan, indikatorSK, kro, ro, kroOptions.length, satker, sbsnJenis, sbsnNama, paket, totalHari, totalAlokasi, skema, jenisPengadaan, outputs, outcomes, provinsi, kabupaten, prioritas, files]);
+  }, [program, sasaranProgram, indikatorSP, kegiatan, sasaranKegiatan, indikatorSK, kro, ro, kroOptions.length, satker, sbsnJenis, sbsnNama, isDuplicateNama, paket, totalHari, totalAlokasi, skema, jenisPengadaan, outputs, outcomes, provinsi, kabupaten, prioritas, files]);
 
   const completedCount = checklist.filter((c) => c.done).length;
   const isComplete = completedCount === checklist.length;
