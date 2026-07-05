@@ -77,3 +77,15 @@ export function diffDays(start: string, end: string): number {
   if (isNaN(s) || isNaN(e) || e < s) return 0;
   return Math.round((e - s) / 86400000) + 1;
 }
+
+export function formatDuration(days: number): string {
+  if (!days || days <= 0) return "";
+  const months = Math.floor(days / 30);
+  const remDays = days % 30;
+  const hours = days * 24;
+  const parts: string[] = [];
+  if (months > 0) parts.push(`${months} bulan${remDays > 0 ? ` ${remDays} hari` : ""}`);
+  else parts.push(`${days} hari`);
+  parts.push(`${hours.toLocaleString("id-ID")} jam`);
+  return parts.join(" · ");
+}
