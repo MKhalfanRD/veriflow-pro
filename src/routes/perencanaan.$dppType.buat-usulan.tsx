@@ -417,9 +417,15 @@ function Form({ dppType }: { dppType: DppType }) {
             </div>
           </div>
           {namaProyekLengkap && (
-            <div className="mt-3 p-2.5 rounded-md bg-brand/5 border border-brand/20 text-xs">
+            <div className={`mt-3 p-2.5 rounded-md text-xs ${isDuplicateNama ? "bg-destructive/5 border border-destructive/30" : "bg-brand/5 border border-brand/20"}`}>
               <span className="text-muted-foreground">Preview:</span>{" "}
-              <span className="font-semibold text-brand">{namaProyekLengkap}</span>
+              <span className={`font-semibold ${isDuplicateNama ? "text-destructive" : "text-brand"}`}>{namaProyekLengkap}</span>
+              {isDuplicateNama && (
+                <div className="mt-1.5 flex items-start gap-1.5 text-destructive">
+                  <AlertCircle className="size-3.5 mt-0.5 shrink-0" />
+                  <span>Nama Proyek SBSN ini sudah pernah diusulkan. Ubah nama/tahap agar tidak duplikat sebelum mengirim.</span>
+                </div>
+              )}
             </div>
           )}
         </Section>
