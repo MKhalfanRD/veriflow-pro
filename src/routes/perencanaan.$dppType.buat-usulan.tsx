@@ -250,6 +250,20 @@ function Form({ dppType }: { dppType: DppType }) {
       tahap: dppType,
       tanggalPengajuan: new Date().toISOString().slice(0, 10),
       dokumen: files,
+      kesiapan,
+      verifikasi: {
+        teknis: {},
+        sspsda: {},
+        history: [
+          {
+            id: newId("evt"),
+            waktu: new Date().toISOString(),
+            aktor: "Balai / Andi Maulana",
+            tipe: "submit",
+            ringkasan: `Balai mengunggah usulan & dokumen kesiapan proyek (${nomor}).`,
+          } as TimelineEvent,
+        ],
+      },
     };
     addUsulan(newUsulan);
     toast.success(`Usulan ${DPP_LABEL[dppType]} berhasil dikirim`, { description: nomor });
