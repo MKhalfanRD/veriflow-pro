@@ -154,6 +154,10 @@ function Form({ dppType }: { dppType: DppType }) {
   const [prioritas, setPrioritas] = useState<Prioritas>("nasional");
   const [files, setFiles] = useState<UploadFile[]>([]);
 
+  // Kesiapan (KAK/DSKP/Lahan/Dok Teknis/Izin/Kebijakan/RTRW)
+  const [kesiapan, setKesiapan] = useState<KesiapanUsulan>(() => emptyKesiapan());
+  const kesiapanStatus = useMemo(() => isKesiapanComplete(kesiapan), [kesiapan]);
+
   const indikatorSPOptions = sasaranProgram ? INDIKATOR_SASARAN_PROGRAM[sasaranProgram] ?? [] : [];
   const sasaranKegiatanOptions = kegiatan ? SASARAN_KEGIATAN[kegiatan] ?? [] : [];
   const indikatorSKOptions =
@@ -207,8 +211,15 @@ function Form({ dppType }: { dppType: DppType }) {
       { label: "Lokasi (provinsi & kabupaten) dipilih", done: !!provinsi && !!kabupaten },
       { label: "Tingkat prioritas dipilih", done: !!prioritas },
       { label: "Dokumen teknis & administrasi", done: hasTeknis && hasAdmin },
+      { label: "KAK terunggah", done: kesiapanStatus.kak },
+      { label: "DSKP terunggah", done: kesiapanStatus.dskp },
+      { label: "Kesiapan Lahan (min. 1 baris lengkap)", done: kesiapanStatus.lahan },
+      { label: "Dokumen Perencanaan Teknis (FS/DED/RAB) lengkap", done: kesiapanStatus.dokTeknis },
+      { label: "Izin Lingkungan (min. 1 baris lengkap)", done: kesiapanStatus.izinLingkungan },
+      { label: "Dukungan Kebijakan (min. 1 baris lengkap)", done: kesiapanStatus.dukunganKebijakan },
+      { label: "Kesesuaian RTRW (min. 1 baris lengkap)", done: kesiapanStatus.rtrw },
     ];
-  }, [program, sasaranProgram, indikatorSP, kegiatan, sasaranKegiatan, indikatorSK, kro, ro, kroOptions.length, satker, sbsnJenis, sbsnNama, isDuplicateNama, paket, totalHari, totalAlokasi, skema, jenisPengadaan, outputs, outcomes, provinsi, kabupaten, prioritas, files]);
+  }, [program, sasaranProgram, indikatorSP, kegiatan, sasaranKegiatan, indikatorSK, kro, ro, kroOptions.length, satker, sbsnJenis, sbsnNama, isDuplicateNama, paket, totalHari, totalAlokasi, skema, jenisPengadaan, outputs, outcomes, provinsi, kabupaten, prioritas, files, kesiapanStatus]);
 
   const completedCount = checklist.filter((c) => c.done).length;
   const isComplete = completedCount === checklist.length;
