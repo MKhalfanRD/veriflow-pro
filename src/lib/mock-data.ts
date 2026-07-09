@@ -48,6 +48,8 @@ export interface DokumenPendukung {
   ukuran: string;
 }
 
+import type { KesiapanUsulan, VerifikasiKesiapan } from "./kesiapan-data";
+
 export interface Usulan {
   id: string;
   nomor: string;
@@ -69,6 +71,8 @@ export interface Usulan {
   verifikatorV1?: string;
   verifikatorV2?: string;
   dokumen: DokumenPendukung[];
+  kesiapan?: KesiapanUsulan;
+  verifikasi?: VerifikasiKesiapan;
 }
 
 export const BALAI_LIST = [
