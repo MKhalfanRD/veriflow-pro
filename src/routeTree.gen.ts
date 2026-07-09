@@ -24,6 +24,7 @@ import { Route as PerencanaanDppTypeRekomtekRouteImport } from './routes/perenca
 import { Route as PerencanaanDppTypeRekapRouteImport } from './routes/perencanaan.$dppType.rekap'
 import { Route as PerencanaanDppTypeLaporanRouteImport } from './routes/perencanaan.$dppType.laporan'
 import { Route as PerencanaanDppTypeBuatUsulanRouteImport } from './routes/perencanaan.$dppType.buat-usulan'
+import { Route as PerencanaanDppTypeKesiapanUsulanIdRouteImport } from './routes/perencanaan.$dppType.kesiapan.$usulanId'
 
 const StudiPendahuluanRoute = StudiPendahuluanRouteImport.update({
   id: '/studi-pendahuluan',
@@ -105,6 +106,12 @@ const PerencanaanDppTypeBuatUsulanRoute =
     path: '/buat-usulan',
     getParentRoute: () => PerencanaanDppTypeRoute,
   } as any)
+const PerencanaanDppTypeKesiapanUsulanIdRoute =
+  PerencanaanDppTypeKesiapanUsulanIdRouteImport.update({
+    id: '/kesiapan/$usulanId',
+    path: '/kesiapan/$usulanId',
+    getParentRoute: () => PerencanaanDppTypeRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -122,6 +129,7 @@ export interface FileRoutesByFullPath {
   '/perencanaan/$dppType/rekomtek': typeof PerencanaanDppTypeRekomtekRoute
   '/perencanaan/$dppType/riwayat': typeof PerencanaanDppTypeRiwayatRoute
   '/perencanaan/$dppType/verifikasi': typeof PerencanaanDppTypeVerifikasiRoute
+  '/perencanaan/$dppType/kesiapan/$usulanId': typeof PerencanaanDppTypeKesiapanUsulanIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -139,6 +147,7 @@ export interface FileRoutesByTo {
   '/perencanaan/$dppType/rekomtek': typeof PerencanaanDppTypeRekomtekRoute
   '/perencanaan/$dppType/riwayat': typeof PerencanaanDppTypeRiwayatRoute
   '/perencanaan/$dppType/verifikasi': typeof PerencanaanDppTypeVerifikasiRoute
+  '/perencanaan/$dppType/kesiapan/$usulanId': typeof PerencanaanDppTypeKesiapanUsulanIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -157,6 +166,7 @@ export interface FileRoutesById {
   '/perencanaan/$dppType/rekomtek': typeof PerencanaanDppTypeRekomtekRoute
   '/perencanaan/$dppType/riwayat': typeof PerencanaanDppTypeRiwayatRoute
   '/perencanaan/$dppType/verifikasi': typeof PerencanaanDppTypeVerifikasiRoute
+  '/perencanaan/$dppType/kesiapan/$usulanId': typeof PerencanaanDppTypeKesiapanUsulanIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -176,6 +186,7 @@ export interface FileRouteTypes {
     | '/perencanaan/$dppType/rekomtek'
     | '/perencanaan/$dppType/riwayat'
     | '/perencanaan/$dppType/verifikasi'
+    | '/perencanaan/$dppType/kesiapan/$usulanId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -193,6 +204,7 @@ export interface FileRouteTypes {
     | '/perencanaan/$dppType/rekomtek'
     | '/perencanaan/$dppType/riwayat'
     | '/perencanaan/$dppType/verifikasi'
+    | '/perencanaan/$dppType/kesiapan/$usulanId'
   id:
     | '__root__'
     | '/'
@@ -210,6 +222,7 @@ export interface FileRouteTypes {
     | '/perencanaan/$dppType/rekomtek'
     | '/perencanaan/$dppType/riwayat'
     | '/perencanaan/$dppType/verifikasi'
+    | '/perencanaan/$dppType/kesiapan/$usulanId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -331,6 +344,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PerencanaanDppTypeBuatUsulanRouteImport
       parentRoute: typeof PerencanaanDppTypeRoute
     }
+    '/perencanaan/$dppType/kesiapan/$usulanId': {
+      id: '/perencanaan/$dppType/kesiapan/$usulanId'
+      path: '/kesiapan/$usulanId'
+      fullPath: '/perencanaan/$dppType/kesiapan/$usulanId'
+      preLoaderRoute: typeof PerencanaanDppTypeKesiapanUsulanIdRouteImport
+      parentRoute: typeof PerencanaanDppTypeRoute
+    }
   }
 }
 
@@ -341,6 +361,7 @@ interface PerencanaanDppTypeRouteChildren {
   PerencanaanDppTypeRekomtekRoute: typeof PerencanaanDppTypeRekomtekRoute
   PerencanaanDppTypeRiwayatRoute: typeof PerencanaanDppTypeRiwayatRoute
   PerencanaanDppTypeVerifikasiRoute: typeof PerencanaanDppTypeVerifikasiRoute
+  PerencanaanDppTypeKesiapanUsulanIdRoute: typeof PerencanaanDppTypeKesiapanUsulanIdRoute
 }
 
 const PerencanaanDppTypeRouteChildren: PerencanaanDppTypeRouteChildren = {
@@ -350,6 +371,8 @@ const PerencanaanDppTypeRouteChildren: PerencanaanDppTypeRouteChildren = {
   PerencanaanDppTypeRekomtekRoute: PerencanaanDppTypeRekomtekRoute,
   PerencanaanDppTypeRiwayatRoute: PerencanaanDppTypeRiwayatRoute,
   PerencanaanDppTypeVerifikasiRoute: PerencanaanDppTypeVerifikasiRoute,
+  PerencanaanDppTypeKesiapanUsulanIdRoute:
+    PerencanaanDppTypeKesiapanUsulanIdRoute,
 }
 
 const PerencanaanDppTypeRouteWithChildren =
