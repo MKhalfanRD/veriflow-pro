@@ -1,10 +1,11 @@
 import { useMemo, useState } from "react";
+import { Link, useRouterState } from "@tanstack/react-router";
 import { useAppStore } from "@/lib/app-store";
-import type { Usulan, Prioritas, StatusUsulan } from "@/lib/mock-data";
+import type { Usulan, Prioritas, StatusUsulan, DppType } from "@/lib/mock-data";
 import { formatTanggal, formatRupiah } from "@/lib/mock-data";
 import { StatusBadge, PrioritasBadge } from "@/components/status-badge";
 import { DetailDrawer } from "@/components/detail-drawer";
-import { Search, Download } from "lucide-react";
+import { Search, Download, ClipboardCheck } from "lucide-react";
 
 interface Props {
   rows: Usulan[];
@@ -15,6 +16,8 @@ interface Props {
 
 export function UsulanTable({ rows, title, description, showBalai = true }: Props) {
   const { role } = useAppStore();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const dppType: DppType = pathname.includes("/perubahan/") ? "perubahan" : "awal";
   const isPublik = false;
   const [selected, setSelected] = useState<Usulan | null>(null);
   const [q, setQ] = useState("");
@@ -107,7 +110,20 @@ export function UsulanTable({ rows, title, description, showBalai = true }: Prop
                   <td className="px-6 py-3 text-xs text-muted-foreground">{formatTanggal(u.tanggalPengajuan)}</td>
                   <td className="px-6 py-3"><StatusBadge status={u.status} /></td>
                   <td className="px-6 py-3 text-right">
-                    <button onClick={() => setSelected(u)} className="text-brand font-medium text-xs hover:underline">Detail</button>
+                    <div className="flex items-center gap-3 justify-end">
+                      {(role === "verif1" || role === "verif2" || role === "balai") && (
+                        <Link
+                          to="/perencanaan/$dppType/kesiapan/$usulanId"
+                          params={{ dppType, usulanId: u.id }}
+                          className="text-brand font-medium text-xs hover:underline inline-flex items-center gap-1"
+                          title={role === "balai" ? "Lihat Penilaian" : "Verifikasi Kesiapan"}
+                        >
+                          <ClipboardCheck className="size-3.5" />
+                          {role === "balai" ? "Penilaian" : "Kesiapan"}
+                        </Link>
+                      )}
+                      <button onClick={() => setSelected(u)} className="text-brand font-medium text-xs hover:underline">Detail</button>
+                    </div>
                   </td>
                 </tr>
               ))}
