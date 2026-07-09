@@ -39,6 +39,14 @@ import {
   diffDays,
   formatDuration,
 } from "@/lib/sda-lookup";
+import { KesiapanForm, isKesiapanComplete } from "@/components/kesiapan-form";
+import {
+  emptyKesiapan,
+  emptyVerifikasi,
+  newId,
+  type KesiapanUsulan,
+  type TimelineEvent,
+} from "@/lib/kesiapan-data";
 
 export const Route = createFileRoute("/perencanaan/$dppType/buat-usulan")({
   component: Page,
@@ -146,6 +154,10 @@ function Form({ dppType }: { dppType: DppType }) {
   const [prioritas, setPrioritas] = useState<Prioritas>("nasional");
   const [files, setFiles] = useState<UploadFile[]>([]);
 
+  // Kesiapan (KAK/DSKP/Lahan/Dok Teknis/Izin/Kebijakan/RTRW)
+  const [kesiapan, setKesiapan] = useState<KesiapanUsulan>(() => emptyKesiapan());
+  const kesiapanStatus = useMemo(() => isKesiapanComplete(kesiapan), [kesiapan]);
+
   const indikatorSPOptions = sasaranProgram ? INDIKATOR_SASARAN_PROGRAM[sasaranProgram] ?? [] : [];
   const sasaranKegiatanOptions = kegiatan ? SASARAN_KEGIATAN[kegiatan] ?? [] : [];
   const indikatorSKOptions =
@@ -199,8 +211,15 @@ function Form({ dppType }: { dppType: DppType }) {
       { label: "Lokasi (provinsi & kabupaten) dipilih", done: !!provinsi && !!kabupaten },
       { label: "Tingkat prioritas dipilih", done: !!prioritas },
       { label: "Dokumen teknis & administrasi", done: hasTeknis && hasAdmin },
+      { label: "KAK terunggah", done: kesiapanStatus.kak },
+      { label: "DSKP terunggah", done: kesiapanStatus.dskp },
+      { label: "Kesiapan Lahan (min. 1 baris lengkap)", done: kesiapanStatus.lahan },
+      { label: "Dokumen Perencanaan Teknis (FS/DED/RAB) lengkap", done: kesiapanStatus.dokTeknis },
+      { label: "Izin Lingkungan (min. 1 baris lengkap)", done: kesiapanStatus.izinLingkungan },
+      { label: "Dukungan Kebijakan (min. 1 baris lengkap)", done: kesiapanStatus.dukunganKebijakan },
+      { label: "Kesesuaian RTRW (min. 1 baris lengkap)", done: kesiapanStatus.rtrw },
     ];
-  }, [program, sasaranProgram, indikatorSP, kegiatan, sasaranKegiatan, indikatorSK, kro, ro, kroOptions.length, satker, sbsnJenis, sbsnNama, isDuplicateNama, paket, totalHari, totalAlokasi, skema, jenisPengadaan, outputs, outcomes, provinsi, kabupaten, prioritas, files]);
+  }, [program, sasaranProgram, indikatorSP, kegiatan, sasaranKegiatan, indikatorSK, kro, ro, kroOptions.length, satker, sbsnJenis, sbsnNama, isDuplicateNama, paket, totalHari, totalAlokasi, skema, jenisPengadaan, outputs, outcomes, provinsi, kabupaten, prioritas, files, kesiapanStatus]);
 
   const completedCount = checklist.filter((c) => c.done).length;
   const isComplete = completedCount === checklist.length;
@@ -231,6 +250,20 @@ function Form({ dppType }: { dppType: DppType }) {
       tahap: dppType,
       tanggalPengajuan: new Date().toISOString().slice(0, 10),
       dokumen: files,
+      kesiapan,
+      verifikasi: {
+        teknis: {},
+        sspsda: {},
+        history: [
+          {
+            id: newId("evt"),
+            waktu: new Date().toISOString(),
+            aktor: "Balai / Andi Maulana",
+            tipe: "submit",
+            ringkasan: `Balai mengunggah usulan & dokumen kesiapan proyek (${nomor}).`,
+          } as TimelineEvent,
+        ],
+      },
     };
     addUsulan(newUsulan);
     toast.success(`Usulan ${DPP_LABEL[dppType]} berhasil dikirim`, { description: nomor });
@@ -627,6 +660,9 @@ function Form({ dppType }: { dppType: DppType }) {
             <Input label="Desa/Kelurahan" value={desa} onChange={setDesa} placeholder="Nama desa/kelurahan" />
           </Grid>
         </Section>
+
+        <KesiapanForm value={kesiapan} onChange={(patch) => setKesiapan((prev) => ({ ...prev, ...patch }))} />
+
 
         <Section title="Tingkat Prioritas" description="Sistem otomatis menetapkan bobot nilai prioritas">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
