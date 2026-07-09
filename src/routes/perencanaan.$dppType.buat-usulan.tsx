@@ -661,6 +661,9 @@ function Form({ dppType }: { dppType: DppType }) {
           </Grid>
         </Section>
 
+        <KesiapanForm value={kesiapan} onChange={(patch) => setKesiapan((prev) => ({ ...prev, ...patch }))} />
+
+
         <Section title="Tingkat Prioritas" description="Sistem otomatis menetapkan bobot nilai prioritas">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {(["nasional", "menteri", "dirjen"] as Prioritas[]).map((p) => {
