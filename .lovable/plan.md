@@ -1,74 +1,153 @@
-# Revisi SIPRO-SDA
 
-## 1. Hapus akses publik → wajib login
+# Kriteria Kesiapan Proyek SBSN — Extend Buat Usulan + Verifikasi V1/V2
 
-- Hapus role `publik`. Tambah state `loggedIn` di app-store.
-- `__root.tsx`: jika belum login → render **halaman login** (tanpa sidebar/header).
-- `src/routes/login.tsx` baru: form sederhana (username + password mock) + pilihan role demo (Balai / Pembina Teknis / SSPSDA) + tombol Masuk.
-- Tombol **Keluar** di sidebar (ganti role switcher → muncul setelah login, kembali ke `/login`).
+## Flow ringkas
+Balai isi form Buat Usulan (termasuk section baru "Kriteria Kesiapan") → submit → masuk antrean Veri 1 (Pembina Teknis) → beri feedback (setuju / minta revisi / tolak) per komponen → jika **semua** komponen di-ACC, usulan masuk ke Veri 2 (SSPSDA) → Veri 2 beri feedback yang sama → ACC final. Timeline history mencatat tiap event (upload / feedback / revisi).
 
-## 2. Struktur sidebar baru (sama untuk 3 role, beda di sub-menu tertentu)
+---
 
-Semua role melihat:
+## 1. Buat Usulan (role Balai) — tambahan section di bawah Lokasi
 
-- Home
-- Studi Pendahuluan
-- **Perencanaan**
-  - Rincian DPP Awal (group, 3-level nested)
-    - Rekap Usulan
-    - Buat Usulan *(balai & sspsda)*
-    - Verif Masuk (Teknis (verif dari daftar usulan balai) & sspsda (verif dari hasil usulan yang di verif teknis))
-    - Laporan / Cetak (untuk role teknis akan muncul sub menu lagi bernama rekomtek dan surat usulan. Untuk Balai dan sspsda hanya akan muncul sub menu surat usulan)
-    - Riwayat
-  - Perubahan Rincian DPP (struktur sub-menu identik dengan Rincian DPP Awal, data = versi terbaru)
-- Pelaksanaan
-- Evaluasi
-- Peraturan
+File: `src/routes/perencanaan.$dppType.buat-usulan.tsx` — tambah blok baru di bawah section Lokasi. Semua sub-section pakai card dengan judul & deskripsi ringkas.
 
-SSPSDA tambahan: menu **Pengaturan Menu** untuk meng-aktifkan / non-aktifkan submenu *Rincian DPP Awal* & *Perubahan Rincian DPP*.
+### A. Kriteria Kesiapan Administrasi Proyek
+Dua card dokumen: **KAK** dan **DSKP**.
 
-## 3. Routing
+Per card:
+- Tombol *Upload dokumen* (mock: simpan nama file + ukuran + waktu).
+- Info file yang sudah di-upload (nama, size, tombol hapus/ganti).
 
-Pakai dynamic segment `$dppType` (`awal` | `perubahan`) supaya satu set komponen melayani kedua sub-menu:
+Balai tidak mengisi checklist di sini — checklist adalah *field verifikator* yang terisi belakangan.
 
-/perencanaan/$dppType                  → layout (cek toggle SSPSDA, jika non-aktif tampilkan pesan terkunci)  
-/perencanaan/$dppType/rekap            → Rekap Usulan T+1  
-/perencanaan/$dppType/buat-usulan      → Form Buat Usulan (balai/sspsda)  
-/perencanaan/$dppType/laporan          → Laporan / Cetak  
-/perencanaan/$dppType/riwayat          → Riwayat aktivitas (filter per role)  
-/perencanaan/$dppType/verifikasi       → Verif Masuk (teknis)  
-/perencanaan/$dppType/rekomtek         → Form & generator Rekomtek (teknis)
+### B. Kesiapan Lahan
+Baris dinamis (`+ Tambah`). Kolom per baris:
+- Dropdown *Kesiapan Lahan*: Clean and Clear / Dalam proses sertifikasi / Belum dibebaskan-sengketa.
+- Dropdown *Jenis Dokumen*: Sertifikat (HM / HGP / HGB), Kartu Identitas Barang, Tanah Negara (Surat pernyataan).
+- Input *Nomor Dokumen* (manual).
+- Upload dokumen (mock).
+- Tombol hapus baris.
 
-Hapus route lama: `balai.*`, `teknis.*`, `sspsda.*`, `verifikasi.tsx`, `verifikasi-akhir.tsx`, `perencanaan.rincian-dpp.tsx`, `perencanaan.perubahan-dpp.tsx`, `usulan.*`.
+### C. Dokumen Perencanaan Teknis
+Tiga sub-blok fixed: **Feasibility Study (FS)**, **Detail Engineering Design (DED)**, **Rincian Anggaran Biaya (RAB)**.
+Per sub-blok:
+- Dropdown *Status*: Ada / Dalam proses.
+- Dropdown *Tahun*: 2020–2040.
+- Upload dokumen.
 
-## 4. Form Rekomtek (teknis)
+### D. Izin Lingkungan
+Baris dinamis:
+- Dropdown *Status Izin*: Sudah terbit / Dalam proses / Belum diproses.
+- Dropdown *Jenis Dokumen*: AMDAL / UKL-UPL / SPPL / PERTEK.
+- Dropdown *Tahun*: 2020–2040.
+- Input *Nomor* (manual).
+- Upload dokumen.
 
-Input: Kementerian/Lembaga · Unit Eselon · Satuan Kerja · Latar Belakang · Dasar Hukum · Maksud & Tujuan · Output & Outcome · Biaya & Tahapan · Waktu Pelaksanaan.
-Preview dokumen dengan template formal + paragraf penutup auto-generate (mengandung nama proyek). Tombol **Cetak / Simpan PDF** via `window.print()` dengan stylesheet print khusus.
+### E. Dukungan Kebijakan
+Baris dinamis. Cascading:
+- Dropdown *Dukungan Kebijakan*:
+  - `Program Kerja Prioritas Nasional`
+  - `Prioritas Program (PP) K/L / Direktif Menteri`
+  - `Tugas fungsi reguler K/L / Direktif Direktur Jenderal`
+- Jika PKPN: dropdown *Klaster PKPN* (Kedaulatan Pangan, Kemandirian Energi & Air, Pendidikan, Kesehatan, Hilirisasi & Industrialisasi, Infrastruktur/Perumahan/Ketahanan Bencana, Ekonomi Kerakyatan & Desa, Penurunan Kemiskinan) → dropdown *Detail Program Kerja* (list per klaster dari Excel).
+- Jika PP atau Tugas fungsi: input *Detail Kebijakan* manual.
 
-## 5. Toggle SSPSDA
+Blok tambahan **Dukungan Tematik (opsional)**: dropdown tematik + input keterangan.
 
-- Tambah `dppAwalEnabled`, `dppPerubahanEnabled` di app-store.
-- Halaman `pengaturan.tsx`: dua switch (khusus role SSPSDA).
-- Layout `/perencanaan/$dppType` cek toggle: kalau non-aktif → kartu "Menu belum dapat diakses. Menunggu SSPSDA mengaktifkan." (SSPSDA tetap bisa lewat link "Buka Pengaturan").
+### F. Kesesuaian RTRW
+Baris dinamis:
+- Dropdown *Kesesuaian RTRW*: RTRW Nasional (RTRWN) / RTRW Provinsi (RTRWP) / RTRW Kabupaten-Kota (RTRWK) / Tidak sesuai.
+- Input *Tahun* (manual).
+- Input *Keterangan* (manual).
 
-## 6. Studi Pendahuluan
+### Integrasi checklist form
+Semua field di atas masuk state form (`useState`) dan tersimpan ke object usulan saat submit (`kesiapan: { kak, dskp, lahan[], dokTeknis{...}, izinLingkungan[], dukunganKebijakan[], dukunganTematik[], rtrw[] }`). Checklist kelengkapan submit (progress bar) mendapat item baru: "KAK terunggah", "DSKP terunggah", "Kesiapan Lahan minimal 1 baris", "FS/DED/RAB diisi", "Izin Lingkungan minimal 1 baris", "Dukungan Kebijakan minimal 1 baris", "RTRW minimal 1 baris".
 
-Ganti slide viewer → **daftar PDF per tahun** (grouped by tahun, tiap item: judul, ukuran, tombol Download). Pakai mock PDF (data-URL kecil) sehingga benar-benar bisa di-download.
+---
 
-## 7. Mock data
+## 2. Halaman Verifikasi Kesiapan (role Veri 1 & Veri 2)
 
-- Tambah field `tahap: "awal" | "perubahan"` di `Usulan`. Default existing = "awal"; tambahkan beberapa mock "perubahan".
-- Hapus role `publik` dari `Role` union.
+Halaman baru: `src/routes/perencanaan.$dppType.kesiapan.$usulanId.tsx`. Akses via tombol **"Verifikasi Kesiapan"** di baris tabel `Verifikasi Masuk` (row action baru).
 
-## 8.  Rekomtek
+### Layout halaman
+1. **Header ringkas**: nomor usulan, nama proyek, balai, status, badge role verifikator aktif.
+2. **Activity Timeline** (kiri, sticky): daftar event terurut waktu — upload dokumen, feedback V1/V2, revisi balai, ACC. Setiap event: waktu, aktor, tipe, ringkasan.
+3. **Konten kanan**: 6 section (KAK, DSKP, Lahan, Dok. Teknis, Izin Lingkungan, Dukungan Kebijakan, RTRW). Setiap section berupa card yang bisa di-expand.
 
-adalah menu rekomendasi teknis yang berguna untuk menampilkan daftar rekomendasi teknis yang telah diinput oleh role teknis. Hasilnya adalah PDF yang memiliki template yang sama namun ada perbedaan nilai berdasarkan inputan yang telah dilakukan oleh teknis 
+### Isi per section verifikasi
+- **Data dari Balai** (read-only): file yang diunggah, dropdown & isian yang dipilih.
+- **Panel Verifikator**:
+  - Untuk KAK & DSKP: checklist dari Excel (per komponen: sub-poin dengan checkbox + textarea catatan per komponen).
+    - KAK: 15 komponen (Latar Belakang, Maksud & Tujuan, Kesesuaian Strategis, Kesesuaian Tata Ruang, Keterkaitan Proyek, Ruang Lingkup, Target & Indikator, Lokasi, Pelaksana, Jangka Waktu, Rencana Pembiayaan, Rencana Penarikan, Skema Pelaksanaan, Rencana Pengadaan, Pemantauan & Evaluasi).
+    - DSKP: 7 kajian (Teknis, Ekonomi, Dampak Lingkungan & Sosial, Kelembagaan, Risiko, Potensi Pemanfaatan, Kesesuaian Prinsip Syariah).
+  - Untuk section lainnya (Lahan, Dok. Teknis, Izin Lingkungan, Kebijakan, RTRW): textarea catatan per baris + tombol status per baris (Setuju / Minta Revisi / Tolak).
+- **Aksi status section**: dropdown/tombol *Setuju / Minta Revisi / Tolak* level section.
+- **Dua tab role**: "Evaluasi Pembina Teknis" & "Evaluasi SSPSDA" (mirip preview Word doc). Veri 1 hanya bisa edit tab Teknis; Veri 2 hanya bisa edit tab SSPSDA. Balai hanya bisa view kedua tab (read-only).
 
-## File yang berubah
+### Aturan flow
+- Setelah Balai submit, semua section = `menunggu_teknis`.
+- Veri 1 buka halaman → mengisi checklist/catatan per section → set status per section. Ketika **semua** section berstatus `disetujui_teknis`, status usulan naik ke `menunggu_sspsda` (otomatis).
+- Sebelum semua ACC Teknis, tab Veri 2 read-only ("Menunggu penyelesaian Pembina Teknis"). Veri 2 tetap bisa melihat progres.
+- Jika ada section `revisi` atau `ditolak` oleh V1, usulan kembali ke Balai (status `revisi`). Balai bisa buka Buat Usulan versi edit untuk mengganti file/isian section terkait (tombol "Revisi Usulan" di tabel Rekap ketika status = revisi). Setelah re-submit, section yang tadinya revisi kembali `menunggu_teknis`.
+- Setelah V2 ACC semua section → usulan `disetujui_v2` (final).
 
-- **Baru**: `routes/login.tsx`, `routes/perencanaan.$dppType.tsx` + 7 sub-route, ulang `routes/studi-pendahuluan.tsx`.
-- **Edit**: `app-store.ts`, `mock-data.ts`, `__root.tsx`, `app-sidebar.tsx`, `app-header.tsx`, `index.tsx`, `pengaturan.tsx`, `routeTree.gen.ts`.
-- **Hapus**: balai.*, teknis.*, sspsda.*, verifikasi*.tsx, perencanaan.rincian-dpp.tsx, perencanaan.perubahan-dpp.tsx, usulan.*.
+### Modal "Lihat Penilaian" untuk role Balai
+Di halaman verifikasi (dan juga dari tabel Rekap milik balai), tombol *"Lihat Penilaian"* buka modal berisi ringkasan checklist V1 & V2 per section (checkbox terkunci + catatan).
 
-Setuju saya eksekusi semuanya?
+---
+
+## 3. Data & store
+
+- **`src/lib/kesiapan-data.ts`** (baru):
+  - `KAK_KOMPONEN[]` — array 15 komponen + sub-poin (dari Excel).
+  - `DSKP_KAJIAN[]` — array 7 kajian + sub-poin.
+  - `KLASTER_PKPN[]` dan `PROGRAM_KERJA_BY_KLASTER` (mapping klaster → detail program).
+  - Konstanta dropdown: `KESIAPAN_LAHAN_OPT`, `JENIS_DOK_LAHAN_OPT`, `STATUS_DOK_TEKNIS_OPT`, `TAHUN_2020_2040`, `STATUS_IZIN_OPT`, `JENIS_IZIN_OPT`, `DUKUNGAN_KEBIJAKAN_OPT`, `DUKUNGAN_TEMATIK_OPT`, `RTRW_OPT`.
+
+- **`src/lib/mock-data.ts`** (edit): perluas type `Usulan` dengan optional field `kesiapan?: KesiapanUsulan` dan `verifikasiKesiapan?: { teknis: SectionVerdict[]; sspsda: SectionVerdict[]; history: TimelineEvent[] }`. Tambah tipe pendukung.
+
+- **`src/lib/app-store.ts`** (edit): tambah action `updateKesiapan(usulanId, patch)` dan `pushKesiapanHistory(usulanId, event)`; persistensi via `localStorage` (biar bertahan antar refresh mock).
+
+---
+
+## 4. Komponen baru
+
+- `src/components/kesiapan/kak-uploader.tsx` — card upload KAK.
+- `src/components/kesiapan/dskp-uploader.tsx` — card upload DSKP.
+- `src/components/kesiapan/lahan-rows.tsx` — tabel baris dinamis Lahan (reusable pattern).
+- `src/components/kesiapan/dok-teknis-block.tsx` — FS/DED/RAB.
+- `src/components/kesiapan/izin-rows.tsx`.
+- `src/components/kesiapan/kebijakan-rows.tsx` (cascade PKPN → Klaster → Detail).
+- `src/components/kesiapan/rtrw-rows.tsx`.
+- `src/components/kesiapan/activity-timeline.tsx`.
+- `src/components/kesiapan/checklist-panel.tsx` — panel verifikator untuk KAK/DSKP (checkbox + catatan).
+- `src/components/kesiapan/section-verdict.tsx` — tombol Setuju / Revisi / Tolak per section + textarea.
+- `src/components/kesiapan/penilaian-modal.tsx` — modal read-only untuk Balai.
+
+Komponen di atas dipakai berdua: di form Buat Usulan (mode input balai) dan di halaman Verifikasi (mode read-only + panel verifikator). Prop `mode: "input" | "verify" | "readonly"` mengatur render.
+
+---
+
+## 5. UI style
+
+Mengikuti tema project:
+- Card: `bg-surface ring-1 ring-black/5 shadow-card rounded-xl p-6`.
+- Status verdict badge pakai varian `StatusBadge` existing atau ekstensi ringan (`disetujui_teknis`, `disetujui_sspsda`, `revisi`, `ditolak`).
+- Timeline pakai ikon Lucide (`Upload`, `Check`, `AlertCircle`, `X`, `RefreshCw`), dot warna sesuai tipe event.
+- Semua textarea/select/input pakai style yang sudah ada di form Buat Usulan (`bg-surface border border-border rounded-md text-sm`).
+
+---
+
+## 6. File yang berubah
+
+**Baru**
+- `src/lib/kesiapan-data.ts`
+- `src/routes/perencanaan.$dppType.kesiapan.$usulanId.tsx`
+- `src/components/kesiapan/*` (9 komponen di atas)
+
+**Edit**
+- `src/routes/perencanaan.$dppType.buat-usulan.tsx` — tambah section Kesiapan di bawah Lokasi + integrasi state & submit.
+- `src/lib/mock-data.ts` — perluas type `Usulan`, tambah tipe verifikasi.
+- `src/lib/app-store.ts` — action baru + persist.
+- `src/components/usulan-table.tsx` — tombol "Verifikasi Kesiapan" pada baris untuk role verif; "Lihat Penilaian" untuk role balai.
+
+Setuju dieksekusi seperti ini?
