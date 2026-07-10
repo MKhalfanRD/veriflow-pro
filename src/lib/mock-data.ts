@@ -73,6 +73,11 @@ export interface Usulan {
   dokumen: DokumenPendukung[];
   kesiapan?: KesiapanUsulan;
   verifikasi?: VerifikasiKesiapan;
+  kodeRo?: string; // e.g. "7691.RBS.001"
+}
+
+export function kodeKegiatanRo(u: Usulan): string {
+  return u.kodeRo ?? u.nomor;
 }
 
 export const BALAI_LIST = [

@@ -1,6 +1,18 @@
 // Halaman verifikasi Kesiapan (V1 Teknis / V2 SSPSDA) + view read-only untuk Balai
-import { useState } from "react";
-import { Check, X, AlertCircle, FileText, Upload, RefreshCw, Clock, Star } from "lucide-react";
+import { useEffect, useState, type ReactNode } from "react";
+import {
+  Check,
+  X,
+  AlertCircle,
+  FileText,
+  Upload,
+  RefreshCw,
+  Clock,
+  Star,
+  Eye,
+  Download,
+  Lock,
+} from "lucide-react";
 import {
   KAK_KOMPONEN,
   DSKP_KAJIAN,
@@ -14,7 +26,9 @@ import {
   type KesiapanUsulan,
   type TimelineEvent,
   type KomponenChecklist,
+  type UploadedFile,
 } from "@/lib/kesiapan-data";
+import { generateMockPdf, downloadBlob } from "@/lib/mock-data";
 
 export type VerifyMode = "verif1" | "verif2" | "readonly";
 
@@ -30,6 +44,70 @@ interface Props {
   onPushHistory?: (ev: Omit<TimelineEvent, "id" | "waktu">) => void;
 }
 
+// ============ File preview helpers ============
+
+function viewFile(file: UploadedFile) {
+  const blob = generateMockPdf(file.nama);
+  const url = URL.createObjectURL(blob);
+  window.open(url, "_blank");
+  setTimeout(() => URL.revokeObjectURL(url), 60_000);
+}
+
+function downloadFile(file: UploadedFile) {
+  downloadBlob(generateMockPdf(file.nama), file.nama);
+}
+
+function FileButton({ file, compact = false }: { file?: UploadedFile; compact?: boolean }) {
+  if (!file) return <span className="text-muted-foreground text-xs">—</span>;
+  if (compact) {
+    return (
+      <div className="flex items-center gap-1.5">
+        <button
+          type="button"
+          onClick={() => viewFile(file)}
+          className="inline-flex items-center gap-1 text-[11px] text-brand hover:underline"
+          title={`Lihat ${file.nama}`}
+        >
+          <Eye className="size-3" /> Lihat
+        </button>
+        <button
+          type="button"
+          onClick={() => downloadFile(file)}
+          className="inline-flex items-center gap-1 text-[11px] text-muted-foreground hover:text-brand"
+          title="Unduh"
+        >
+          <Download className="size-3" />
+        </button>
+      </div>
+    );
+  }
+  return (
+    <div className="flex items-center gap-2 p-2 rounded-md border border-border bg-background">
+      <FileText className="size-4 text-brand shrink-0" />
+      <div className="flex-1 min-w-0">
+        <div className="text-sm font-medium truncate">{file.nama}</div>
+        <div className="text-[10px] text-muted-foreground">
+          {file.ukuran} · Diunggah {formatWaktu(file.waktu)}
+        </div>
+      </div>
+      <button
+        type="button"
+        onClick={() => viewFile(file)}
+        className="inline-flex items-center gap-1 text-[11px] text-brand hover:underline px-1.5 py-1"
+      >
+        <Eye className="size-3.5" /> Lihat
+      </button>
+      <button
+        type="button"
+        onClick={() => downloadFile(file)}
+        className="inline-flex items-center gap-1 text-[11px] text-muted-foreground hover:text-brand px-1.5 py-1"
+      >
+        <Download className="size-3.5" />
+      </button>
+    </div>
+  );
+}
+
 export function KesiapanVerifyView({
   kesiapan,
   verifikasi,
@@ -37,8 +115,6 @@ export function KesiapanVerifyView({
   onSectionChange,
   onPushHistory,
 }: Props) {
-  // Aturan: V1 hanya bisa edit tab "teknis"; V2 hanya bisa edit tab "sspsda"
-  //         V2 disable sampai semua section teknis = disetujui
   const teknisSelesai = SECTION_ORDER.every(
     (s) => verifikasi.teknis[s]?.status === "disetujui",
   );
@@ -253,17 +329,16 @@ function SectionCard({
         </div>
       </div>
 
-      <div className="p-6 space-y-5">
-        {/* Data dari Balai (read-only) */}
-        <div>
-          <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
-            Data dari Balai
+      {/* Split kiri (data balai) / kanan (panel verif) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 divide-y lg:divide-y-0 lg:divide-x divide-border">
+        <div className="p-6 bg-muted/20">
+          <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
+            <FileText className="size-3" /> Data dari Balai
           </div>
           <BalaiData sectionKey={sectionKey} kesiapan={kesiapan} />
         </div>
 
-        {/* Panel verifikator */}
-        <div className="pt-4 border-t border-border">
+        <div className="p-6">
           <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
             Panel Verifikator — {tab === "teknis" ? "Pembina Teknis" : "SSPSDA"}
           </div>
@@ -271,7 +346,10 @@ function SectionCard({
           {tab === "sspsda" && !teknisSelesai && mode !== "readonly" && (
             <div className="mb-3 p-3 rounded-md bg-status-pending-bg border border-status-pending/20 text-xs flex items-start gap-2 text-status-pending">
               <AlertCircle className="size-3.5 mt-0.5 shrink-0" />
-              <span>SSPSDA menunggu Pembina Teknis menyetujui semua komponen sebelum dapat memberi penilaian.</span>
+              <span>
+                SSPSDA menunggu Pembina Teknis menyetujui semua komponen sebelum dapat memberi
+                penilaian.
+              </span>
             </div>
           )}
 
@@ -279,6 +357,7 @@ function SectionCard({
             sectionKey={sectionKey}
             verdict={activeVerdict}
             canEdit={canEdit}
+            role={tab}
             onChange={(v) => {
               onSectionChange?.(tab, sectionKey, v);
             }}
@@ -307,7 +386,7 @@ function SectionCard({
   );
 }
 
-// =============== Balai data display (read-only) ===============
+// =============== Balai data display (read-only, dengan viewer) ===============
 
 function BalaiData({
   sectionKey,
@@ -318,14 +397,19 @@ function BalaiData({
 }) {
   switch (sectionKey) {
     case "kak":
-      return <FileLine file={kesiapan.kak} placeholder="KAK belum diunggah" />;
+      return <FileBlock file={kesiapan.kak} placeholder="KAK belum diunggah" />;
     case "dskp":
-      return <FileLine file={kesiapan.dskp} placeholder="DSKP belum diunggah" />;
+      return <FileBlock file={kesiapan.dskp} placeholder="DSKP belum diunggah" />;
     case "lahan":
       return (
         <DataTable
           headers={["Kesiapan Lahan", "Jenis Dokumen", "Nomor", "File"]}
-          rows={kesiapan.lahan.map((r) => [r.kesiapan, r.jenisDok, r.nomorDok, r.file?.nama ?? "—"])}
+          rows={kesiapan.lahan.map((r) => [
+            r.kesiapan,
+            r.jenisDok,
+            r.nomorDok,
+            <FileButton key="f" file={r.file} compact />,
+          ])}
           emptyMsg="Belum ada data kesiapan lahan."
         />
       );
@@ -335,9 +419,24 @@ function BalaiData({
         <DataTable
           headers={["Dokumen", "Status", "Tahun", "File"]}
           rows={[
-            ["Feasibility Study", dt.fs.status, dt.fs.tahun, dt.fs.file?.nama ?? "—"],
-            ["Detail Engineering Design", dt.ded.status, dt.ded.tahun, dt.ded.file?.nama ?? "—"],
-            ["Rincian Anggaran Biaya", dt.rab.status, dt.rab.tahun, dt.rab.file?.nama ?? "—"],
+            [
+              "Feasibility Study",
+              dt.fs.status,
+              dt.fs.tahun,
+              <FileButton key="f" file={dt.fs.file} compact />,
+            ],
+            [
+              "Detail Engineering Design",
+              dt.ded.status,
+              dt.ded.tahun,
+              <FileButton key="f" file={dt.ded.file} compact />,
+            ],
+            [
+              "Rincian Anggaran Biaya",
+              dt.rab.status,
+              dt.rab.tahun,
+              <FileButton key="f" file={dt.rab.file} compact />,
+            ],
           ]}
           emptyMsg=""
         />
@@ -352,7 +451,7 @@ function BalaiData({
             r.jenisDok,
             r.tahun,
             r.nomor,
-            r.file?.nama ?? "—",
+            <FileButton key="f" file={r.file} compact />,
           ])}
           emptyMsg="Belum ada data izin lingkungan."
         />
@@ -380,7 +479,7 @@ function BalaiData({
   }
 }
 
-function FileLine({ file, placeholder }: { file?: { nama: string; ukuran: string; waktu: string }; placeholder: string }) {
+function FileBlock({ file, placeholder }: { file?: UploadedFile; placeholder: string }) {
   if (!file) {
     return (
       <div className="text-xs italic text-muted-foreground px-2 py-2 border border-dashed border-border rounded-md">
@@ -388,17 +487,7 @@ function FileLine({ file, placeholder }: { file?: { nama: string; ukuran: string
       </div>
     );
   }
-  return (
-    <div className="flex items-center gap-2 p-2 rounded-md border border-border bg-background">
-      <FileText className="size-4 text-brand shrink-0" />
-      <div className="flex-1 min-w-0">
-        <div className="text-sm font-medium truncate">{file.nama}</div>
-        <div className="text-[10px] text-muted-foreground">
-          {file.ukuran} · Diunggah {formatWaktu(file.waktu)}
-        </div>
-      </div>
-    </div>
-  );
+  return <FileButton file={file} />;
 }
 
 function DataTable({
@@ -407,7 +496,7 @@ function DataTable({
   emptyMsg,
 }: {
   headers: string[];
-  rows: (string | undefined)[][];
+  rows: ReactNode[][];
   emptyMsg: string;
 }) {
   if (rows.length === 0) {
@@ -418,12 +507,15 @@ function DataTable({
     );
   }
   return (
-    <div className="overflow-x-auto border border-border rounded-md">
+    <div className="overflow-x-auto border border-border rounded-md bg-surface">
       <table className="w-full text-xs">
         <thead className="bg-muted/60">
           <tr>
             {headers.map((h) => (
-              <th key={h} className="text-left px-3 py-2 font-semibold text-[10px] uppercase tracking-wider text-muted-foreground">
+              <th
+                key={h}
+                className="text-left px-3 py-2 font-semibold text-[10px] uppercase tracking-wider text-muted-foreground"
+              >
                 {h}
               </th>
             ))}
@@ -434,7 +526,11 @@ function DataTable({
             <tr key={i}>
               {r.map((c, j) => (
                 <td key={j} className="px-3 py-2 align-top">
-                  {c || <span className="text-muted-foreground">—</span>}
+                  {c === "" || c == null ? (
+                    <span className="text-muted-foreground">—</span>
+                  ) : (
+                    c
+                  )}
                 </td>
               ))}
             </tr>
@@ -462,7 +558,9 @@ function VerdictBadge({ label, v }: { label: string; v?: SectionVerdict }) {
     ditolak: "Ditolak",
   };
   return (
-    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[9px] font-semibold uppercase tracking-wide ${map[status]}`}>
+    <span
+      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[9px] font-semibold uppercase tracking-wide ${map[status]}`}
+    >
       {label}: {text[status]}
     </span>
   );
@@ -470,16 +568,25 @@ function VerdictBadge({ label, v }: { label: string; v?: SectionVerdict }) {
 
 // =============== Verdict panel ===============
 
+const VERDICT_LABEL: Record<VerdictStatus, string> = {
+  menunggu: "Belum diputuskan",
+  disetujui: "Setujui",
+  revisi: "Minta Revisi",
+  ditolak: "Tolak",
+};
+
 function VerdictPanel({
   sectionKey,
   verdict,
   canEdit,
+  role,
   onChange,
   onCommit,
 }: {
   sectionKey: SectionKey;
   verdict?: SectionVerdict;
   canEdit: boolean;
+  role: "teknis" | "sspsda";
   onChange: (v: SectionVerdict) => void;
   onCommit: (v: SectionVerdict) => void;
 }) {
@@ -488,10 +595,19 @@ function VerdictPanel({
   const komponen: KomponenChecklist[] =
     sectionKey === "kak" ? KAK_KOMPONEN : sectionKey === "dskp" ? DSKP_KAJIAN : [];
 
+  // Locked setelah verdict dibuat — hanya bisa diubah setelah Balai mengirim data terbaru
+  const locked = cur.status !== "menunggu";
+  const editable = canEdit && !locked;
+
   const [catatan, setCatatan] = useState(cur.catatan);
+  useEffect(() => {
+    setCatatan(cur.catatan);
+  }, [cur.catatan]);
+
+  const [pending, setPending] = useState<VerdictStatus | null>(null);
 
   const toggleItem = (kode: string, item: string) => {
-    if (!canEdit) return;
+    if (!editable) return;
     const cur2 = cur.checklist?.[kode] ?? { checked: [], catatan: "" };
     const checked = cur2.checked.includes(item)
       ? cur2.checked.filter((i) => i !== item)
@@ -503,7 +619,7 @@ function VerdictPanel({
   };
 
   const setCatatanKomponen = (kode: string, val: string) => {
-    if (!canEdit) return;
+    if (!editable) return;
     const cur2 = cur.checklist?.[kode] ?? { checked: [], catatan: "" };
     onChange({
       ...cur,
@@ -511,16 +627,28 @@ function VerdictPanel({
     });
   };
 
-  const commit = (status: VerdictStatus) => {
-    const v: SectionVerdict = { ...cur, status, catatan };
+  const confirmSubmit = () => {
+    if (!pending) return;
+    const v: SectionVerdict = { ...cur, status: pending, catatan };
     onChange(v);
     onCommit(v);
+    setPending(null);
   };
 
   return (
     <div className="space-y-4">
+      {locked && (
+        <div className="flex items-start gap-2 p-3 rounded-md bg-muted border border-border text-xs">
+          <Lock className="size-3.5 mt-0.5 shrink-0 text-muted-foreground" />
+          <span>
+            Keputusan sudah diberikan (<b>{VERDICT_LABEL[cur.status]}</b>). Anda tidak dapat mengubah
+            penilaian sampai Balai mengirim data terbaru.
+          </span>
+        </div>
+      )}
+
       {isChecklistSection && (
-        <div className="space-y-3">
+        <div className="space-y-3 max-h-[520px] overflow-y-auto pr-1">
           {komponen.map((k) => {
             const state = cur.checklist?.[k.kode] ?? { checked: [], catatan: "" };
             return (
@@ -536,12 +664,12 @@ function VerdictPanel({
                         <button
                           type="button"
                           onClick={() => toggleItem(k.kode, p)}
-                          disabled={!canEdit}
+                          disabled={!editable}
                           className={`mt-0.5 size-4 rounded shrink-0 flex items-center justify-center border ${
                             checked
                               ? "bg-status-approved border-status-approved"
                               : "bg-background border-border"
-                          } ${!canEdit ? "cursor-not-allowed" : "hover:border-brand"}`}
+                          } ${!editable ? "cursor-not-allowed opacity-70" : "hover:border-brand"}`}
                         >
                           {checked && <Check className="size-3 text-white" />}
                         </button>
@@ -553,7 +681,7 @@ function VerdictPanel({
                 <textarea
                   value={state.catatan}
                   onChange={(e) => setCatatanKomponen(k.kode, e.target.value)}
-                  disabled={!canEdit}
+                  disabled={!editable}
                   placeholder="Catatan / kelengkapan (opsional)..."
                   rows={2}
                   className="w-full mt-2 border border-border rounded-md px-2 py-1.5 text-xs bg-background focus:outline-none focus:ring-1 focus:ring-brand disabled:opacity-60"
@@ -571,7 +699,7 @@ function VerdictPanel({
         <textarea
           value={catatan}
           onChange={(e) => setCatatan(e.target.value)}
-          disabled={!canEdit}
+          disabled={!editable}
           rows={3}
           placeholder="Tulis catatan atas seluruh section ini..."
           className="w-full border border-border rounded-md px-3 py-2 text-sm bg-background focus:outline-none focus:ring-1 focus:ring-brand disabled:opacity-60"
@@ -579,34 +707,117 @@ function VerdictPanel({
       </div>
 
       {canEdit ? (
-        <div className="flex flex-wrap gap-2">
-          <button
-            type="button"
-            onClick={() => commit("disetujui")}
-            className="px-4 py-2 rounded-md text-xs font-semibold bg-brand text-brand-foreground hover:opacity-90"
-          >
-            Setujui
-          </button>
-          <button
-            type="button"
-            onClick={() => commit("revisi")}
-            className="px-4 py-2 rounded-md text-xs font-semibold border border-status-revisi/40 text-status-revisi hover:bg-status-revisi-bg"
-          >
-            Minta Revisi
-          </button>
-          <button
-            type="button"
-            onClick={() => commit("ditolak")}
-            className="px-4 py-2 rounded-md text-xs font-semibold border border-status-rejected/40 text-status-rejected hover:bg-status-rejected-bg"
-          >
-            Tolak
-          </button>
+        <div className="pt-3 border-t border-border">
+          <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1.5">
+            Keputusan
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <select
+              disabled={locked}
+              value={cur.status}
+              onChange={(e) => {
+                const s = e.target.value as VerdictStatus;
+                if (s === "menunggu") return;
+                setPending(s);
+              }}
+              className={`border rounded-md px-3 py-2 text-sm bg-background focus:outline-none focus:ring-1 focus:ring-brand disabled:opacity-60 ${
+                locked ? "border-border" : "border-brand"
+              }`}
+            >
+              <option value="menunggu">— Pilih Keputusan —</option>
+              <option value="disetujui">Setujui</option>
+              <option value="revisi">Minta Revisi</option>
+              <option value="ditolak">Tolak</option>
+            </select>
+            {locked && (
+              <span className="text-[11px] text-muted-foreground italic inline-flex items-center gap-1">
+                <Lock className="size-3" /> Terkunci
+              </span>
+            )}
+          </div>
         </div>
       ) : (
         <div className="text-[11px] text-muted-foreground italic">
           Panel penilaian terkunci untuk peran Anda saat ini.
         </div>
       )}
+
+      {pending && (
+        <ConfirmDialog
+          status={pending}
+          role={role}
+          onCancel={() => setPending(null)}
+          onConfirm={confirmSubmit}
+        />
+      )}
+    </div>
+  );
+}
+
+function ConfirmDialog({
+  status,
+  role,
+  onCancel,
+  onConfirm,
+}: {
+  status: VerdictStatus;
+  role: "teknis" | "sspsda";
+  onCancel: () => void;
+  onConfirm: () => void;
+}) {
+  const label = VERDICT_LABEL[status];
+  const roleLabel = role === "teknis" ? "Pembina Teknis" : "SSPSDA";
+  const tone: Record<VerdictStatus, string> = {
+    menunggu: "",
+    disetujui: "bg-status-approved text-white hover:opacity-90",
+    revisi: "bg-status-revisi text-white hover:opacity-90",
+    ditolak: "bg-status-rejected text-white hover:opacity-90",
+  };
+  return (
+    <div
+      className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4"
+      onClick={onCancel}
+    >
+      <div
+        className="bg-surface rounded-xl shadow-lg max-w-md w-full p-6"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-start gap-3 mb-4">
+          <div className="size-9 rounded-full bg-status-pending-bg text-status-pending flex items-center justify-center shrink-0">
+            <AlertCircle className="size-5" />
+          </div>
+          <div>
+            <h4 className="text-sm font-semibold">Konfirmasi: {label}</h4>
+            <p className="text-xs text-muted-foreground mt-1">
+              Apakah Anda yakin ingin <b>{label.toLowerCase()}</b> komponen ini sebagai{" "}
+              <b>{roleLabel}</b>?
+            </p>
+          </div>
+        </div>
+        <div className="p-3 rounded-md bg-muted border border-border text-[11px] text-muted-foreground mb-4 flex items-start gap-2">
+          <Lock className="size-3.5 mt-0.5 shrink-0" />
+          <span>
+            Setelah dikirim, Anda <b>tidak dapat mengubah keputusan</b> sampai Balai mengirim data
+            terbaru.
+          </span>
+        </div>
+        <div className="flex justify-end gap-2">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="px-4 py-2 rounded-md text-xs font-semibold border border-border hover:bg-muted"
+          >
+            Batal
+          </button>
+          <button
+            type="button"
+            onClick={onConfirm}
+            className={`px-4 py-2 rounded-md text-xs font-semibold ${tone[status]}`}
+          >
+            Ya, {label}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
