@@ -73,6 +73,11 @@ export interface Usulan {
   dokumen: DokumenPendukung[];
   kesiapan?: KesiapanUsulan;
   verifikasi?: VerifikasiKesiapan;
+  kodeRo?: string; // e.g. "7691.RBS.001"
+}
+
+export function kodeKegiatanRo(u: Usulan): string {
+  return u.kodeRo ?? u.nomor;
 }
 
 export const BALAI_LIST = [
@@ -102,6 +107,7 @@ export const USULAN_MOCK: Usulan[] = [
     prioritas: "nasional",
     status: "menunggu_v1",
     tahap: "awal",
+    kodeRo: "7691.RBS.001",
     tanggalPengajuan: "2025-05-12",
     dokumen: [
       { nama: "KAK_Wonogiri.pdf", tipe: "teknis", ukuran: "2.4 MB" },
@@ -122,6 +128,7 @@ export const USULAN_MOCK: Usulan[] = [
     prioritas: "menteri",
     status: "revisi",
     tahap: "awal",
+    kodeRo: "7691.RBS.003",
     tanggalPengajuan: "2025-05-10",
     tanggalEdit: "2025-05-18",
     diubah: true,
@@ -147,6 +154,7 @@ export const USULAN_MOCK: Usulan[] = [
     prioritas: "dirjen",
     status: "disetujui_v1",
     tahap: "awal",
+    kodeRo: "7691.RBS.101",
     tanggalPengajuan: "2025-05-08",
     tanggalVerifV1: "2025-05-14",
     verifikatorV1: "Ir. Budi Santoso, M.T.",
@@ -170,6 +178,7 @@ export const USULAN_MOCK: Usulan[] = [
     prioritas: "nasional",
     status: "menunggu_v2",
     tahap: "awal",
+    kodeRo: "7691.RBS.005",
     tanggalPengajuan: "2025-04-28",
     tanggalVerifV1: "2025-05-06",
     tanggalEdit: "2025-05-02",
@@ -194,6 +203,7 @@ export const USULAN_MOCK: Usulan[] = [
     prioritas: "menteri",
     status: "disetujui_v2",
     tahap: "awal",
+    kodeRo: "7691.RBS.011",
     tanggalPengajuan: "2025-04-15",
     tanggalVerifV1: "2025-04-22",
     verifikatorV1: "Ir. Budi Santoso, M.T.",
@@ -216,6 +226,7 @@ export const USULAN_MOCK: Usulan[] = [
     prioritas: "dirjen",
     status: "tidak_dilanjutkan",
     tahap: "awal",
+    kodeRo: "7691.RBS.014",
     tanggalPengajuan: "2025-04-10",
     tanggalVerifV1: "2025-04-18",
     verifikatorV1: "Ir. Budi Santoso, M.T.",
@@ -239,6 +250,7 @@ export const USULAN_MOCK: Usulan[] = [
     prioritas: "dirjen",
     status: "draft",
     tahap: "awal",
+    kodeRo: "7691.RBS.501",
     tanggalPengajuan: "2025-05-20",
     dokumen: [{ nama: "KAK_Draft.pdf", tipe: "teknis", ukuran: "1.2 MB" }],
   },
@@ -254,6 +266,7 @@ export const USULAN_MOCK: Usulan[] = [
     prioritas: "menteri",
     status: "disetujui_v2",
     tahap: "awal",
+    kodeRo: "7691.RBS.102",
     tanggalPengajuan: "2025-03-29",
     tanggalVerifV1: "2025-04-08",
     verifikatorV1: "Ir. Budi Santoso, M.T.",
@@ -278,6 +291,7 @@ export const USULAN_MOCK: Usulan[] = [
     prioritas: "nasional",
     status: "menunggu_v1",
     tahap: "perubahan",
+    kodeRo: "7691.RBS.001",
     tanggalPengajuan: "2025-06-02",
     diubah: true,
     tanggalEdit: "2025-06-02",
@@ -298,6 +312,7 @@ export const USULAN_MOCK: Usulan[] = [
     prioritas: "menteri",
     status: "disetujui_v1",
     tahap: "perubahan",
+    kodeRo: "7691.RBS.011",
     tanggalPengajuan: "2025-06-05",
     tanggalVerifV1: "2025-06-09",
     diubah: true,
