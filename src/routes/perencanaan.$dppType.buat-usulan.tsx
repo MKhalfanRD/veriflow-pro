@@ -239,6 +239,7 @@ function Form({ dppType }: { dppType: DppType }) {
     const newUsulan: Usulan = {
       id: `u_${Date.now()}`,
       nomor,
+      kodeRo: ro || undefined,
       namaKegiatan: namaProyekLengkap,
       lokasi,
       deskripsi,

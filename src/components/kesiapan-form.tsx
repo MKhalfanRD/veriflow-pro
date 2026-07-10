@@ -34,7 +34,7 @@ export function KesiapanForm({ value, onChange }: Props) {
     <>
       <Section
         title="Kriteria Kesiapan Administrasi Proyek"
-        description="Unggah dokumen KAK & DSKP. Checklist penilaian per komponen akan diisi oleh Pembina Teknis & SSPSDA."
+        description="Unggah dokumen KAK & DSKP. Checklist penilaian per komponen akan diisi oleh Pembina Teknis & SSPSDA. Pastikan dokumen sudah final dan ditandatangani pejabat berwenang."
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <DocUpload
@@ -54,7 +54,7 @@ export function KesiapanForm({ value, onChange }: Props) {
 
       <Section
         title="Kesiapan Lahan"
-        description="Tambahkan baris untuk tiap dokumen kesiapan lahan yang dimiliki."
+        description="Lampirkan bukti dokumen kepemilikan/pemanfaatan lahan lokasi proyek. Jika lahan masih dalam proses sertifikasi atau pembebasan, tetap wajib mencantumkan nomor dokumen/register proses dan mengunggah bukti progres terakhir."
       >
         <LahanRows
           rows={value.lahan}
@@ -64,7 +64,7 @@ export function KesiapanForm({ value, onChange }: Props) {
 
       <Section
         title="Dokumen Perencanaan Teknis"
-        description="Feasibility Study, Detail Engineering Design, dan Rincian Anggaran Biaya."
+        description="Feasibility Study (FS), Detail Engineering Design (DED), dan Rincian Anggaran Biaya (RAB). Jika salah satu dokumen masih dalam proses, pilih status 'Dalam proses' dan cantumkan tahun target penyelesaiannya."
       >
         <div className="space-y-4">
           {(
@@ -90,14 +90,14 @@ export function KesiapanForm({ value, onChange }: Props) {
 
       <Section
         title="Izin Lingkungan"
-        description="Tambahkan baris untuk tiap dokumen izin lingkungan (AMDAL/UKL-UPL/SPPL/PERTEK)."
+        description="Tambahkan tiap dokumen izin lingkungan (AMDAL/UKL-UPL/SPPL/PERTEK). Jika izin masih dalam proses, wajib mencantumkan nomor register/agenda proses perizinan dan mengunggah bukti pengurusan."
       >
         <IzinRows rows={value.izinLingkungan} onChange={(rows) => onChange({ izinLingkungan: rows })} />
       </Section>
 
       <Section
         title="Dukungan Kebijakan"
-        description="Pemetaan usulan terhadap kebijakan/direktif prioritas."
+        description="Pemetaan usulan terhadap kebijakan/direktif prioritas nasional, Kementerian/Lembaga, atau Direktorat Jenderal. Minimal satu dukungan wajib dipilih. Untuk PKPN, pilih klaster & detail program kerjanya."
       >
         <KebijakanRows
           rows={value.dukunganKebijakan}
@@ -108,6 +108,10 @@ export function KesiapanForm({ value, onChange }: Props) {
           <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
             Dukungan Tematik (opsional)
           </div>
+          <p className="text-[11px] text-muted-foreground mb-3">
+            Isi jika usulan mendukung tema lintas sektor tertentu (Green Project, Blue Economy,
+            Ketahanan Pangan, dll.).
+          </p>
           <TematikRows
             rows={value.dukunganTematik}
             onChange={(rows) => onChange({ dukunganTematik: rows })}
@@ -117,7 +121,7 @@ export function KesiapanForm({ value, onChange }: Props) {
 
       <Section
         title="Kesesuaian dengan RTRW"
-        description="Rencana Tata Ruang Wilayah yang selaras dengan lokasi proyek."
+        description="Bukti bahwa lokasi proyek selaras dengan Rencana Tata Ruang Wilayah yang berlaku (Nasional/Provinsi/Kabupaten-Kota). Jika tidak sesuai, jelaskan rencana penyesuaiannya pada kolom keterangan."
       >
         <RtrwRows rows={value.rtrw} onChange={(rows) => onChange({ rtrw: rows })} />
       </Section>
