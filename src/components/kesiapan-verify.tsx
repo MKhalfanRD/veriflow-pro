@@ -1,5 +1,5 @@
 // Halaman verifikasi Kesiapan (V1 Teknis / V2 SSPSDA) + view read-only untuk Balai
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import {
   Check,
   X,
@@ -9,8 +9,6 @@ import {
   RefreshCw,
   Clock,
   Star,
-  Eye,
-  Download,
   Lock,
 } from "lucide-react";
 import {
@@ -28,7 +26,7 @@ import {
   type KomponenChecklist,
   type UploadedFile,
 } from "@/lib/kesiapan-data";
-import { generateMockPdf, downloadBlob } from "@/lib/mock-data";
+import { generateMockPdf } from "@/lib/mock-data";
 
 export type VerifyMode = "verif1" | "verif2" | "readonly";
 
@@ -44,17 +42,38 @@ interface Props {
   onPushHistory?: (ev: Omit<TimelineEvent, "id" | "waktu">) => void;
 }
 
-// ============ File preview helpers ============
+// ============ Inline PDF preview (verifikator langsung melihat dokumen) ============
 
-function viewFile(file: UploadedFile) {
-  const blob = generateMockPdf(file.nama);
-  const url = URL.createObjectURL(blob);
-  window.open(url, "_blank");
-  setTimeout(() => URL.revokeObjectURL(url), 60_000);
+function InlinePdf({ file, height = 360 }: { file: UploadedFile; height?: number }) {
+  const url = useMemo(() => URL.createObjectURL(generateMockPdf(file.nama)), [file.nama]);
+  useEffect(() => () => URL.revokeObjectURL(url), [url]);
+  return (
+    <div className="border border-border rounded-md overflow-hidden bg-background">
+      <div className="px-3 py-2 text-xs font-medium bg-muted/70 border-b border-border flex items-center gap-2">
+        <FileText className="size-3.5 text-brand shrink-0" />
+        <span className="truncate flex-1">{file.nama}</span>
+        <span className="text-[10px] text-muted-foreground shrink-0">
+          {file.ukuran} · {formatWaktu(file.waktu)}
+        </span>
+      </div>
+      <iframe
+        src={url}
+        title={file.nama}
+        className="w-full bg-background"
+        style={{ height }}
+      />
+    </div>
+  );
 }
 
-function downloadFile(file: UploadedFile) {
-  downloadBlob(generateMockPdf(file.nama), file.nama);
+function InlineFileCell({ file }: { file?: UploadedFile }) {
+  if (!file) return <span className="text-muted-foreground text-xs">—</span>;
+  return (
+    <div className="inline-flex items-center gap-1.5 text-[11px] text-foreground/80">
+      <FileText className="size-3 text-brand" />
+      <span className="truncate max-w-[140px]" title={file.nama}>{file.nama}</span>
+    </div>
+  );
 }
 
 function FileButton({ file, compact = false }: { file?: UploadedFile; compact?: boolean }) {
