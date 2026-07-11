@@ -662,8 +662,8 @@ function Form({ dppType }: { dppType: DppType }) {
       </div>
 
       <aside className="space-y-4 lg:sticky lg:top-6 lg:self-start">
-        <div className="bg-surface rounded-xl ring-1 ring-black/5 shadow-card overflow-hidden">
-          <div className="p-5 border-b border-border">
+        <div className="bg-surface rounded-xl ring-1 ring-black/5 shadow-card overflow-hidden flex flex-col max-h-[calc(100vh-3rem)]">
+          <div className="p-5 border-b border-border shrink-0">
             <h3 className="text-sm font-semibold">Kelengkapan Data</h3>
             <p className="text-[11px] text-muted-foreground">Wajib lengkap sebelum dapat dikirim</p>
             <div className="mt-3 flex items-baseline gap-2">
@@ -674,7 +674,7 @@ function Form({ dppType }: { dppType: DppType }) {
               <div className={`h-full transition-all ${isComplete ? "bg-status-approved" : "bg-brand"}`} style={{ width: `${progress}%` }} />
             </div>
           </div>
-          <ul className="p-5 space-y-2.5">
+          <ul className="p-5 space-y-2.5 overflow-y-auto flex-1 min-h-0">
             {checklist.map((c) => (
               <li key={c.label} className="flex items-start gap-2.5 text-xs">
                 <div className={`mt-0.5 size-4 rounded shrink-0 flex items-center justify-center ${c.done ? "bg-status-approved" : "border border-border bg-background"}`}>
@@ -684,7 +684,7 @@ function Form({ dppType }: { dppType: DppType }) {
               </li>
             ))}
           </ul>
-          <div className="p-5 pt-0 space-y-2">
+          <div className="p-5 space-y-2 shrink-0 border-t border-border bg-surface">
             <button
               onClick={handleSubmit}
               disabled={!isComplete}
