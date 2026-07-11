@@ -1,5 +1,5 @@
 // Halaman verifikasi Kesiapan (V1 Teknis / V2 SSPSDA) + view read-only untuk Balai
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import {
   Check,
   X,
@@ -9,8 +9,6 @@ import {
   RefreshCw,
   Clock,
   Star,
-  Eye,
-  Download,
   Lock,
 } from "lucide-react";
 import {
@@ -28,7 +26,7 @@ import {
   type KomponenChecklist,
   type UploadedFile,
 } from "@/lib/kesiapan-data";
-import { generateMockPdf, downloadBlob } from "@/lib/mock-data";
+import { generateMockPdf } from "@/lib/mock-data";
 
 export type VerifyMode = "verif1" | "verif2" | "readonly";
 
@@ -44,69 +42,40 @@ interface Props {
   onPushHistory?: (ev: Omit<TimelineEvent, "id" | "waktu">) => void;
 }
 
-// ============ File preview helpers ============
+// ============ Inline PDF preview (verifikator langsung melihat dokumen) ============
 
-function viewFile(file: UploadedFile) {
-  const blob = generateMockPdf(file.nama);
-  const url = URL.createObjectURL(blob);
-  window.open(url, "_blank");
-  setTimeout(() => URL.revokeObjectURL(url), 60_000);
-}
-
-function downloadFile(file: UploadedFile) {
-  downloadBlob(generateMockPdf(file.nama), file.nama);
-}
-
-function FileButton({ file, compact = false }: { file?: UploadedFile; compact?: boolean }) {
-  if (!file) return <span className="text-muted-foreground text-xs">—</span>;
-  if (compact) {
-    return (
-      <div className="flex items-center gap-1.5">
-        <button
-          type="button"
-          onClick={() => viewFile(file)}
-          className="inline-flex items-center gap-1 text-[11px] text-brand hover:underline"
-          title={`Lihat ${file.nama}`}
-        >
-          <Eye className="size-3" /> Lihat
-        </button>
-        <button
-          type="button"
-          onClick={() => downloadFile(file)}
-          className="inline-flex items-center gap-1 text-[11px] text-muted-foreground hover:text-brand"
-          title="Unduh"
-        >
-          <Download className="size-3" />
-        </button>
-      </div>
-    );
-  }
+function InlinePdf({ file, height = 360 }: { file: UploadedFile; height?: number }) {
+  const url = useMemo(() => URL.createObjectURL(generateMockPdf(file.nama)), [file.nama]);
+  useEffect(() => () => URL.revokeObjectURL(url), [url]);
   return (
-    <div className="flex items-center gap-2 p-2 rounded-md border border-border bg-background">
-      <FileText className="size-4 text-brand shrink-0" />
-      <div className="flex-1 min-w-0">
-        <div className="text-sm font-medium truncate">{file.nama}</div>
-        <div className="text-[10px] text-muted-foreground">
-          {file.ukuran} · Diunggah {formatWaktu(file.waktu)}
-        </div>
+    <div className="border border-border rounded-md overflow-hidden bg-background">
+      <div className="px-3 py-2 text-xs font-medium bg-muted/70 border-b border-border flex items-center gap-2">
+        <FileText className="size-3.5 text-brand shrink-0" />
+        <span className="truncate flex-1">{file.nama}</span>
+        <span className="text-[10px] text-muted-foreground shrink-0">
+          {file.ukuran} · {formatWaktu(file.waktu)}
+        </span>
       </div>
-      <button
-        type="button"
-        onClick={() => viewFile(file)}
-        className="inline-flex items-center gap-1 text-[11px] text-brand hover:underline px-1.5 py-1"
-      >
-        <Eye className="size-3.5" /> Lihat
-      </button>
-      <button
-        type="button"
-        onClick={() => downloadFile(file)}
-        className="inline-flex items-center gap-1 text-[11px] text-muted-foreground hover:text-brand px-1.5 py-1"
-      >
-        <Download className="size-3.5" />
-      </button>
+      <iframe
+        src={url}
+        title={file.nama}
+        className="w-full bg-background"
+        style={{ height }}
+      />
     </div>
   );
 }
+
+function InlineFileCell({ file }: { file?: UploadedFile }) {
+  if (!file) return <span className="text-muted-foreground text-xs">—</span>;
+  return (
+    <div className="inline-flex items-center gap-1.5 text-[11px] text-foreground/80">
+      <FileText className="size-3 text-brand" />
+      <span className="truncate max-w-[140px]" title={file.nama}>{file.nama}</span>
+    </div>
+  );
+}
+
 
 export function KesiapanVerifyView({
   kesiapan,
@@ -386,7 +355,7 @@ function SectionCard({
   );
 }
 
-// =============== Balai data display (read-only, dengan viewer) ===============
+// =============== Balai data display (read-only, dokumen tampil inline) ===============
 
 function BalaiData({
   sectionKey,
@@ -402,59 +371,53 @@ function BalaiData({
       return <FileBlock file={kesiapan.dskp} placeholder="DSKP belum diunggah" />;
     case "lahan":
       return (
-        <DataTable
-          headers={["Kesiapan Lahan", "Jenis Dokumen", "Nomor", "File"]}
-          rows={kesiapan.lahan.map((r) => [
-            r.kesiapan,
-            r.jenisDok,
-            r.nomorDok,
-            <FileButton key="f" file={r.file} compact />,
-          ])}
-          emptyMsg="Belum ada data kesiapan lahan."
-        />
+        <div className="space-y-3">
+          <DataTable
+            headers={["Kesiapan Lahan", "Jenis Dokumen", "Nomor", "File"]}
+            rows={kesiapan.lahan.map((r) => [
+              r.kesiapan,
+              r.jenisDok,
+              r.nomorDok,
+              <InlineFileCell key="f" file={r.file} />,
+            ])}
+            emptyMsg="Belum ada data kesiapan lahan."
+          />
+          <InlineDocList files={kesiapan.lahan.map((r) => r.file)} />
+        </div>
       );
     case "dokTeknis": {
       const dt = kesiapan.dokTeknis;
       return (
-        <DataTable
-          headers={["Dokumen", "Status", "Tahun", "File"]}
-          rows={[
-            [
-              "Feasibility Study",
-              dt.fs.status,
-              dt.fs.tahun,
-              <FileButton key="f" file={dt.fs.file} compact />,
-            ],
-            [
-              "Detail Engineering Design",
-              dt.ded.status,
-              dt.ded.tahun,
-              <FileButton key="f" file={dt.ded.file} compact />,
-            ],
-            [
-              "Rincian Anggaran Biaya",
-              dt.rab.status,
-              dt.rab.tahun,
-              <FileButton key="f" file={dt.rab.file} compact />,
-            ],
-          ]}
-          emptyMsg=""
-        />
+        <div className="space-y-3">
+          <DataTable
+            headers={["Dokumen", "Status", "Tahun", "File"]}
+            rows={[
+              ["Feasibility Study", dt.fs.status, dt.fs.tahun, <InlineFileCell key="f" file={dt.fs.file} />],
+              ["Detail Engineering Design", dt.ded.status, dt.ded.tahun, <InlineFileCell key="f" file={dt.ded.file} />],
+              ["Rincian Anggaran Biaya", dt.rab.status, dt.rab.tahun, <InlineFileCell key="f" file={dt.rab.file} />],
+            ]}
+            emptyMsg=""
+          />
+          <InlineDocList files={[dt.fs.file, dt.ded.file, dt.rab.file]} />
+        </div>
       );
     }
     case "izinLingkungan":
       return (
-        <DataTable
-          headers={["Status", "Jenis", "Tahun", "Nomor", "File"]}
-          rows={kesiapan.izinLingkungan.map((r) => [
-            r.statusIzin,
-            r.jenisDok,
-            r.tahun,
-            r.nomor,
-            <FileButton key="f" file={r.file} compact />,
-          ])}
-          emptyMsg="Belum ada data izin lingkungan."
-        />
+        <div className="space-y-3">
+          <DataTable
+            headers={["Status", "Jenis", "Tahun", "Nomor", "File"]}
+            rows={kesiapan.izinLingkungan.map((r) => [
+              r.statusIzin,
+              r.jenisDok,
+              r.tahun,
+              r.nomor,
+              <InlineFileCell key="f" file={r.file} />,
+            ])}
+            emptyMsg="Belum ada data izin lingkungan."
+          />
+          <InlineDocList files={kesiapan.izinLingkungan.map((r) => r.file)} />
+        </div>
       );
     case "dukunganKebijakan":
       return (
@@ -479,6 +442,18 @@ function BalaiData({
   }
 }
 
+function InlineDocList({ files }: { files: (UploadedFile | undefined)[] }) {
+  const valid = files.filter((f): f is UploadedFile => !!f);
+  if (valid.length === 0) return null;
+  return (
+    <div className="space-y-2">
+      {valid.map((f, i) => (
+        <InlinePdf key={`${f.nama}-${i}`} file={f} height={280} />
+      ))}
+    </div>
+  );
+}
+
 function FileBlock({ file, placeholder }: { file?: UploadedFile; placeholder: string }) {
   if (!file) {
     return (
@@ -487,7 +462,7 @@ function FileBlock({ file, placeholder }: { file?: UploadedFile; placeholder: st
       </div>
     );
   }
-  return <FileButton file={file} />;
+  return <InlinePdf file={file} height={480} />;
 }
 
 function DataTable({

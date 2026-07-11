@@ -194,8 +194,6 @@ function Form({ dppType }: { dppType: DppType }) {
   }, [namaProyekLengkap, usulan]);
 
   const checklist = useMemo(() => {
-    const hasTeknis = files.some((f) => f.tipe === "teknis");
-    const hasAdmin = files.some((f) => f.tipe === "administrasi");
     return [
       { label: "Program & Sasaran Program dipilih", done: !!program && !!sasaranProgram && !!indikatorSP },
       { label: "Kegiatan & Sasaran Kegiatan dipilih", done: !!kegiatan && !!sasaranKegiatan && !!indikatorSK },
@@ -209,8 +207,6 @@ function Form({ dppType }: { dppType: DppType }) {
       { label: "Minimal 1 output diisi", done: outputs.some((o) => Number(o.volume) > 0) },
       { label: "Minimal 1 outcome diisi", done: outcomes.some((o) => Number(o.volume) > 0) },
       { label: "Lokasi (provinsi & kabupaten) dipilih", done: !!provinsi && !!kabupaten },
-      { label: "Tingkat prioritas dipilih", done: !!prioritas },
-      { label: "Dokumen teknis & administrasi", done: hasTeknis && hasAdmin },
       { label: "KAK terunggah", done: kesiapanStatus.kak },
       { label: "DSKP terunggah", done: kesiapanStatus.dskp },
       { label: "Kesiapan Lahan (min. 1 baris lengkap)", done: kesiapanStatus.lahan },
@@ -219,7 +215,7 @@ function Form({ dppType }: { dppType: DppType }) {
       { label: "Dukungan Kebijakan (min. 1 baris lengkap)", done: kesiapanStatus.dukunganKebijakan },
       { label: "Kesesuaian RTRW (min. 1 baris lengkap)", done: kesiapanStatus.rtrw },
     ];
-  }, [program, sasaranProgram, indikatorSP, kegiatan, sasaranKegiatan, indikatorSK, kro, ro, kroOptions.length, satker, sbsnJenis, sbsnNama, isDuplicateNama, paket, totalHari, totalAlokasi, skema, jenisPengadaan, outputs, outcomes, provinsi, kabupaten, prioritas, files, kesiapanStatus]);
+  }, [program, sasaranProgram, indikatorSP, kegiatan, sasaranKegiatan, indikatorSK, kro, ro, kroOptions.length, satker, sbsnJenis, sbsnNama, isDuplicateNama, paket, totalHari, totalAlokasi, skema, jenisPengadaan, outputs, outcomes, provinsi, kabupaten, kesiapanStatus]);
 
   const completedCount = checklist.filter((c) => c.done).length;
   const isComplete = completedCount === checklist.length;
@@ -233,7 +229,10 @@ function Form({ dppType }: { dppType: DppType }) {
 
   const handleSubmit = () => {
     if (!isComplete) return;
-    const nomor = `USL-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 9999)).padStart(4, "0")}${dppType === "perubahan" ? "-R1" : ""}`;
+    const suffix = dppType === "perubahan" ? "-R1" : "";
+    const nomor = ro
+      ? `${ro}${suffix}`
+      : `7691.RBS.${String(Math.floor(Math.random() * 900) + 100)}${suffix}`;
     const lokasi = [desa, kecamatan, kabupaten, provinsi].filter(Boolean).join(", ");
     const deskripsi = `${namaProyekLengkap}. Paket: ${paket.map((p) => `${p.jenis}-${p.nama}`).join("; ")}. Skema: ${skema}. Pengadaan: ${jenisPengadaan}.`;
     const newUsulan: Usulan = {
@@ -663,58 +662,11 @@ function Form({ dppType }: { dppType: DppType }) {
         </Section>
 
         <KesiapanForm value={kesiapan} onChange={(patch) => setKesiapan((prev) => ({ ...prev, ...patch }))} />
-
-
-        <Section title="Tingkat Prioritas" description="Sistem otomatis menetapkan bobot nilai prioritas">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            {(["nasional", "menteri", "dirjen"] as Prioritas[]).map((p) => {
-              const active = prioritas === p;
-              return (
-                <button key={p} type="button" onClick={() => setPrioritas(p)}
-                  className={`text-left p-4 rounded-lg border transition-all ${active ? "border-brand bg-brand/5 ring-2 ring-brand/20" : "border-border bg-surface hover:border-brand/40"}`}>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className={`text-[10px] font-bold uppercase tracking-wider ${active ? "text-brand" : "text-muted-foreground"}`}>{PRIORITAS_LABEL[p]}</span>
-                    <span className={`size-6 rounded-full flex items-center justify-center text-[11px] font-bold font-mono ${active ? "bg-brand text-brand-foreground" : "bg-muted text-muted-foreground"}`}>{PRIORITAS_NILAI[p]}</span>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </Section>
-
-        <Section title="Dokumen Pendukung" description="Unggah dokumen teknis, administrasi, dan pendukung (PDF)">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            {(["teknis", "administrasi", "lainnya"] as const).map((tipe) => (
-              <button key={tipe} type="button" onClick={() => handleFakeUpload(tipe)}
-                className="border-2 border-dashed border-border rounded-lg p-5 text-center hover:border-brand hover:bg-brand/5 transition-all">
-                <Upload className="size-5 mx-auto text-muted-foreground mb-2" />
-                <div className="text-xs font-semibold capitalize">{tipe === "lainnya" ? "Pendukung Lainnya" : `Dokumen ${tipe}`}</div>
-                <div className="text-[10px] text-muted-foreground mt-0.5">Klik untuk simulasi upload PDF</div>
-              </button>
-            ))}
-          </div>
-          {files.length > 0 && (
-            <div className="mt-4 space-y-2">
-              {files.map((f, i) => (
-                <div key={i} className="flex items-center gap-3 p-2.5 rounded-lg border border-border bg-surface">
-                  <FileText className="size-4 text-brand" />
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium truncate">{f.nama}</div>
-                    <div className="text-[10px] text-muted-foreground uppercase">{f.tipe} · {f.ukuran}</div>
-                  </div>
-                  <button onClick={() => setFiles((p) => p.filter((_, j) => j !== i))} className="text-muted-foreground hover:text-destructive p-1">
-                    <X className="size-3.5" />
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </Section>
       </div>
 
       <aside className="space-y-4 lg:sticky lg:top-6 lg:self-start">
-        <div className="bg-surface rounded-xl ring-1 ring-black/5 shadow-card overflow-hidden">
-          <div className="p-5 border-b border-border">
+        <div className="bg-surface rounded-xl ring-1 ring-black/5 shadow-card overflow-hidden flex flex-col max-h-[calc(100vh-3rem)]">
+          <div className="p-5 border-b border-border shrink-0">
             <h3 className="text-sm font-semibold">Kelengkapan Data</h3>
             <p className="text-[11px] text-muted-foreground">Wajib lengkap sebelum dapat dikirim</p>
             <div className="mt-3 flex items-baseline gap-2">
@@ -725,7 +677,7 @@ function Form({ dppType }: { dppType: DppType }) {
               <div className={`h-full transition-all ${isComplete ? "bg-status-approved" : "bg-brand"}`} style={{ width: `${progress}%` }} />
             </div>
           </div>
-          <ul className="p-5 space-y-2.5">
+          <ul className="p-5 space-y-2.5 overflow-y-auto flex-1 min-h-0">
             {checklist.map((c) => (
               <li key={c.label} className="flex items-start gap-2.5 text-xs">
                 <div className={`mt-0.5 size-4 rounded shrink-0 flex items-center justify-center ${c.done ? "bg-status-approved" : "border border-border bg-background"}`}>
@@ -735,7 +687,7 @@ function Form({ dppType }: { dppType: DppType }) {
               </li>
             ))}
           </ul>
-          <div className="p-5 pt-0 space-y-2">
+          <div className="p-5 space-y-2 shrink-0 border-t border-border bg-surface">
             <button
               onClick={handleSubmit}
               disabled={!isComplete}
