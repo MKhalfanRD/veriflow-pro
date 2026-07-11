@@ -96,7 +96,7 @@ export const TAHUN_PERENCANAAN = new Date().getFullYear() + 1;
 export const USULAN_MOCK: Usulan[] = [
   {
     id: "u1",
-    nomor: "USL-2025-0012",
+    nomor: "7691.RBS.001",
     namaKegiatan: "Rehabilitasi Bendungan Wonogiri",
     lokasi: "Wonogiri, Jawa Tengah",
     deskripsi:
@@ -117,7 +117,7 @@ export const USULAN_MOCK: Usulan[] = [
   },
   {
     id: "u2",
-    nomor: "USL-2025-0015",
+    nomor: "7691.RBS.003",
     namaKegiatan: "Normalisasi Sungai Ciliwung Paket 2",
     lokasi: "DKI Jakarta",
     deskripsi:
@@ -143,7 +143,7 @@ export const USULAN_MOCK: Usulan[] = [
   },
   {
     id: "u3",
-    nomor: "USL-2025-0018",
+    nomor: "7691.RBS.101",
     namaKegiatan: "Pembangunan Embung Giriroto",
     lokasi: "Boyolali, Jawa Tengah",
     deskripsi:
@@ -167,7 +167,7 @@ export const USULAN_MOCK: Usulan[] = [
   },
   {
     id: "u4",
-    nomor: "USL-2025-0021",
+    nomor: "7691.RBS.005",
     namaKegiatan: "Pemeliharaan Irigasi Rentang",
     lokasi: "Majalengka, Jawa Barat",
     deskripsi:
@@ -192,7 +192,7 @@ export const USULAN_MOCK: Usulan[] = [
   },
   {
     id: "u5",
-    nomor: "USL-2025-0024",
+    nomor: "7691.RBS.011",
     namaKegiatan: "Pembangunan Tanggul Kali Gading",
     lokasi: "Kalimantan Tengah",
     deskripsi:
@@ -216,7 +216,7 @@ export const USULAN_MOCK: Usulan[] = [
   },
   {
     id: "u6",
-    nomor: "USL-2025-0027",
+    nomor: "7691.RBS.014",
     namaKegiatan: "Normalisasi Drainase Utama Kota",
     lokasi: "Bandung, Jawa Barat",
     deskripsi: "Normalisasi saluran drainase primer pusat kota.",
@@ -240,7 +240,7 @@ export const USULAN_MOCK: Usulan[] = [
   },
   {
     id: "u7",
-    nomor: "USL-2025-0029",
+    nomor: "7691.RBS.501",
     namaKegiatan: "Pembangunan Embung Desa Sejahtera",
     lokasi: "Sikka, NTT",
     deskripsi: "Pembangunan embung air baku 180.000 m³ untuk wilayah kering.",
@@ -256,7 +256,7 @@ export const USULAN_MOCK: Usulan[] = [
   },
   {
     id: "u8",
-    nomor: "USL-2025-0031",
+    nomor: "7691.RBS.102",
     namaKegiatan: "Rehabilitasi Bendung Colo",
     lokasi: "Sukoharjo, Jawa Tengah",
     deskripsi: "Rehabilitasi bendung utama dan jaringan primer untuk irigasi 22.000 Ha.",
@@ -280,7 +280,7 @@ export const USULAN_MOCK: Usulan[] = [
   // Perubahan DPP data
   {
     id: "p1",
-    nomor: "USL-2025-0012-R1",
+    nomor: "7691.RBS.001-R1",
     namaKegiatan: "Rehabilitasi Bendungan Wonogiri (Revisi Lingkup)",
     lokasi: "Wonogiri, Jawa Tengah",
     deskripsi:
@@ -302,7 +302,7 @@ export const USULAN_MOCK: Usulan[] = [
   },
   {
     id: "p2",
-    nomor: "USL-2025-0024-R1",
+    nomor: "7691.RBS.011-R1",
     namaKegiatan: "Pembangunan Tanggul Kali Gading (Optimasi)",
     lokasi: "Kalimantan Tengah",
     deskripsi: "Optimasi trase tanggul dan penambahan pintu klep di outlet sekunder.",
