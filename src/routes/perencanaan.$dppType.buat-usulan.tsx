@@ -229,7 +229,10 @@ function Form({ dppType }: { dppType: DppType }) {
 
   const handleSubmit = () => {
     if (!isComplete) return;
-    const nomor = `USL-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 9999)).padStart(4, "0")}${dppType === "perubahan" ? "-R1" : ""}`;
+    const suffix = dppType === "perubahan" ? "-R1" : "";
+    const nomor = ro
+      ? `${ro}${suffix}`
+      : `7691.RBS.${String(Math.floor(Math.random() * 900) + 100)}${suffix}`;
     const lokasi = [desa, kecamatan, kabupaten, provinsi].filter(Boolean).join(", ");
     const deskripsi = `${namaProyekLengkap}. Paket: ${paket.map((p) => `${p.jenis}-${p.nama}`).join("; ")}. Skema: ${skema}. Pengadaan: ${jenisPengadaan}.`;
     const newUsulan: Usulan = {
