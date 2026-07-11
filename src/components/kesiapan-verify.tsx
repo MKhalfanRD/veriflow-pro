@@ -355,7 +355,7 @@ function SectionCard({
   );
 }
 
-// =============== Balai data display (read-only, dengan viewer) ===============
+// =============== Balai data display (read-only, dokumen tampil inline) ===============
 
 function BalaiData({
   sectionKey,
@@ -371,59 +371,53 @@ function BalaiData({
       return <FileBlock file={kesiapan.dskp} placeholder="DSKP belum diunggah" />;
     case "lahan":
       return (
-        <DataTable
-          headers={["Kesiapan Lahan", "Jenis Dokumen", "Nomor", "File"]}
-          rows={kesiapan.lahan.map((r) => [
-            r.kesiapan,
-            r.jenisDok,
-            r.nomorDok,
-            <FileButton key="f" file={r.file} compact />,
-          ])}
-          emptyMsg="Belum ada data kesiapan lahan."
-        />
+        <div className="space-y-3">
+          <DataTable
+            headers={["Kesiapan Lahan", "Jenis Dokumen", "Nomor", "File"]}
+            rows={kesiapan.lahan.map((r) => [
+              r.kesiapan,
+              r.jenisDok,
+              r.nomorDok,
+              <InlineFileCell key="f" file={r.file} />,
+            ])}
+            emptyMsg="Belum ada data kesiapan lahan."
+          />
+          <InlineDocList files={kesiapan.lahan.map((r) => r.file)} />
+        </div>
       );
     case "dokTeknis": {
       const dt = kesiapan.dokTeknis;
       return (
-        <DataTable
-          headers={["Dokumen", "Status", "Tahun", "File"]}
-          rows={[
-            [
-              "Feasibility Study",
-              dt.fs.status,
-              dt.fs.tahun,
-              <FileButton key="f" file={dt.fs.file} compact />,
-            ],
-            [
-              "Detail Engineering Design",
-              dt.ded.status,
-              dt.ded.tahun,
-              <FileButton key="f" file={dt.ded.file} compact />,
-            ],
-            [
-              "Rincian Anggaran Biaya",
-              dt.rab.status,
-              dt.rab.tahun,
-              <FileButton key="f" file={dt.rab.file} compact />,
-            ],
-          ]}
-          emptyMsg=""
-        />
+        <div className="space-y-3">
+          <DataTable
+            headers={["Dokumen", "Status", "Tahun", "File"]}
+            rows={[
+              ["Feasibility Study", dt.fs.status, dt.fs.tahun, <InlineFileCell key="f" file={dt.fs.file} />],
+              ["Detail Engineering Design", dt.ded.status, dt.ded.tahun, <InlineFileCell key="f" file={dt.ded.file} />],
+              ["Rincian Anggaran Biaya", dt.rab.status, dt.rab.tahun, <InlineFileCell key="f" file={dt.rab.file} />],
+            ]}
+            emptyMsg=""
+          />
+          <InlineDocList files={[dt.fs.file, dt.ded.file, dt.rab.file]} />
+        </div>
       );
     }
     case "izinLingkungan":
       return (
-        <DataTable
-          headers={["Status", "Jenis", "Tahun", "Nomor", "File"]}
-          rows={kesiapan.izinLingkungan.map((r) => [
-            r.statusIzin,
-            r.jenisDok,
-            r.tahun,
-            r.nomor,
-            <FileButton key="f" file={r.file} compact />,
-          ])}
-          emptyMsg="Belum ada data izin lingkungan."
-        />
+        <div className="space-y-3">
+          <DataTable
+            headers={["Status", "Jenis", "Tahun", "Nomor", "File"]}
+            rows={kesiapan.izinLingkungan.map((r) => [
+              r.statusIzin,
+              r.jenisDok,
+              r.tahun,
+              r.nomor,
+              <InlineFileCell key="f" file={r.file} />,
+            ])}
+            emptyMsg="Belum ada data izin lingkungan."
+          />
+          <InlineDocList files={kesiapan.izinLingkungan.map((r) => r.file)} />
+        </div>
       );
     case "dukunganKebijakan":
       return (
@@ -448,6 +442,18 @@ function BalaiData({
   }
 }
 
+function InlineDocList({ files }: { files: (UploadedFile | undefined)[] }) {
+  const valid = files.filter((f): f is UploadedFile => !!f);
+  if (valid.length === 0) return null;
+  return (
+    <div className="space-y-2">
+      {valid.map((f, i) => (
+        <InlinePdf key={`${f.nama}-${i}`} file={f} height={280} />
+      ))}
+    </div>
+  );
+}
+
 function FileBlock({ file, placeholder }: { file?: UploadedFile; placeholder: string }) {
   if (!file) {
     return (
@@ -456,7 +462,7 @@ function FileBlock({ file, placeholder }: { file?: UploadedFile; placeholder: st
       </div>
     );
   }
-  return <FileButton file={file} />;
+  return <InlinePdf file={file} height={480} />;
 }
 
 function DataTable({
