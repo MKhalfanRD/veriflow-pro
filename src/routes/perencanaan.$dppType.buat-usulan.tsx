@@ -194,8 +194,6 @@ function Form({ dppType }: { dppType: DppType }) {
   }, [namaProyekLengkap, usulan]);
 
   const checklist = useMemo(() => {
-    const hasTeknis = files.some((f) => f.tipe === "teknis");
-    const hasAdmin = files.some((f) => f.tipe === "administrasi");
     return [
       { label: "Program & Sasaran Program dipilih", done: !!program && !!sasaranProgram && !!indikatorSP },
       { label: "Kegiatan & Sasaran Kegiatan dipilih", done: !!kegiatan && !!sasaranKegiatan && !!indikatorSK },
@@ -209,8 +207,6 @@ function Form({ dppType }: { dppType: DppType }) {
       { label: "Minimal 1 output diisi", done: outputs.some((o) => Number(o.volume) > 0) },
       { label: "Minimal 1 outcome diisi", done: outcomes.some((o) => Number(o.volume) > 0) },
       { label: "Lokasi (provinsi & kabupaten) dipilih", done: !!provinsi && !!kabupaten },
-      { label: "Tingkat prioritas dipilih", done: !!prioritas },
-      { label: "Dokumen teknis & administrasi", done: hasTeknis && hasAdmin },
       { label: "KAK terunggah", done: kesiapanStatus.kak },
       { label: "DSKP terunggah", done: kesiapanStatus.dskp },
       { label: "Kesiapan Lahan (min. 1 baris lengkap)", done: kesiapanStatus.lahan },
@@ -219,7 +215,7 @@ function Form({ dppType }: { dppType: DppType }) {
       { label: "Dukungan Kebijakan (min. 1 baris lengkap)", done: kesiapanStatus.dukunganKebijakan },
       { label: "Kesesuaian RTRW (min. 1 baris lengkap)", done: kesiapanStatus.rtrw },
     ];
-  }, [program, sasaranProgram, indikatorSP, kegiatan, sasaranKegiatan, indikatorSK, kro, ro, kroOptions.length, satker, sbsnJenis, sbsnNama, isDuplicateNama, paket, totalHari, totalAlokasi, skema, jenisPengadaan, outputs, outcomes, provinsi, kabupaten, prioritas, files, kesiapanStatus]);
+  }, [program, sasaranProgram, indikatorSP, kegiatan, sasaranKegiatan, indikatorSK, kro, ro, kroOptions.length, satker, sbsnJenis, sbsnNama, isDuplicateNama, paket, totalHari, totalAlokasi, skema, jenisPengadaan, outputs, outcomes, provinsi, kabupaten, kesiapanStatus]);
 
   const completedCount = checklist.filter((c) => c.done).length;
   const isComplete = completedCount === checklist.length;
