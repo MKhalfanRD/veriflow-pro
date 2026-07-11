@@ -659,53 +659,6 @@ function Form({ dppType }: { dppType: DppType }) {
         </Section>
 
         <KesiapanForm value={kesiapan} onChange={(patch) => setKesiapan((prev) => ({ ...prev, ...patch }))} />
-
-
-        <Section title="Tingkat Prioritas" description="Sistem otomatis menetapkan bobot nilai prioritas">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            {(["nasional", "menteri", "dirjen"] as Prioritas[]).map((p) => {
-              const active = prioritas === p;
-              return (
-                <button key={p} type="button" onClick={() => setPrioritas(p)}
-                  className={`text-left p-4 rounded-lg border transition-all ${active ? "border-brand bg-brand/5 ring-2 ring-brand/20" : "border-border bg-surface hover:border-brand/40"}`}>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className={`text-[10px] font-bold uppercase tracking-wider ${active ? "text-brand" : "text-muted-foreground"}`}>{PRIORITAS_LABEL[p]}</span>
-                    <span className={`size-6 rounded-full flex items-center justify-center text-[11px] font-bold font-mono ${active ? "bg-brand text-brand-foreground" : "bg-muted text-muted-foreground"}`}>{PRIORITAS_NILAI[p]}</span>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </Section>
-
-        <Section title="Dokumen Pendukung" description="Unggah dokumen teknis, administrasi, dan pendukung (PDF)">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            {(["teknis", "administrasi", "lainnya"] as const).map((tipe) => (
-              <button key={tipe} type="button" onClick={() => handleFakeUpload(tipe)}
-                className="border-2 border-dashed border-border rounded-lg p-5 text-center hover:border-brand hover:bg-brand/5 transition-all">
-                <Upload className="size-5 mx-auto text-muted-foreground mb-2" />
-                <div className="text-xs font-semibold capitalize">{tipe === "lainnya" ? "Pendukung Lainnya" : `Dokumen ${tipe}`}</div>
-                <div className="text-[10px] text-muted-foreground mt-0.5">Klik untuk simulasi upload PDF</div>
-              </button>
-            ))}
-          </div>
-          {files.length > 0 && (
-            <div className="mt-4 space-y-2">
-              {files.map((f, i) => (
-                <div key={i} className="flex items-center gap-3 p-2.5 rounded-lg border border-border bg-surface">
-                  <FileText className="size-4 text-brand" />
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium truncate">{f.nama}</div>
-                    <div className="text-[10px] text-muted-foreground uppercase">{f.tipe} · {f.ukuran}</div>
-                  </div>
-                  <button onClick={() => setFiles((p) => p.filter((_, j) => j !== i))} className="text-muted-foreground hover:text-destructive p-1">
-                    <X className="size-3.5" />
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </Section>
       </div>
 
       <aside className="space-y-4 lg:sticky lg:top-6 lg:self-start">
