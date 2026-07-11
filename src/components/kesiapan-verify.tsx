@@ -76,56 +76,6 @@ function InlineFileCell({ file }: { file?: UploadedFile }) {
   );
 }
 
-function FileButton({ file, compact = false }: { file?: UploadedFile; compact?: boolean }) {
-  if (!file) return <span className="text-muted-foreground text-xs">—</span>;
-  if (compact) {
-    return (
-      <div className="flex items-center gap-1.5">
-        <button
-          type="button"
-          onClick={() => viewFile(file)}
-          className="inline-flex items-center gap-1 text-[11px] text-brand hover:underline"
-          title={`Lihat ${file.nama}`}
-        >
-          <Eye className="size-3" /> Lihat
-        </button>
-        <button
-          type="button"
-          onClick={() => downloadFile(file)}
-          className="inline-flex items-center gap-1 text-[11px] text-muted-foreground hover:text-brand"
-          title="Unduh"
-        >
-          <Download className="size-3" />
-        </button>
-      </div>
-    );
-  }
-  return (
-    <div className="flex items-center gap-2 p-2 rounded-md border border-border bg-background">
-      <FileText className="size-4 text-brand shrink-0" />
-      <div className="flex-1 min-w-0">
-        <div className="text-sm font-medium truncate">{file.nama}</div>
-        <div className="text-[10px] text-muted-foreground">
-          {file.ukuran} · Diunggah {formatWaktu(file.waktu)}
-        </div>
-      </div>
-      <button
-        type="button"
-        onClick={() => viewFile(file)}
-        className="inline-flex items-center gap-1 text-[11px] text-brand hover:underline px-1.5 py-1"
-      >
-        <Eye className="size-3.5" /> Lihat
-      </button>
-      <button
-        type="button"
-        onClick={() => downloadFile(file)}
-        className="inline-flex items-center gap-1 text-[11px] text-muted-foreground hover:text-brand px-1.5 py-1"
-      >
-        <Download className="size-3.5" />
-      </button>
-    </div>
-  );
-}
 
 export function KesiapanVerifyView({
   kesiapan,
